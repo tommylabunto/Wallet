@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".AddEditTransactionActivity">
+
+    <TextView
+        android:id="@+id/textView_dateTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="date" />
+
+    <EditText
+        android:id="@+id/edit_text_dateTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="date"
+        android:focusable="false"
+        android:inputType="text" />
+
+    <TextView
+        android:id="@+id/textView_Value"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Value" />
+
+    <EditText
+        android:id="@+id/edit_text_value"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="value"
+        android:inputType="numberDecimal" />
+
+    <TextView
+        android:id="@+id/textView_Name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Name" />
+
+    <EditText
+        android:id="@+id/edit_text_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="name"
+        android:inputType="text" />
+
+    <TextView
+        android:id="@+id/textView_typeName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Type Name" />
+
+    <EditText
+        android:id="@+id/edit_text_type_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="type name"
+        android:inputType="text" />
+
+
+
+
+</LinearLayout>

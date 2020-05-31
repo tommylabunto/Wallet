@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    tools:context=".AddEditTransactionActivity">
+    tools:context=".AddEditRepeatTransactionActivity">
 
     <TextView
         android:id="@+id/textView_dateTime"

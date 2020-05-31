@@ -10,6 +10,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".AddEditRepeatTransactionActivity"
+            android:parentActivityName=".RepeatTransactionActivity" />
+        <activity
+            android:name=".RepeatTransactionActivity"
+            android:parentActivityName=".SettingsActivity" />
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".MainActivity" />
+        <activity
             android:name=".AddEditTransactionActivity"
             android:parentActivityName=".MainActivity" />
         <activity

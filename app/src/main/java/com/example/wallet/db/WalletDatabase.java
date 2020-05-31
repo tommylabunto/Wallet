@@ -62,11 +62,6 @@ public abstract class WalletDatabase extends RoomDatabase {
                 // If you want to start with more words, just add them.
                 TransactionDao transactionDao = INSTANCE.getTransactionDao();
                 //transactionDao.deleteAllTransactions();
-//                Transaction t1 = new Transaction(Calendar.getInstance().getTime(),0,"lala","lala");
-//                transactionDao.insertTransaction(t1);
-//
-//                Transaction t2 = new Transaction(Calendar.getInstance().getTime(),0,"huat","ooo");
-//                transactionDao.insertTransaction(t2);
             });
         }
     };

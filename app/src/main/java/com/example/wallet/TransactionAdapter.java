@@ -67,7 +67,6 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
     public void onBindViewHolder(TransactionViewHolder holder, int position) {
         Transaction current = getItem(position);
         holder.wordItemView.setText(current.getName());
-
     }
 
     public interface OnItemClickListener {

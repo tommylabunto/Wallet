@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,13 +22,15 @@ import com.example.wallet.db.Transaction;
 import com.example.wallet.db.TransactionViewModel;
 import com.example.wallet.db.TypeViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Date;
 import java.util.List;
 
 // TODO: throw possible exceptions
 // TODO: try to use functional approach (return, dont set)
-// TODO: add undo button in toast
+// TODO: add recurring transaction
+// TODO: change string to string resource
 public class MainActivity extends AppCompatActivity {
 
     public static final int ADD_TRANSACTION_ACTIVITY_REQUEST_CODE = 1;
@@ -38,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
     private MonthlyBudgetViewModel monthlyBudgetViewModel;
 
     private TransactionAdapter transactionAdapter;
+
+    private CoordinatorLayout coordinatorLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         initViewModels();
+
+        coordinatorLayout = findViewById(R.id.mainActivity);
     }
 
     private void initViewModels() {
@@ -151,10 +158,27 @@ public class MainActivity extends AppCompatActivity {
                     // delete transaction
                 } else {
                     transactionViewModel.deleteTransaction(transaction);
-                    Toast.makeText(this, "Transaction deleted", Toast.LENGTH_SHORT).show();
+                    showSnackbar(transaction);
                 }
             }
         }
+    }
+
+    private void showSnackbar(Transaction transaction) {
+
+        Snackbar snackbar = Snackbar.make(coordinatorLayout, "Transaction deleted", Snackbar.LENGTH_LONG)
+                .setAction("UNDO", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // insert back
+                        transactionViewModel.insertTransaction(transaction);
+
+                        Snackbar snackbar1 = Snackbar.make(coordinatorLayout, "Undo successful", Snackbar.LENGTH_SHORT);
+                        snackbar1.show();
+                    }
+                });
+
+        snackbar.show();
     }
 
     private Transaction extractDataToTransaction(Intent data, Long id) {

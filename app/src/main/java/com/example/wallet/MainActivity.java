@@ -27,10 +27,14 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.Date;
 import java.util.List;
 
+// TODO: CUD repeat transactions (today)
+// TODO: rename intent to goTo<Activity> (today)
+// TODO: arrange each card by day (today)
+// TODO: import/export database
 // TODO: throw possible exceptions
 // TODO: try to use functional approach (return, dont set)
-// TODO: add recurring transaction
 // TODO: change string to string resource
+
 public class MainActivity extends AppCompatActivity {
 
     public static final int ADD_TRANSACTION_ACTIVITY_REQUEST_CODE = 1;
@@ -78,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
 
         transactionViewModel = ViewModelProviders.of(this).get(TransactionViewModel.class);
 
-        transactionViewModel.getAllTransactions().observe(this, new Observer<List<Transaction>>() {
+        transactionViewModel.getAllNonRecurringTransactions().observe(this, new Observer<List<Transaction>>() {
             @Override
             public void onChanged(@Nullable final List<Transaction> transactions) {
                 // Update the cached copy of the words in the transactionAdapter.
@@ -213,7 +217,6 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_settings:
                 Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
-                //startActivityForResult(intent, SETTINGS_ACTIVITY_REQUEST_CODE);
                 startActivity(intent);
                 return true;
             default:

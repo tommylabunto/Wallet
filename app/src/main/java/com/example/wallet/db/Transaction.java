@@ -27,8 +27,22 @@ public class Transaction {
     @Size(min = 1, max = 100)
     private String typeName;
 
+    @NonNull
+    private boolean isRepeat;
+
+    // 12 (monthly)
+    // 4 (quarterly)
+    // 2 (biannually)
+    // 1 (annually)
+    private int frequency;
+
+    // min 1 year to max 30 years
+    @Size(min = 1, max = 30)
+    private int numOfRepeat;
+
     // can be income(+) or expense (-)
     public Transaction() {
+        this.isRepeat = false;
     }
 
     public Transaction(Date date, double value, String name, String typeName) {
@@ -38,6 +52,19 @@ public class Transaction {
         this.value = value;
         this.typeName = typeName;
         this.name = name;
+    }
+
+    public Transaction(Date date, double value, String name, String typeName, int frequency, int numOfRepeat) {
+        this();
+
+        this.date = date;
+        this.value = value;
+        this.typeName = typeName;
+        this.name = name;
+        this.frequency = frequency;
+        this.numOfRepeat = numOfRepeat;
+
+        this.isRepeat = true;
     }
 
     public String getName() {
@@ -78,6 +105,30 @@ public class Transaction {
 
     public void setTypeName(String typeName) {
         this.typeName = typeName;
+    }
+
+    public boolean isRepeat() {
+        return isRepeat;
+    }
+
+    public void setRepeat(boolean repeat) {
+        isRepeat = repeat;
+    }
+
+    public int getFrequency() {
+        return frequency;
+    }
+
+    public void setFrequency(int frequency) {
+        this.frequency = frequency;
+    }
+
+    public int getNumOfRepeat() {
+        return numOfRepeat;
+    }
+
+    public void setNumOfRepeat(int numOfRepeat) {
+        this.numOfRepeat = numOfRepeat;
     }
 }
 

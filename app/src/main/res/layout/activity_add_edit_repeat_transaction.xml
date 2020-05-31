@@ -61,4 +61,35 @@
         android:hint="type name"
         android:inputType="text" />
 
+    <TextView
+        android:id="@+id/textView_frequency"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="frequency" />
+
+<!--    <EditText-->
+<!--        android:id="@+id/edit_text_frequency"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:hint="frequency"-->
+<!--        android:inputType="number" />-->
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/textView_num_repeat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="repeat" />
+
+    <EditText
+        android:id="@+id/edit_text_num_repeat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="repeat"
+        android:inputType="number" />
+
 </LinearLayout>

@@ -10,17 +10,29 @@ public class TransactionRepository {
 
     private TransactionDao transactionDao;
     private LiveData<List<Transaction>> allTransactions;
+    private LiveData<List<Transaction>> allRecurringTransactions;
+    private LiveData<List<Transaction>> allNonRecurringTransactions;
 
     public TransactionRepository(Application application) {
         WalletDatabase db = WalletDatabase.getDatabase(application);
         transactionDao = db.getTransactionDao();
         allTransactions = transactionDao.getAllTransactions();
+        allRecurringTransactions = transactionDao.getAllRecurringTransactions();
+        allNonRecurringTransactions = transactionDao.getAllNonRecurringTransactions();
     }
 
     // Room executes all queries on a separate thread.
     // Observed LiveData will notify the observer when the data has changed.
     public LiveData<List<Transaction>> getAllTransactions() {
         return allTransactions;
+    }
+
+    public LiveData<List<Transaction>> getAllRecurringTransactions() {
+        return allRecurringTransactions;
+    }
+
+    public LiveData<List<Transaction>> getAllNonRecurringTransactions() {
+        return allNonRecurringTransactions;
     }
 
     // You must call this on a non-UI thread or your app will throw an exception. Room ensures
@@ -41,4 +53,5 @@ public class TransactionRepository {
             transactionDao.updateTransaction(transaction);
         });
     }
+
 }

@@ -18,7 +18,7 @@ public class DatePickerFragment extends DialogFragment {
     }
 
     public DatePickerFragment(Calendar calendar) {
-        super();
+        this();
         this.calendar = calendar;
     }
 

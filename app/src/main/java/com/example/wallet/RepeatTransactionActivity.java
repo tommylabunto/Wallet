@@ -71,7 +71,7 @@ public class RepeatTransactionActivity extends AppCompatActivity {
 
         transactionViewModel = ViewModelProviders.of(this).get(TransactionViewModel.class);
 
-        transactionViewModel.getAllTransactions().observe(this, new Observer<List<Transaction>>() {
+        transactionViewModel.getAllRecurringTransactions().observe(this, new Observer<List<Transaction>>() {
             @Override
             public void onChanged(@Nullable final List<Transaction> transactions) {
                 // Update the cached copy of the words in the transactionAdapter.
@@ -89,6 +89,8 @@ public class RepeatTransactionActivity extends AppCompatActivity {
                 intent.putExtra(AddEditRepeatTransactionActivity.EXTRA_TYPENAME, transaction.getTypeName());
                 intent.putExtra(AddEditRepeatTransactionActivity.EXTRA_DATE, DateFormatter.formatDateToString(transaction.getDate()));
                 intent.putExtra(AddEditRepeatTransactionActivity.EXTRA_VALUE, transaction.getValue());
+                intent.putExtra(AddEditRepeatTransactionActivity.EXTRA_FREQUENCY, transaction.getFrequency());
+                intent.putExtra(AddEditRepeatTransactionActivity.EXTRA_REPEAT, transaction.getNumOfRepeat());
                 startActivityForResult(intent, EDIT_TRANSACTION_ACTIVITY_REQUEST_CODE);
             }
         });
@@ -159,7 +161,10 @@ public class RepeatTransactionActivity extends AppCompatActivity {
         String dateString = data.getStringExtra(AddEditRepeatTransactionActivity.EXTRA_DATE);
         Date date = DateFormatter.formatStringToDate(dateString);
 
-        Transaction transaction = new Transaction(date, value, name, typeName);
+        int frequency = data.getIntExtra(AddEditRepeatTransactionActivity.EXTRA_FREQUENCY, 12);
+        int repeat = data.getIntExtra(AddEditRepeatTransactionActivity.EXTRA_REPEAT, 1);
+
+        Transaction transaction = new Transaction(date, value, name, typeName, frequency, repeat);
 
         if (id != 0) {
             transaction.setTransactionId(id);

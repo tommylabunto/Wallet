@@ -7,7 +7,6 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import java.util.Date;
 import java.util.List;
 
 @Dao
@@ -22,22 +21,25 @@ public interface TransactionDao {
     @Delete
     public void deleteTransaction(Transaction transaction);
 
-//    @Query("SELECT dateTime, value, name, typeName FROM `transaction` WHERE name = :selectedName")
-//    public String getTransaction(int selectedName);
+    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, isRepeat, frequency, numOfRepeat FROM `transaction` WHERE transactionId = :transactionId")
+    public LiveData<Transaction> getTransaction(Long transactionId);
 
-    @Query("SELECT transactionId, date, value, name, typeName, isRepeat, frequency, numOfRepeat FROM `transaction` WHERE isRepeat = 1")
+    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, isRepeat, frequency, numOfRepeat FROM `transaction` WHERE isRepeat = 1")
     public LiveData<List<Transaction>> getAllRecurringTransactions();
 
-    @Query("SELECT transactionId, date, value, name, typeName, isRepeat, frequency, numOfRepeat FROM `transaction` WHERE isRepeat = 0")
+    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, isRepeat, frequency, numOfRepeat FROM `transaction` WHERE isRepeat = 0")
     public LiveData<List<Transaction>> getAllNonRecurringTransactions();
 
-    // TODO: check if it works
-    @Query("SELECT transactionId, date, value, name, typeName, isRepeat, frequency, numOfRepeat FROM `transaction` WHERE date < :date")
-    public LiveData<List<Transaction>> getAllRecurringFutureTransactions(Date date);
-
-    @Query("SELECT transactionId, date, value, name, typeName, isRepeat, frequency, numOfRepeat FROM `transaction`")
+    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, isRepeat, frequency, numOfRepeat FROM `transaction`")
     public LiveData<List<Transaction>> getAllTransactions();
 
     @Query("DELETE FROM `transaction`")
     public void deleteAllTransactions();
+
+    @Query("DELETE FROM `transaction` WHERE value = :value AND name = :name AND typeName = :typeName AND frequency = :frequency")
+    public void deleteAllRecurringTransactions(double value, String name, String typeName, int frequency);
+
+    // date is stored as Long in sqlite (seen in converters)
+    @Query("DELETE FROM `transaction` WHERE transactionRecurringId = :transactionRecurringId AND date >= :milliseconds")
+    public void deleteFutureRecurringTransactions(String transactionRecurringId, Long milliseconds);
 }

@@ -49,8 +49,8 @@ public class SettingsActivity extends AppCompatActivity {
         textViewRepeat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(SettingsActivity.this, RepeatTransactionActivity.class);
-                startActivityForResult(intent, REPEAT_ACTIVITY_REQUEST_CODE);
+                Intent goToRepeatTransactionActivity = new Intent(SettingsActivity.this, RepeatTransactionActivity.class);
+                startActivityForResult(goToRepeatTransactionActivity, REPEAT_ACTIVITY_REQUEST_CODE);
             }
         });
     }

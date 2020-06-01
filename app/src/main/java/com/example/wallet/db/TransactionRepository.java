@@ -54,4 +54,24 @@ public class TransactionRepository {
         });
     }
 
+    public LiveData<Transaction> getTransaction(Long transactionId) {
+
+        return transactionDao.getTransaction(transactionId);
+
+//        WalletDatabase.databaseWriteExecutor.execute(() -> {
+//            transactionDao.getTransaction(transactionId);
+//        });
+    }
+
+    public void deleteAllRecurringTransactions(double value, String name, String typeName, int frequency) {
+        WalletDatabase.databaseWriteExecutor.execute(() -> {
+            transactionDao.deleteAllRecurringTransactions(value, name, typeName, frequency);
+        });
+    }
+
+    public void deleteFutureRecurringTransactions(String transactionRecurringId, Long milliseconds) {
+        WalletDatabase.databaseWriteExecutor.execute(() -> {
+            transactionDao.deleteFutureRecurringTransactions(transactionRecurringId, milliseconds);
+        });
+    }
 }

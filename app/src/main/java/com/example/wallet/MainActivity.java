@@ -27,13 +27,14 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.Date;
 import java.util.List;
 
-// TODO: CUD repeat transactions (today)
-// TODO: rename intent to goTo<Activity> (today)
-// TODO: arrange each card by day (today)
+// TODO: create helper package (today)
+// TODO: arrange each card by day, one screen has a month's worth of cards (today)
 // TODO: import/export database
+// TODO: implement settings (reset, app theme)
 // TODO: throw possible exceptions
 // TODO: try to use functional approach (return, dont set)
 // TODO: change string to string resource
+// TODO: (end) comply with google's standards
 
 public class MainActivity extends AppCompatActivity {
 
@@ -61,8 +62,8 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, AddEditTransactionActivity.class);
-                startActivityForResult(intent, ADD_TRANSACTION_ACTIVITY_REQUEST_CODE);
+                Intent goToAddEditActivity = new Intent(MainActivity.this, AddEditTransactionActivity.class);
+                startActivityForResult(goToAddEditActivity, ADD_TRANSACTION_ACTIVITY_REQUEST_CODE);
             }
         });
 
@@ -94,13 +95,13 @@ public class MainActivity extends AppCompatActivity {
         transactionAdapter.setOnItemClickListener(new TransactionAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Transaction transaction) {
-                Intent intent = new Intent(MainActivity.this, AddEditTransactionActivity.class);
-                intent.putExtra(AddEditTransactionActivity.EXTRA_ID, transaction.getTransactionId());
-                intent.putExtra(AddEditTransactionActivity.EXTRA_NAME, transaction.getName());
-                intent.putExtra(AddEditTransactionActivity.EXTRA_TYPENAME, transaction.getTypeName());
-                intent.putExtra(AddEditTransactionActivity.EXTRA_DATE, DateFormatter.formatDateToString(transaction.getDate()));
-                intent.putExtra(AddEditTransactionActivity.EXTRA_VALUE, transaction.getValue());
-                startActivityForResult(intent, EDIT_TRANSACTION_ACTIVITY_REQUEST_CODE);
+                Intent goToAddEditTransactionActivity = new Intent(MainActivity.this, AddEditTransactionActivity.class);
+                goToAddEditTransactionActivity.putExtra(AddEditTransactionActivity.EXTRA_ID, transaction.getTransactionId());
+                goToAddEditTransactionActivity.putExtra(AddEditTransactionActivity.EXTRA_NAME, transaction.getName());
+                goToAddEditTransactionActivity.putExtra(AddEditTransactionActivity.EXTRA_TYPENAME, transaction.getTypeName());
+                goToAddEditTransactionActivity.putExtra(AddEditTransactionActivity.EXTRA_DATE, DateFormatter.formatDateToString(transaction.getDate()));
+                goToAddEditTransactionActivity.putExtra(AddEditTransactionActivity.EXTRA_VALUE, transaction.getValue());
+                startActivityForResult(goToAddEditTransactionActivity, EDIT_TRANSACTION_ACTIVITY_REQUEST_CODE);
             }
         });
 
@@ -216,8 +217,8 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case R.id.action_settings:
-                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
-                startActivity(intent);
+                Intent goToSettingsActivity = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(goToSettingsActivity);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

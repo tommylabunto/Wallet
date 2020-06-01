@@ -12,7 +12,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(version = 3, entities = {MonthlyBudget.class, Transaction.class, Type.class})
+@Database(version = 6, entities = {MonthlyBudget.class, Transaction.class, Type.class})
 @TypeConverters({Converters.class})
 public abstract class WalletDatabase extends RoomDatabase {
 

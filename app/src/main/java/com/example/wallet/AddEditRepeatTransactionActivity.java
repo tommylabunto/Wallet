@@ -38,6 +38,8 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
             "com.example.wallet.EXTRA_FREQUENCY";
     public static final String EXTRA_REPEAT =
             "com.example.wallet.EXTRA_REPEAT";
+    public static final String EXTRA_RECURRING_ID =
+            "com.example.wallet.EXTRA_RECURRING_ID";
     public static final String EXTRA_OPERATION =
             "com.example.wallet.EXTRA_OPERATION";
 
@@ -127,7 +129,7 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
 
         String repeatString = editTextRepeat.getText().toString();
 
-        int repeat = 0;
+        int repeat = -1;
 
         if (!valueString.isEmpty()) {
             value = Double.parseDouble(valueString);
@@ -137,13 +139,13 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
             repeat = Integer.parseInt(repeatString);
         }
 
-        if (name.isEmpty() || typeName.isEmpty() || value == 0 || frequency == 0  || repeat == 0 ) {
+        if (name.isEmpty() || typeName.isEmpty() || value == 0 || frequency == 0  || repeat == -1 ) {
             Toast.makeText(this, "Please insert a name or typeName or value or frequency or repeat", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if (repeat < 1 || repeat > 30) {
-            CustomAlertDialog customAlertDialog = new CustomAlertDialog("Repeat must be within 1 and 30");
+        if (repeat < 0 || repeat > 30) {
+            CustomAlertDialog customAlertDialog = new CustomAlertDialog("Repeat must be within 0 and 30");
             customAlertDialog.show(getSupportFragmentManager(), "alert dialog");
         } else {
             Intent newTransaction = createIntent(dateString, value, name, typeName, frequency, repeat, "save");
@@ -173,8 +175,8 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
             repeat = Integer.parseInt(repeatString);
         }
 
-        if (repeat < 1 || repeat > 30) {
-            CustomAlertDialog customAlertDialog = new CustomAlertDialog("Repeat must be within 1 and 30");
+        if (repeat < 0 || repeat > 30) {
+            CustomAlertDialog customAlertDialog = new CustomAlertDialog("Repeat must be within 0 and 30");
             customAlertDialog.show(getSupportFragmentManager(), "alert dialog");
         } else {
             Intent oldTransaction = createIntent(dateString, value, name, typeName, frequency, repeat, "delete");
@@ -199,6 +201,9 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
         if (id != -1) {
             transaction.putExtra(EXTRA_ID, id);
         }
+
+        String recurringId = getIntent().getStringExtra(EXTRA_RECURRING_ID);
+        transaction.putExtra(EXTRA_RECURRING_ID, recurringId);
 
         return transaction;
     }

@@ -13,6 +13,9 @@ public class Transaction {
     @NonNull
     private long transactionId;
 
+    // each recurring transaction will have the same id
+    private String transactionRecurringId;
+
     @NonNull
     private Date date;
 
@@ -30,13 +33,16 @@ public class Transaction {
     @NonNull
     private boolean isRepeat;
 
+    // number of times in a year
+    // to get duration between successive events, use 12 / frequency
     // 12 (monthly)
     // 4 (quarterly)
     // 2 (biannually)
     // 1 (annually)
     private int frequency;
 
-    // min 1 year to max 30 years
+    // min 0 year to max 30 years
+    // 0 means no more recurring in current year
     @Size(min = 1, max = 30)
     private int numOfRepeat;
 
@@ -129,6 +135,14 @@ public class Transaction {
 
     public void setNumOfRepeat(int numOfRepeat) {
         this.numOfRepeat = numOfRepeat;
+    }
+
+    public String getTransactionRecurringId() {
+        return transactionRecurringId;
+    }
+
+    public void setTransactionRecurringId(String transactionRecurringId) {
+        this.transactionRecurringId = transactionRecurringId;
     }
 }
 

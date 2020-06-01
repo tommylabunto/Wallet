@@ -49,4 +49,16 @@ public class TransactionViewModel extends AndroidViewModel {
     public void deleteTransaction(Transaction transaction) {
         transactionRepository.deleteTransaction(transaction);
     }
+
+    public LiveData<Transaction> getTransaction(Long transactionId) {
+        return transactionRepository.getTransaction(transactionId);
+    }
+
+    public void deleteAllRecurringTransactions(double value, String name, String typeName, int frequency) {
+        transactionRepository.deleteAllRecurringTransactions(value, name, typeName, frequency);
+    }
+
+    public void deleteFutureRecurringTransactions(String transactionRecurringId, Long milliseconds) {
+        transactionRepository.deleteFutureRecurringTransactions(transactionRecurringId, milliseconds);
+    }
 }

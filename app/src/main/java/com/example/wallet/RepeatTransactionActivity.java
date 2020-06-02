@@ -14,9 +14,9 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.wallet.db.DateFormatter;
 import com.example.wallet.db.Transaction;
 import com.example.wallet.db.TransactionViewModel;
+import com.example.wallet.helper.DateFormatter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Calendar;

@@ -38,6 +38,10 @@ public class TransactionViewModel extends AndroidViewModel {
         return allNonRecurringTransactions;
     }
 
+    public LiveData<List<Transaction>> getAllTransactionsInAMonth(Long millisecondsStart, Long millisecondsEnd) {
+        return transactionRepository.getAllTransactionsInAMonth(millisecondsStart, millisecondsEnd);
+    }
+
     public void insertTransaction(Transaction transaction) {
         transactionRepository.insertTransaction(transaction);
     }

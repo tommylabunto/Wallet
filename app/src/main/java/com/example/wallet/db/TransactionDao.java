@@ -21,16 +21,19 @@ public interface TransactionDao {
     @Delete
     public void deleteTransaction(Transaction transaction);
 
-    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, isRepeat, frequency, numOfRepeat FROM `transaction` WHERE transactionId = :transactionId")
+    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, isRepeat, frequency, numOfRepeat FROM `transaction` WHERE transactionId = :transactionId ORDER BY date ASC")
     public LiveData<Transaction> getTransaction(Long transactionId);
 
-    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, isRepeat, frequency, numOfRepeat FROM `transaction` WHERE isRepeat = 1")
+    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, isRepeat, frequency, numOfRepeat FROM `transaction` WHERE date >= :millisecondsStart AND date <= :millisecondsEnd ORDER BY date ASC")
+    public LiveData<List<Transaction>> getAllTransactionsInAMonth(Long millisecondsStart, Long millisecondsEnd);
+
+    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, isRepeat, frequency, numOfRepeat FROM `transaction` WHERE isRepeat = 1 ORDER BY date ASC")
     public LiveData<List<Transaction>> getAllRecurringTransactions();
 
-    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, isRepeat, frequency, numOfRepeat FROM `transaction` WHERE isRepeat = 0")
+    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, isRepeat, frequency, numOfRepeat FROM `transaction` WHERE isRepeat = 0 ORDER BY date ASC")
     public LiveData<List<Transaction>> getAllNonRecurringTransactions();
 
-    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, isRepeat, frequency, numOfRepeat FROM `transaction`")
+    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, isRepeat, frequency, numOfRepeat FROM `transaction` ORDER BY date ASC")
     public LiveData<List<Transaction>> getAllTransactions();
 
     @Query("DELETE FROM `transaction`")

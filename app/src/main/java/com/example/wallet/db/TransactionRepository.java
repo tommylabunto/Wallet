@@ -3,6 +3,7 @@ package com.example.wallet.db;
 import android.app.Application;
 
 import androidx.lifecycle.LiveData;
+import androidx.sqlite.db.SupportSQLiteQuery;
 
 import java.util.List;
 
@@ -77,5 +78,9 @@ public class TransactionRepository {
         WalletDatabase.databaseWriteExecutor.execute(() -> {
             transactionDao.deleteFutureRecurringTransactions(transactionRecurringId, milliseconds);
         });
+    }
+
+    public LiveData<Integer> checkpoint(SupportSQLiteQuery supportSQLiteQuery) {
+        return transactionDao.checkpoint(supportSQLiteQuery);
     }
 }

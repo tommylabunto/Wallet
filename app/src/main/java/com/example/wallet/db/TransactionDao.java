@@ -5,7 +5,9 @@ import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.RawQuery;
 import androidx.room.Update;
+import androidx.sqlite.db.SupportSQLiteQuery;
 
 import java.util.List;
 
@@ -45,4 +47,7 @@ public interface TransactionDao {
     // date is stored as Long in sqlite (seen in converters)
     @Query("DELETE FROM `transaction` WHERE transactionRecurringId = :transactionRecurringId AND date >= :milliseconds")
     public void deleteFutureRecurringTransactions(String transactionRecurringId, Long milliseconds);
+
+    @RawQuery(observedEntities = Transaction.class)
+    public LiveData<Integer> checkpoint(SupportSQLiteQuery supportSQLiteQuery);
 }

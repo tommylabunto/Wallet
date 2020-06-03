@@ -1,11 +1,15 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/settings"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_anchor="@+id/settings"
+        app:layout_anchorGravity="center">
 
         <TextView
             android:id="@+id/textView_repeat"
@@ -13,7 +17,20 @@
             android:layout_height="wrap_content"
             android:clickable="true"
             android:text="Repeat"
-            android:textSize="35sp" />
+            android:textSize="35sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView_export_import"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:clickable="true"
+            android:text="Export/Import"
+            android:textSize="35sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView_repeat" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

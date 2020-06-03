@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
@@ -36,9 +37,22 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
             });
         }
 
-        public void showHeader(String text) {
-            TextView textView = itemView.findViewById(R.id.textView2);
-            textView.setText(text);
+        public void showHeader(String date, String totalAmount) {
+            TextView textView_date = itemView.findViewById(R.id.textView_date);
+            textView_date.setText(date);
+
+            TextView textView_totalAmount = itemView.findViewById(R.id.textView_totalAmount);
+            textView_totalAmount.setText(totalAmount);
+        }
+
+        public void removeHeader() {
+            ConstraintLayout constraintLayout = itemView.findViewById(R.id.recyclerview_constraint_layout);
+
+            TextView textView_date = itemView.findViewById(R.id.textView_date);
+            constraintLayout.removeView(textView_date);
+
+            TextView textView_totalAmount = itemView.findViewById(R.id.textView_totalAmount);
+            constraintLayout.removeView(textView_totalAmount);
         }
     }
 
@@ -70,7 +84,8 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
     @Override
     public TransactionViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = mInflater.inflate(R.layout.recyclerview_item, parent, false);
-        return new TransactionViewHolder(itemView);
+        TransactionViewHolder holder = new TransactionViewHolder(itemView);
+        return holder;
     }
 
     @Override
@@ -86,15 +101,34 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
 
         double totalValue = 0;
 
+        int count = 0;
+        boolean isFirst = false;
+
         for (int i = 0; i < transactions.size(); i++) {
             if (formatter.format(transactions.get(i).getDate()).equals(formattedDate)) {
 
                 totalValue += transactions.get(i).getValue();
 
+                if (count == 0 && transactions.get(i).getTransactionId() == current.getTransactionId()) {
+                    isFirst = true;
+                }
+                count++;
+
                 if (i+1 == transactions.size() || ( i+1 < transactions.size() && !formatter.format(transactions.get(i+1).getDate()).equals(formattedDate))) {
-                    holder.showHeader(totalValue + "");
+                    break;
                 }
             }
+        }
+
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(totalValue);
+
+        if (isFirst) {
+            holder.showHeader(formattedDate, stringBuilder.toString());
+        }
+
+        if (!isFirst) {
+            holder.removeHeader();
         }
     }
 

@@ -16,6 +16,7 @@ public class SettingsActivity extends AppCompatActivity {
     public static final int REPEAT_ACTIVITY_REQUEST_CODE = 3;
 
     private TextView textViewRepeat;
+    private TextView textViewExportImport;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +52,15 @@ public class SettingsActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent goToRepeatTransactionActivity = new Intent(SettingsActivity.this, RepeatTransactionActivity.class);
                 startActivityForResult(goToRepeatTransactionActivity, REPEAT_ACTIVITY_REQUEST_CODE);
+            }
+        });
+
+        textViewExportImport = findViewById(R.id.textView_export_import);
+        textViewExportImport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent goToExportImportActivity= new Intent(SettingsActivity.this, ExportImportActivity.class);
+                startActivity(goToExportImportActivity);
             }
         });
     }

@@ -4,6 +4,7 @@ import android.app.Application;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.sqlite.db.SupportSQLiteQuery;
 
 import java.util.List;
 
@@ -64,5 +65,9 @@ public class TransactionViewModel extends AndroidViewModel {
 
     public void deleteFutureRecurringTransactions(String transactionRecurringId, Long milliseconds) {
         transactionRepository.deleteFutureRecurringTransactions(transactionRecurringId, milliseconds);
+    }
+
+    public LiveData<Integer> checkpoint(SupportSQLiteQuery supportSQLiteQuery) {
+        return transactionRepository.checkpoint(supportSQLiteQuery);
     }
 }

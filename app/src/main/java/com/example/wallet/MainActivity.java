@@ -32,8 +32,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-// TODO: arrange each card nicely (date and total amount on top of start of every item) (today)
-// TODO: import/export database (today)
+// TODO: import database (today)
+// TODO: optimise total amount (transaction adapter), refresh amount when transaction is deleted or saved (today)
+// TODO: fix bug when try to change month (today)
 // TODO: implement settings (reset, app theme)
 // TODO: throw possible exceptions
 // TODO: try to use functional approach (return, dont set)
@@ -199,8 +200,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChanged(@Nullable final List<Transaction> transactions) {
                 // Update the cached copy of the words in the transactionAdapter.
-                transactionAdapter.showHeader(transactions);
                 transactionAdapter.submitList(transactions);
+                transactionAdapter.showHeader(transactions);
             }
         });
     }

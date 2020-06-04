@@ -11,6 +11,13 @@ android {
         versionCode 1
         versionName "1.0"
 
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation":
+                                     "com.example.wallet".toString()]
+            }
+        }
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -26,6 +33,9 @@ android {
                 srcDirs 'src/main/java', 'src/main/java/com/example/wallet/entity', 'src/main/java/com/example/wallet/db2'
             }
         }
+
+        androidTest.assets.srcDirs +=
+                files("com.example.wallet/schemas".toString())
     }
     compileOptions {
         targetCompatibility = 1.8

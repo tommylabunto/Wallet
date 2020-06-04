@@ -7,13 +7,23 @@
     tools:context=".ExportImportActivity">
 
     <TextView
-        android:id="@+id/textView_sampleText"
+        android:id="@+id/textView_export"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
-        android:text="Exporting..."
+        android:text="Export"
         android:textSize="35sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView_import"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:text="Import"
+        android:textSize="35sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_export" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

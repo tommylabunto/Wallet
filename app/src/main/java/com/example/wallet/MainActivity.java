@@ -32,7 +32,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-// TODO: import database (today)
+
 // TODO: optimise total amount (transaction adapter), refresh amount when transaction is deleted or saved (today)
 // TODO: fix bug when try to change month (today)
 // TODO: implement settings (reset, app theme)
@@ -40,6 +40,13 @@ import java.util.List;
 // TODO: try to use functional approach (return, dont set)
 // TODO: change string to string resource
 // TODO: (end) comply with google's standards
+// TODO:
+/*
+TODO: import database
+- can get uri from clicking a file -> which gets copies file into files folder
+- can createfromassets successfully
+- but cannot create from file (maybe something to do with the path)
+ */
 
 public class MainActivity extends AppCompatActivity {
 

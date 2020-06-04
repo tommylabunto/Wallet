@@ -9,10 +9,11 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import java.io.File;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(version = 6, entities = {MonthlyBudget.class, Transaction.class, Type.class})
+@Database(version = 1, entities = {MonthlyBudget.class, Transaction.class, Type.class})
 @TypeConverters({Converters.class})
 public abstract class WalletDatabase extends RoomDatabase {
 
@@ -29,12 +30,15 @@ public abstract class WalletDatabase extends RoomDatabase {
             Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
     public static WalletDatabase getDatabase(final Context context) {
+
         if (INSTANCE == null) {
             synchronized (WalletDatabase.class) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             WalletDatabase.class, "WalletDatabase")
                             .addCallback(sRoomDatabaseCallback)
+                            //.createFromFile(new File("data/data/com.example.wallet/files/WalletDatabase.db"))
+                            //.createFromAsset("WalletDatabase.db")
                             .fallbackToDestructiveMigration()
                             .build();
                 }
@@ -65,4 +69,16 @@ public abstract class WalletDatabase extends RoomDatabase {
             });
         }
     };
+
+    public static WalletDatabase prepopulateDB(final Context context, File file) {
+
+        INSTANCE = Room.databaseBuilder(context.getApplicationContext(), WalletDatabase.class, "WalletDatabase")
+                .createFromFile(file)
+                .fallbackToDestructiveMigration()
+                .build();
+
+//        INSTANCE.close();
+
+        return INSTANCE;
+    }
 }

@@ -48,6 +48,7 @@ public interface TransactionDao {
     @Query("DELETE FROM `transaction` WHERE transactionRecurringId = :transactionRecurringId AND date >= :milliseconds")
     public void deleteFutureRecurringTransactions(String transactionRecurringId, Long milliseconds);
 
+    // sync DB data
     @RawQuery(observedEntities = Transaction.class)
     public LiveData<Integer> checkpoint(SupportSQLiteQuery supportSQLiteQuery);
 }

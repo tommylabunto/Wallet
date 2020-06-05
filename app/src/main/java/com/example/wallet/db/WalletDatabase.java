@@ -65,10 +65,22 @@ public abstract class WalletDatabase extends RoomDatabase {
                 // Populate the database in the background.
                 // If you want to start with more words, just add them.
                 TransactionDao transactionDao = INSTANCE.getTransactionDao();
-                //transactionDao.deleteAllTransactions();
             });
         }
     };
+
+    public static void addTypes() {
+
+        databaseWriteExecutor.execute(() -> {
+            // Populate the database in the background.
+            // If you want to start with more words, just add them.
+            TypeDao typeDao = INSTANCE.getTypeDao();
+
+            typeDao.insertType(new Type("Food"));
+            typeDao.insertType(new Type("Transport"));
+            typeDao.insertType(new Type("Others"));
+        });
+    }
 
     public static WalletDatabase prepopulateDB(final Context context, File file) {
 
@@ -76,9 +88,18 @@ public abstract class WalletDatabase extends RoomDatabase {
                 .createFromFile(file)
                 .fallbackToDestructiveMigration()
                 .build();
-
 //        INSTANCE.close();
 
         return INSTANCE;
+    }
+
+    // run using another thread so main thread wont lock up
+    // but room doesn't let us know when it finishes
+    public static void deleteAllData() {
+
+        databaseWriteExecutor.execute(() -> {
+
+            INSTANCE.clearAllTables();
+        });
     }
 }

@@ -2,18 +2,15 @@ package com.example.wallet;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.cardview.widget.CardView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -32,20 +29,24 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-
-// TODO: optimise total amount (transaction adapter), refresh amount when transaction is deleted or saved (today)
-// TODO: fix bug when try to change month (today)
-// TODO: implement settings (reset, app theme)
+// TODO: get type (today)
+// TODO: implement screen for repeat transaction (today)
+// TODO: create screen for CRUD type, monthlybudget
 // TODO: throw possible exceptions
 // TODO: try to use functional approach (return, dont set)
+// TODO: implement settings (app theme)
 // TODO: change string to string resource
 // TODO: (end) comply with google's standards
-// TODO:
 /*
 TODO: import database
 - can get uri from clicking a file -> which gets copies file into files folder
 - can createfromassets successfully
 - but cannot create from file (maybe something to do with the path)
+ */
+/*
+TODO: refresh after CRUD non-recurring transactions
+- after crud, activity is refreshed
+- see if there is a way to invoke updateHeader(transaction, holder); from TransactionAdapter
  */
 
 public class MainActivity extends AppCompatActivity {
@@ -115,32 +116,6 @@ public class MainActivity extends AppCompatActivity {
         initViewModels();
 
         coordinatorLayout = findViewById(R.id.mainActivity);
-
-        //showHeader();
-    }
-
-    private void showHeader() {
-
-        CardView constraintLayout = findViewById(R.id.recyclerview_card_view);
-        TextView textView = new TextView(this);
-        textView.setText("header");
-        CardView.LayoutParams params = new CardView.LayoutParams(
-                CardView.LayoutParams.MATCH_PARENT,
-                CardView.LayoutParams.MATCH_PARENT
-        );
-        textView.setLayoutParams(params);
-        Log.d("textview", (String) textView.getText());
-        constraintLayout.addView(textView);
-
-//        ConstraintLayout constraintLayout = findViewById(R.id.content_main_layout);
-//        TextView textView = new TextView(this);
-//        textView.setText("header");
-//        ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(
-//                ConstraintLayout.LayoutParams.MATCH_PARENT,
-//                ConstraintLayout.LayoutParams.MATCH_PARENT
-//        );
-//        textView.setLayoutParams(params);
-//        constraintLayout.addView(textView);
     }
 
     private void initStartEndCal() {
@@ -176,19 +151,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//        // Get a new or existing ViewModel from the ViewModelProvider.
 //        typeViewModel = ViewModelProviders.of(this).get(TypeViewModel.class);
 //
-//        // Add an observer on the LiveData returned by getAllTypes.
-//        // The onChanged() method fires when the observed data changes and the activity is
-//        // in the foreground.
-//        typeViewModel.getAllTypes().observe(this, new Observer<List<Type>>() {
+//        typeViewModel.getAllTypes().observe(this, new Observer<List<String>>() {
 //            @Override
-//            public void onChanged(@Nullable final List<Type> types) {
-//                // Update the cached copy of the words in the adapter.
-//                //adapter.setWords(words);
+//            public void onChanged(@Nullable final List<String> types) {
+//
+//                if (types.size() == 0) {
+//                    WalletDatabase.addTypes();
+//
+//                }
 //            }
 //        });
+
 //
 //        monthlyBudgetViewModel = ViewModelProviders.of(this).get(MonthlyBudgetViewModel.class);
 //
@@ -208,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
             public void onChanged(@Nullable final List<Transaction> transactions) {
                 // Update the cached copy of the words in the transactionAdapter.
                 transactionAdapter.submitList(transactions);
-                transactionAdapter.showHeader(transactions);
+                transactionAdapter.passTransactions(transactions);
             }
         });
     }
@@ -226,6 +201,7 @@ public class MainActivity extends AppCompatActivity {
                 if (data.getStringExtra(AddEditTransactionActivity.EXTRA_OPERATION).equals("save")) {
                     Transaction transaction = extractDataToTransaction(data, 0L);
                     transactionViewModel.insertTransaction(transaction);
+                    reload();
                     Toast.makeText(this, "Transaction saved", Toast.LENGTH_LONG).show();
                 }
             } else {
@@ -241,6 +217,7 @@ public class MainActivity extends AppCompatActivity {
                 if (data.getStringExtra(AddEditTransactionActivity.EXTRA_OPERATION).equals("save")) {
 
                     transactionViewModel.updateTransaction(transaction);
+                    reload();
                     Toast.makeText(this, "Transaction updated", Toast.LENGTH_SHORT).show();
 
                     // delete transaction
@@ -252,7 +229,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void reload() {
+        finish();
+        overridePendingTransition(0, 0);
+        startActivity(getIntent());
+        overridePendingTransition(0, 0);
+    }
+
     private void showSnackbar(Transaction transaction) {
+
+        final int isClicked = 0;
 
         Snackbar snackbar = Snackbar.make(coordinatorLayout, "Transaction deleted", Snackbar.LENGTH_LONG)
                 .setAction("UNDO", new View.OnClickListener() {
@@ -260,13 +246,27 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         // insert back
                         transactionViewModel.insertTransaction(transaction);
+                        reload();
 
                         Snackbar snackbar1 = Snackbar.make(coordinatorLayout, "Undo successful", Snackbar.LENGTH_SHORT);
                         snackbar1.show();
                     }
+                })
+                .addCallback(new Snackbar.Callback() {
+
+                    @Override
+                    public void onDismissed(Snackbar snackbar, int event) {
+                        //see Snackbar.Callback docs for event details
+                        showToast();
+                        reload();
+                    }
                 });
 
         snackbar.show();
+    }
+
+    private void showToast() {
+        Toast.makeText(this, "Reloading", Toast.LENGTH_SHORT).show();
     }
 
     private Transaction extractDataToTransaction(Intent data, Long id) {

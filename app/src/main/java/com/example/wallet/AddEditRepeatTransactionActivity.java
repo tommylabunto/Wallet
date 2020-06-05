@@ -1,6 +1,8 @@
 package com.example.wallet;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -18,7 +20,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.wallet.helper.DateFormatter;
-import com.example.wallet.helper.CustomAlertDialog;
 import com.example.wallet.helper.DatePickerFragment;
 import com.example.wallet.helper.FrequencyStringConverter;
 
@@ -73,7 +74,6 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
         editTextDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Calendar calendar = convertEditTextToCalendar(editTextDate);
                 DialogFragment datePicker = new DatePickerFragment(calendar);
                 datePicker.show(getSupportFragmentManager(), "date picker");
@@ -148,8 +148,7 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
         }
 
         if (repeat < 0 || repeat > 30) {
-            CustomAlertDialog customAlertDialog = new CustomAlertDialog("Repeat must be within 0 and 30");
-            customAlertDialog.show(getSupportFragmentManager(), "alert dialog");
+            showAlertDialog();
         } else {
             Intent newTransaction = createIntent(dateString, value, name, typeName, frequency, repeat, "save");
 
@@ -179,8 +178,7 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
         }
 
         if (repeat < 0 || repeat > 30) {
-            CustomAlertDialog customAlertDialog = new CustomAlertDialog("Repeat must be within 0 and 30");
-            customAlertDialog.show(getSupportFragmentManager(), "alert dialog");
+            showAlertDialog();
         } else {
             Intent oldTransaction = createIntent(dateString, value, name, typeName, frequency, repeat, "delete");
 
@@ -249,5 +247,19 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
         Calendar calendar = Calendar.getInstance();
         String dateString = DateFormatter.formatDateToString(calendar.getTime());
         editTextDate.setText(dateString);
+    }
+
+    private void showAlertDialog() {
+
+        new AlertDialog.Builder(AddEditRepeatTransactionActivity.this)
+                .setTitle("Warning")
+                .setMessage("Repeat must be within 0 and 30")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing, just go back to previous screen
+                    }
+                })
+                .create().show();
     }
 }

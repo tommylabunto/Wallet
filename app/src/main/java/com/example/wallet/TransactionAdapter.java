@@ -6,13 +6,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.wallet.db.Transaction;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
@@ -39,20 +40,32 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
 
         public void showHeader(String date, String totalAmount) {
             TextView textView_date = itemView.findViewById(R.id.textView_date);
-            textView_date.setText(date);
+
+            if (textView_date != null) {
+                textView_date.setText(date);
+            }
 
             TextView textView_totalAmount = itemView.findViewById(R.id.textView_totalAmount);
-            textView_totalAmount.setText(totalAmount);
+
+            if (textView_totalAmount != null) {
+                textView_totalAmount.setText(totalAmount);
+            }
+
+            textView_date.setVisibility(View.VISIBLE);
+            textView_totalAmount.setVisibility(View.VISIBLE);
         }
 
+        /*
+        don't remove view otherwise it will cause problems causing it to be null
+        changing view to INVISIBLE still takes up space, so GONE is the solution
+         */
         public void removeHeader() {
-            ConstraintLayout constraintLayout = itemView.findViewById(R.id.recyclerview_constraint_layout);
 
             TextView textView_date = itemView.findViewById(R.id.textView_date);
-            constraintLayout.removeView(textView_date);
+            textView_date.setVisibility(View.GONE);
 
             TextView textView_totalAmount = itemView.findViewById(R.id.textView_totalAmount);
-            constraintLayout.removeView(textView_totalAmount);
+            textView_totalAmount.setVisibility(View.GONE);
         }
     }
 
@@ -60,6 +73,8 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
     private OnItemClickListener listener;
 
     private List<Transaction> transactions;
+
+    private boolean isFirst;
 
     public TransactionAdapter(Context context) {
         super(DIFF_CALLBACK);
@@ -90,46 +105,10 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
 
     @Override
     public void onBindViewHolder(TransactionViewHolder holder, int position) {
-        Transaction current = getItem(position);
-        holder.wordItemView.setText(current.getName());
+        Transaction transaction = getItem(position);
+        holder.wordItemView.setText(transaction.getName());
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(current.getDate());
-
-        SimpleDateFormat formatter = new SimpleDateFormat("ddMMyyyy");
-        String formattedDate = formatter.format(calendar.getTime());
-
-        double totalValue = 0;
-
-        int count = 0;
-        boolean isFirst = false;
-
-        for (int i = 0; i < transactions.size(); i++) {
-            if (formatter.format(transactions.get(i).getDate()).equals(formattedDate)) {
-
-                totalValue += transactions.get(i).getValue();
-
-                if (count == 0 && transactions.get(i).getTransactionId() == current.getTransactionId()) {
-                    isFirst = true;
-                }
-                count++;
-
-                if (i+1 == transactions.size() || ( i+1 < transactions.size() && !formatter.format(transactions.get(i+1).getDate()).equals(formattedDate))) {
-                    break;
-                }
-            }
-        }
-
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(totalValue);
-
-        if (isFirst) {
-            holder.showHeader(formattedDate, stringBuilder.toString());
-        }
-
-        if (!isFirst) {
-            holder.removeHeader();
-        }
+        updateHeader(transaction, holder);
     }
 
     public interface OnItemClickListener {
@@ -140,7 +119,71 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
         this.listener = listener;
     }
 
-    public void showHeader(List<Transaction> transactions) {
+    public void passTransactions(List<Transaction> transactions) {
         this.transactions = transactions;
+    }
+
+    private void updateHeader(Transaction transaction, TransactionViewHolder holder) {
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(transaction.getDate());
+
+        SimpleDateFormat formatter = new SimpleDateFormat("ddMMyyyy");
+        String formattedDate = formatter.format(calendar.getTime());
+
+        this.isFirst = false;
+
+        if (transactions != null || !transactions.isEmpty()) {
+
+            String totalAmount = calculateTotalAmountInAMonth(transaction);
+
+            if (this.isFirst) {
+                holder.showHeader(formattedDate, totalAmount);
+            }
+        }
+
+        if (!this.isFirst) {
+            holder.removeHeader();
+        }
+    }
+
+    private String calculateTotalAmountInAMonth(Transaction transaction) {
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(transaction.getDate());
+
+        SimpleDateFormat formatter = new SimpleDateFormat("ddMMyyyy");
+        String formattedDate = formatter.format(calendar.getTime());
+
+        double totalValue = 0;
+
+        int count = 0;
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        BigDecimal totalValue1 = new BigDecimal(0);
+
+        for (int i = 0; i < transactions.size(); i++) {
+            if (formatter.format(transactions.get(i).getDate()).equals(formattedDate)) {
+
+                totalValue += transactions.get(i).getValue();
+
+                if (count == 0 && transactions.get(i).getTransactionId() == transaction.getTransactionId()) {
+                    this.isFirst = true;
+                }
+                count++;
+
+                if (i + 1 == transactions.size() || (i + 1 < transactions.size() && !formatter.format(transactions.get(i + 1).getDate()).equals(formattedDate))) {
+                    break;
+                }
+            }
+        }
+
+        // round up to 2.d.p
+        BigDecimal totalValueBd= new BigDecimal(totalValue).setScale(2, RoundingMode.HALF_UP);
+
+        stringBuilder.append(totalValueBd);
+
+        return stringBuilder.toString();
     }
 }

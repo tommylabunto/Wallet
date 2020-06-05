@@ -1,5 +1,7 @@
 package com.example.wallet;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -7,6 +9,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.wallet.db.WalletDatabase;
 
 public class SettingsActivity extends AppCompatActivity {
 //public class SettingsActivity extends AppCompatActivity implements PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
@@ -17,6 +21,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     private TextView textViewRepeat;
     private TextView textViewExportImport;
+    private TextView textViewReset;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +66,34 @@ public class SettingsActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent goToExportImportActivity= new Intent(SettingsActivity.this, ExportImportActivity.class);
                 startActivity(goToExportImportActivity);
+            }
+        });
+
+        textViewReset = findViewById(R.id.textView_reset);
+        textViewReset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                new AlertDialog.Builder(SettingsActivity.this)
+                        .setTitle("Warning")
+                        .setMessage("Are you sure you want to reset database?")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                WalletDatabase.deleteAllData();
+
+                                // go home page
+                                Intent goToAddMainActivity = new Intent(SettingsActivity.this, MainActivity.class);
+                                startActivity(goToAddMainActivity);
+                            }
+                        })
+                        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .create().show();
             }
         });
     }

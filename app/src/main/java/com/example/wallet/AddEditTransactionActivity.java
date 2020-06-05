@@ -3,22 +3,32 @@ package com.example.wallet;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
+import com.example.wallet.db.TypeViewModel;
 import com.example.wallet.helper.DateFormatter;
 import com.example.wallet.helper.DatePickerFragment;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 
 public class AddEditTransactionActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
@@ -41,15 +51,48 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
     private EditText editTextValue;
     private EditText editTextDate;
 
+    private Spinner spinner;
+    private String type;
+
+    private List<String> typeList;
+
+    private TypeViewModel typeViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_transaction);
 
         editTextName = findViewById(R.id.edit_text_name);
-        editTextTypeName = findViewById(R.id.edit_text_type_name);
+        //editTextTypeName = findViewById(R.id.edit_text_type_name);
         editTextValue = findViewById(R.id.edit_text_value);
         editTextDate = findViewById(R.id.edit_text_dateTime);
+
+        spinner = findViewById(R.id.spinner_type);
+
+        //initViewModel();
+
+        List<String> typeList1 = new ArrayList<>();
+        typeList1.add("Food");
+        typeList1.add("Transport");
+
+        //Log.d("type size", typeList.size() + "");
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, typeList1);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                type = parent.getItemAtPosition(position).toString();
+                Log.d("type", type);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
 
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
 
@@ -66,12 +109,40 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
         Intent intent = getIntent();
         if (intent.hasExtra(EXTRA_ID)) {
             editTextName.setText(intent.getStringExtra(EXTRA_NAME));
-            editTextTypeName.setText(intent.getStringExtra(EXTRA_TYPENAME));
+//            editTextTypeName.setText(intent.getStringExtra(EXTRA_TYPENAME));
             editTextDate.setText(intent.getStringExtra(EXTRA_DATE));
             editTextValue.setText(intent.getDoubleExtra(EXTRA_VALUE, 1) + "");
+
+            type = intent.getStringExtra(EXTRA_TYPENAME);
+            int selectionPosition= adapter.getPosition(type);
+            spinner.setSelection(selectionPosition);
         } else {
             setTodayDate(editTextDate);
         }
+    }
+
+    private void deepCopyList(List<String> types) {
+
+        typeList = new ArrayList<>();
+
+        for (String type : types) {
+
+            typeList.add(type);
+            Log.d("type", type);
+        }
+    }
+
+    private void initViewModel() {
+
+        typeViewModel = ViewModelProviders.of(this).get(TypeViewModel.class);
+
+        typeViewModel.getAllTypes().observe(this, new Observer<List<String>>() {
+            @Override
+            public void onChanged(@Nullable final List<String> types) {
+
+                deepCopyList(types);
+            }
+        });
     }
 
     private Calendar convertEditTextToCalendar(EditText editTextDate) {
@@ -87,7 +158,7 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
     private void createOrSaveTransaction() {
 
         String name = editTextName.getText().toString().trim();
-        String typeName = editTextTypeName.getText().toString().trim();
+        //String typeName = editTextTypeName.getText().toString().trim();
         String dateString = editTextDate.getText().toString();
         String valueString = editTextValue.getText().toString();
         double value = 0;
@@ -96,21 +167,21 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
             value = Double.parseDouble(valueString);
         }
 
-        if (name.isEmpty() || typeName.isEmpty() || value == 0) {
+        if (name.isEmpty() || value == 0) {
             Toast.makeText(this, "Please insert a name or typeName or value", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        Intent newTransaction = createIntent(dateString, value, name, typeName, "save");
+        Intent newTransaction = createIntent(dateString, value, name, type, "save");
 
         setResult(RESULT_OK, newTransaction);
         finish();
     }
 
-    private void deleteTransaction(){
+    private void deleteTransaction() {
 
         String name = editTextName.getText().toString().trim();
-        String typeName = editTextTypeName.getText().toString().trim();
+        //String typeName = editTextTypeName.getText().toString().trim();
         String dateString = editTextDate.getText().toString();
         String valueString = editTextValue.getText().toString();
         double value = 0;
@@ -119,7 +190,7 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
             value = Double.parseDouble(valueString);
         }
 
-        Intent oldTransaction = createIntent(dateString, value, name, typeName, "delete");
+        Intent oldTransaction = createIntent(dateString, value, name, type, "delete");
 
         setResult(RESULT_OK, oldTransaction);
         finish();

@@ -21,6 +21,7 @@ import com.example.wallet.db.MonthlyBudgetViewModel;
 import com.example.wallet.db.Transaction;
 import com.example.wallet.db.TransactionViewModel;
 import com.example.wallet.db.TypeViewModel;
+import com.example.wallet.db.WalletDatabase;
 import com.example.wallet.helper.DateFormatter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -29,9 +30,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-// TODO: get type (today)
-// TODO: implement screen for repeat transaction (today)
-// TODO: create screen for CRUD type, monthlybudget
+// TODO: create screen for CRUD type, monthlybudget in settings (today)
+// TODO: when CRUD type, then change type in addedittransactionactivity, so dunnid to get types whenever create new activity (today)
 // TODO: throw possible exceptions
 // TODO: try to use functional approach (return, dont set)
 // TODO: implement settings (app theme)
@@ -151,18 +151,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//        typeViewModel = ViewModelProviders.of(this).get(TypeViewModel.class);
-//
-//        typeViewModel.getAllTypes().observe(this, new Observer<List<String>>() {
-//            @Override
-//            public void onChanged(@Nullable final List<String> types) {
-//
-//                if (types.size() == 0) {
-//                    WalletDatabase.addTypes();
-//
-//                }
-//            }
-//        });
+        typeViewModel = ViewModelProviders.of(this).get(TypeViewModel.class);
+
+        typeViewModel.getAllTypes().observe(this, new Observer<List<String>>() {
+            @Override
+            public void onChanged(@Nullable final List<String> types) {
+
+                if (types.size() == 0) {
+                    WalletDatabase.addTypes();
+                }
+            }
+        });
 
 //
 //        monthlyBudgetViewModel = ViewModelProviders.of(this).get(MonthlyBudgetViewModel.class);

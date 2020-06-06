@@ -11,14 +11,12 @@ public class TransactionRepository {
 
     private TransactionDao transactionDao;
     private LiveData<List<Transaction>> allTransactions;
-    private LiveData<List<Transaction>> allRecurringTransactions;
     private LiveData<List<Transaction>> allNonRecurringTransactions;
 
     public TransactionRepository(Application application) {
         WalletDatabase db = WalletDatabase.getDatabase(application);
         transactionDao = db.getTransactionDao();
         allTransactions = transactionDao.getAllTransactions();
-        allRecurringTransactions = transactionDao.getAllRecurringTransactions();
         allNonRecurringTransactions = transactionDao.getAllNonRecurringTransactions();
     }
 
@@ -28,8 +26,8 @@ public class TransactionRepository {
         return allTransactions;
     }
 
-    public LiveData<List<Transaction>> getAllRecurringTransactions() {
-        return allRecurringTransactions;
+    public LiveData<List<Transaction>> getAllRecurringTransactions(Long millisecondsToday) {
+        return transactionDao.getAllRecurringTransactions(millisecondsToday);
     }
 
     public LiveData<List<Transaction>> getAllNonRecurringTransactions() {

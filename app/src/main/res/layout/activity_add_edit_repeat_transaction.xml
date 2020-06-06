@@ -54,12 +54,17 @@
         android:layout_height="wrap_content"
         android:text="Type Name" />
 
-    <EditText
-        android:id="@+id/edit_text_type_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="type name"
-        android:inputType="text" />
+    <Spinner
+        android:id="@+id/spinner_repeat_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+<!--    <EditText-->
+<!--        android:id="@+id/edit_text_type_name"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:hint="type name"-->
+<!--        android:inputType="text" />-->
 
     <TextView
         android:id="@+id/textView_frequency"

@@ -7,7 +7,7 @@
     tools:context=".RepeatTransactionActivity"
     android:id="@+id/repeatTransactionActivity">
 
-    <include layout="@layout/content_main" />
+    <include layout="@layout/content_repeat" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/repeat_fab"

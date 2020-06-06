@@ -52,9 +52,10 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
     private EditText editTextDate;
 
     private Spinner spinner;
+    private ArrayAdapter<String> adapter;
     private String type;
 
-    private List<String> typeList;
+    private static List<String> typeList;
 
     private TypeViewModel typeViewModel;
 
@@ -70,16 +71,80 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
 
         spinner = findViewById(R.id.spinner_type);
 
-        //initViewModel();
+        typeList = new ArrayList<>();
+        initViewModel();
 
-        List<String> typeList1 = new ArrayList<>();
-        typeList1.add("Food");
-        typeList1.add("Transport");
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
 
-        //Log.d("type size", typeList.size() + "");
+        editTextDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, typeList1);
+                Calendar calendar = convertEditTextToCalendar(editTextDate);
+                DialogFragment datePicker = new DatePickerFragment(calendar);
+                datePicker.show(getSupportFragmentManager(), "date picker");
+            }
+        });
+
+        extractIntent();
+    }
+
+    private void extractIntent() {
+        Intent intent = getIntent();
+        if (intent.hasExtra(EXTRA_ID)) {
+            editTextName.setText(intent.getStringExtra(EXTRA_NAME));
+//            editTextTypeName.setText(intent.getStringExtra(EXTRA_TYPENAME));
+            editTextDate.setText(intent.getStringExtra(EXTRA_DATE));
+            editTextValue.setText(intent.getDoubleExtra(EXTRA_VALUE, 1) + "");
+
+            type = intent.getStringExtra(EXTRA_TYPENAME);
+
+            if (adapter == null) {
+                adapter = new ArrayAdapter<String>(this,
+                        android.R.layout.simple_spinner_item, typeList);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                Log.d("typeList.size", typeList.size() + "");
+            }
+
+            int selectionPosition= adapter.getPosition(type);
+            Log.d("selectionPosition", selectionPosition + "");
+            spinner.setSelection(selectionPosition);
+        } else {
+            setTodayDate(editTextDate);
+        }
+    }
+
+    private void initViewModel() {
+
+        typeViewModel = ViewModelProviders.of(this).get(TypeViewModel.class);
+
+        typeViewModel.getAllTypes().observe(this, new Observer<List<String>>() {
+            @Override
+            public void onChanged(@Nullable final List<String> types) {
+
+                deepCopyList(types);
+                Log.d("onchanged","onchanged");
+            }
+        });
+    }
+
+    private void deepCopyList(List<String> types) {
+
+        typeList = new ArrayList<>();
+
+        for (String type : types) {
+
+            typeList.add(type);
+            Log.d("type", type);
+        }
+
+        showSpinner();
+    }
+
+    private void showSpinner() {
+
+        adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, typeList);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -94,55 +159,7 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
             }
         });
 
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
-
-        editTextDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Calendar calendar = convertEditTextToCalendar(editTextDate);
-                DialogFragment datePicker = new DatePickerFragment(calendar);
-                datePicker.show(getSupportFragmentManager(), "date picker");
-            }
-        });
-
-        Intent intent = getIntent();
-        if (intent.hasExtra(EXTRA_ID)) {
-            editTextName.setText(intent.getStringExtra(EXTRA_NAME));
-//            editTextTypeName.setText(intent.getStringExtra(EXTRA_TYPENAME));
-            editTextDate.setText(intent.getStringExtra(EXTRA_DATE));
-            editTextValue.setText(intent.getDoubleExtra(EXTRA_VALUE, 1) + "");
-
-            type = intent.getStringExtra(EXTRA_TYPENAME);
-            int selectionPosition= adapter.getPosition(type);
-            spinner.setSelection(selectionPosition);
-        } else {
-            setTodayDate(editTextDate);
-        }
-    }
-
-    private void deepCopyList(List<String> types) {
-
-        typeList = new ArrayList<>();
-
-        for (String type : types) {
-
-            typeList.add(type);
-            Log.d("type", type);
-        }
-    }
-
-    private void initViewModel() {
-
-        typeViewModel = ViewModelProviders.of(this).get(TypeViewModel.class);
-
-        typeViewModel.getAllTypes().observe(this, new Observer<List<String>>() {
-            @Override
-            public void onChanged(@Nullable final List<String> types) {
-
-                deepCopyList(types);
-            }
-        });
+        extractIntent();
     }
 
     private Calendar convertEditTextToCalendar(EditText editTextDate) {
@@ -155,6 +172,9 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
         return calendar;
     }
 
+    /*
+    when save a recurring transaction -> it becomes a non-recurring transaction because the data is not passed into the transaction
+     */
     private void createOrSaveTransaction() {
 
         String name = editTextName.getText().toString().trim();

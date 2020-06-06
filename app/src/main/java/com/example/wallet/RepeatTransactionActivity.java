@@ -19,6 +19,7 @@ import com.example.wallet.db.TransactionViewModel;
 import com.example.wallet.helper.DateFormatter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -31,7 +32,7 @@ public class RepeatTransactionActivity extends AppCompatActivity {
 
     private TransactionViewModel transactionViewModel;
 
-    private TransactionAdapter transactionAdapter;
+    private RepeatTransactionAdapter repeatTransactionAdapter;
 
     private CoordinatorLayout coordinatorLayout;
 
@@ -52,9 +53,9 @@ public class RepeatTransactionActivity extends AppCompatActivity {
 
         // show transaction in recycler view
         RecyclerView recyclerView = findViewById(R.id.recyclerview);
-        transactionAdapter = new TransactionAdapter(this);
+        repeatTransactionAdapter = new RepeatTransactionAdapter(this);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setAdapter(transactionAdapter);
+        recyclerView.setAdapter(repeatTransactionAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         initViewModels();
@@ -69,18 +70,22 @@ public class RepeatTransactionActivity extends AppCompatActivity {
 
     private void initViewModels() {
 
+        Calendar today = Calendar.getInstance();
+
         transactionViewModel = ViewModelProviders.of(this).get(TransactionViewModel.class);
 
-        transactionViewModel.getAllRecurringTransactions().observe(this, new Observer<List<Transaction>>() {
+        transactionViewModel.getAllRecurringTransactions(today.getTimeInMillis()).observe(this, new Observer<List<Transaction>>() {
             @Override
             public void onChanged(@Nullable final List<Transaction> transactions) {
                 // Update the cached copy of the words in the transactionAdapter.
-                transactionAdapter.submitList(transactions);
+                // list received is not distinct by recurring id
+                List<Transaction> distinctTransactions = deepCopyDistinctTransaction(transactions);
+                repeatTransactionAdapter.submitList(distinctTransactions);
             }
         });
 
         // when click on item in recycler view -> populate data and open up to edit
-        transactionAdapter.setOnItemClickListener(new TransactionAdapter.OnItemClickListener() {
+        repeatTransactionAdapter.setOnItemClickListener(new RepeatTransactionAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Transaction transaction) {
                 Intent goToAddEditRepeatTransactionActivity = new Intent(
@@ -104,6 +109,30 @@ public class RepeatTransactionActivity extends AppCompatActivity {
                 startActivityForResult(goToAddEditRepeatTransactionActivity, EDIT_TRANSACTION_ACTIVITY_REQUEST_CODE);
             }
         });
+    }
+
+    private List<Transaction> deepCopyDistinctTransaction(List<Transaction> transactions) {
+
+        List<Transaction> distinctTransactions = new ArrayList<>();
+
+        String recurringId = "";
+
+        for (int i = 0; i < transactions.size(); i++) {
+
+            Transaction transaction = transactions.get(i);
+
+            if (recurringId.isEmpty()) {
+                recurringId = transaction.getTransactionRecurringId();
+                distinctTransactions.add(transaction);
+            }
+
+            if (!recurringId.equals(transaction.getTransactionRecurringId())) {
+                recurringId = transaction.getTransactionRecurringId();
+                distinctTransactions.add(transaction);
+            }
+        }
+
+        return distinctTransactions;
     }
 
     @Override

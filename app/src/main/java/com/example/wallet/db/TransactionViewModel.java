@@ -16,14 +16,12 @@ public class TransactionViewModel extends AndroidViewModel {
     //   the UI when the data actually changes.
     // - Repository is completely separated from the UI through the ViewModel.
     private LiveData<List<Transaction>> allTransactions;
-    private LiveData<List<Transaction>> allRecurringTransactions;
     private LiveData<List<Transaction>> allNonRecurringTransactions;
 
     public TransactionViewModel(Application application) {
         super(application);
         transactionRepository = new TransactionRepository(application);
         allTransactions = transactionRepository.getAllTransactions();
-        allRecurringTransactions = transactionRepository.getAllRecurringTransactions();
         allNonRecurringTransactions = transactionRepository.getAllNonRecurringTransactions();
     }
 
@@ -31,8 +29,8 @@ public class TransactionViewModel extends AndroidViewModel {
         return allTransactions;
     }
 
-    public LiveData<List<Transaction>> getAllRecurringTransactions() {
-        return allRecurringTransactions;
+    public LiveData<List<Transaction>> getAllRecurringTransactions(Long millisecondsToday) {
+        return transactionRepository.getAllRecurringTransactions(millisecondsToday);
     }
 
     public LiveData<List<Transaction>> getAllNonRecurringTransactions() {

@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,15 +17,21 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
+import com.example.wallet.db.TypeViewModel;
 import com.example.wallet.helper.DateFormatter;
 import com.example.wallet.helper.DatePickerFragment;
 import com.example.wallet.helper.FrequencyStringConverter;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class AddEditRepeatTransactionActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener{
 
@@ -55,7 +62,14 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
     private Spinner spinner;
     private int frequency;
 
+    private String type;
+    private Spinner spinnerType;
+    private ArrayAdapter<String> adapterType;
+    private static List<String> typeList;
+
     private ArrayAdapter<CharSequence> spinnerAdapter;
+
+    private TypeViewModel typeViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +77,7 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
         setContentView(R.layout.activity_add_edit_repeat_transaction);
 
         editTextName = findViewById(R.id.edit_text_name);
-        editTextTypeName = findViewById(R.id.edit_text_type_name);
+        //editTextTypeName = findViewById(R.id.edit_text_type_name);
         editTextValue = findViewById(R.id.edit_text_value);
         editTextDate = findViewById(R.id.edit_text_dateTime);
         spinner = findViewById(R.id.spinner);
@@ -95,10 +109,20 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
             }
         });
 
+        spinnerType = findViewById(R.id.spinner_repeat_type);
+
+        typeList = new ArrayList<>();
+        initViewModel();
+
+        extractIntent();
+    }
+
+    private void extractIntent() {
+
         Intent intent = getIntent();
         if (intent.hasExtra(EXTRA_ID)) {
             editTextName.setText(intent.getStringExtra(EXTRA_NAME));
-            editTextTypeName.setText(intent.getStringExtra(EXTRA_TYPENAME));
+            //editTextTypeName.setText(intent.getStringExtra(EXTRA_TYPENAME));
             editTextDate.setText(intent.getStringExtra(EXTRA_DATE));
             editTextValue.setText(intent.getDoubleExtra(EXTRA_VALUE, 1) + "");
             editTextRepeat.setText(intent.getIntExtra(EXTRA_REPEAT, 1) + "");
@@ -107,9 +131,70 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
             String frequencyString = FrequencyStringConverter.convertFrequencyIntToString(frequency);
             int selectionPosition= spinnerAdapter.getPosition(frequencyString);
             spinner.setSelection(selectionPosition);
+
+            type = intent.getStringExtra(EXTRA_TYPENAME);
+
+            if (adapterType == null) {
+                adapterType = new ArrayAdapter<String>(this,
+                        android.R.layout.simple_spinner_item, typeList);
+                adapterType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                Log.d("typeList.size", typeList.size() + "");
+            }
+
+            int selectionPositionType = adapterType.getPosition(type);
+            Log.d("selectionPositionType", selectionPositionType + "");
+            spinnerType.setSelection(selectionPositionType);
         } else {
             setTodayDate(editTextDate);
         }
+    }
+
+    private void initViewModel() {
+
+        typeViewModel = ViewModelProviders.of(this).get(TypeViewModel.class);
+
+        typeViewModel.getAllTypes().observe(this, new Observer<List<String>>() {
+            @Override
+            public void onChanged(@Nullable final List<String> types) {
+
+                deepCopyList(types);
+                Log.d("onchanged","onchanged");
+            }
+        });
+    }
+
+    private void deepCopyList(List<String> types) {
+
+        typeList = new ArrayList<>();
+
+        for (String type : types) {
+
+            typeList.add(type);
+            Log.d("type", type);
+        }
+
+        showSpinner();
+    }
+
+    private void showSpinner() {
+
+        adapterType = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, typeList);
+        adapterType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerType.setAdapter(adapterType);
+        spinnerType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                type = parent.getItemAtPosition(position).toString();
+                Log.d("type", type);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        extractIntent();
     }
 
     private Calendar convertEditTextToCalendar(EditText editTextDate) {
@@ -125,7 +210,7 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
     private void createOrSaveTransaction() {
 
         String name = editTextName.getText().toString().trim();
-        String typeName = editTextTypeName.getText().toString().trim();
+        //String typeName = editTextTypeName.getText().toString().trim();
         String dateString = editTextDate.getText().toString();
         String valueString = editTextValue.getText().toString();
         double value = 0;
@@ -142,7 +227,7 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
             repeat = Integer.parseInt(repeatString);
         }
 
-        if (name.isEmpty() || typeName.isEmpty() || value == 0 || frequency == 0  || repeat == -1 ) {
+        if (name.isEmpty() || value == 0 || frequency == 0  || repeat == -1 ) {
             Toast.makeText(this, "Please insert a name or typeName or value or frequency or repeat", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -150,7 +235,7 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
         if (repeat < 0 || repeat > 30) {
             showAlertDialog();
         } else {
-            Intent newTransaction = createIntent(dateString, value, name, typeName, frequency, repeat, "save");
+            Intent newTransaction = createIntent(dateString, value, name, type, frequency, repeat, "save");
 
             setResult(RESULT_OK, newTransaction);
             finish();
@@ -160,7 +245,7 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
     private void deleteTransaction(){
 
         String name = editTextName.getText().toString().trim();
-        String typeName = editTextTypeName.getText().toString().trim();
+        //String typeName = editTextTypeName.getText().toString().trim();
         String dateString = editTextDate.getText().toString();
         String valueString = editTextValue.getText().toString();
         double value = 0;
@@ -180,7 +265,7 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
         if (repeat < 0 || repeat > 30) {
             showAlertDialog();
         } else {
-            Intent oldTransaction = createIntent(dateString, value, name, typeName, frequency, repeat, "delete");
+            Intent oldTransaction = createIntent(dateString, value, name, type, frequency, repeat, "delete");
 
             setResult(RESULT_OK, oldTransaction);
             finish();

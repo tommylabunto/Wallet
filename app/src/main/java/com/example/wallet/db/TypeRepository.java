@@ -9,17 +9,23 @@ import java.util.List;
 public class TypeRepository {
 
     private TypeDao typeDao;
-    private LiveData<List<String>> allTypes;
+    private LiveData<List<String>> allTypesString;
+    private LiveData<List<Type>> allTypes;
 
     public TypeRepository(Application application) {
         WalletDatabase db = WalletDatabase.getDatabase(application);
         typeDao = db.getTypeDao();
+        allTypesString = typeDao.getAllTypesString();
         allTypes = typeDao.getAllTypes();
     }
 
     // Room executes all queries on a separate thread.
     // Observed LiveData will notify the observer when the data has changed.
-    public LiveData<List<String>> getAllTypes() {
+    public LiveData<List<String>> getAllTypesString() {
+        return allTypesString;
+    }
+
+    public LiveData<List<Type>> getAllTypes() {
         return allTypes;
     }
 

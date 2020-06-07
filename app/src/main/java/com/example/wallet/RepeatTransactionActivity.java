@@ -14,8 +14,11 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.wallet.adapter.RepeatTransactionAdapter;
 import com.example.wallet.db.Transaction;
 import com.example.wallet.db.TransactionViewModel;
+import com.example.wallet.db.TypeViewModel;
+import com.example.wallet.db.WalletDatabase;
 import com.example.wallet.helper.DateFormatter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -31,6 +34,7 @@ public class RepeatTransactionActivity extends AppCompatActivity {
     public static final int EDIT_TRANSACTION_ACTIVITY_REQUEST_CODE = 2;
 
     private TransactionViewModel transactionViewModel;
+    private TypeViewModel typeViewModel;
 
     private RepeatTransactionAdapter repeatTransactionAdapter;
 
@@ -107,6 +111,18 @@ public class RepeatTransactionActivity extends AppCompatActivity {
                 goToAddEditRepeatTransactionActivity.putExtra(AddEditRepeatTransactionActivity.EXTRA_RECURRING_ID,
                         transaction.getTransactionRecurringId());
                 startActivityForResult(goToAddEditRepeatTransactionActivity, EDIT_TRANSACTION_ACTIVITY_REQUEST_CODE);
+            }
+        });
+
+        typeViewModel = ViewModelProviders.of(this).get(TypeViewModel.class);
+
+        typeViewModel.getAllTypesString().observe(this, new Observer<List<String>>() {
+            @Override
+            public void onChanged(@Nullable final List<String> types) {
+
+                if (types.size() == 0) {
+                    WalletDatabase.addTypes();
+                }
             }
         });
     }

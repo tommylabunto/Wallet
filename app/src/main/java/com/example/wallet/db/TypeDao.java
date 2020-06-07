@@ -24,6 +24,9 @@ public interface TypeDao {
     @Query("SELECT name FROM type WHERE name = :selectedType")
     public LiveData<String> getType(String selectedType);
 
-    @Query("SELECT name FROM type")
-    public LiveData<List<String>>  getAllTypes();
+    @Query("SELECT name FROM type ORDER BY name ASC")
+    public LiveData<List<String>> getAllTypesString();
+
+    @Query("SELECT typeId, name FROM type ORDER BY name ASC")
+    public LiveData<List<Type>> getAllTypes();
 }

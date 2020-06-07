@@ -153,7 +153,7 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
 
         typeViewModel = ViewModelProviders.of(this).get(TypeViewModel.class);
 
-        typeViewModel.getAllTypes().observe(this, new Observer<List<String>>() {
+        typeViewModel.getAllTypesString().observe(this, new Observer<List<String>>() {
             @Override
             public void onChanged(@Nullable final List<String> types) {
 

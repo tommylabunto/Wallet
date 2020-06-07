@@ -22,6 +22,7 @@ public class SettingsActivity extends AppCompatActivity {
     private TextView textViewRepeat;
     private TextView textViewExportImport;
     private TextView textViewReset;
+    private TextView textViewType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +95,15 @@ public class SettingsActivity extends AppCompatActivity {
                             }
                         })
                         .create().show();
+            }
+        });
+
+        textViewType = findViewById(R.id.textView_type);
+        textViewType.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent goToTypeActivity= new Intent(SettingsActivity.this, TypeActivity.class);
+                startActivity(goToTypeActivity);
             }
         });
     }

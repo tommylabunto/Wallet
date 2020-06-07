@@ -14,15 +14,21 @@ public class TypeViewModel extends AndroidViewModel {
     // - We can put an observer on the data (instead of polling for changes) and only update the
     //   the UI when the data actually changes.
     // - Repository is completely separated from the UI through the ViewModel.
-    private LiveData<List<String>> allTypes;
+    private LiveData<List<String>> allTypesString;
+    private LiveData<List<Type>> allTypes;
 
     public TypeViewModel(Application application) {
         super(application);
         typeRepository = new TypeRepository(application);
+        allTypesString = typeRepository.getAllTypesString();
         allTypes = typeRepository.getAllTypes();
     }
 
-    public LiveData<List<String>> getAllTypes() {
+    public LiveData<List<String>> getAllTypesString() {
+        return allTypesString;
+    }
+
+    public LiveData<List<Type>> getAllTypes() {
         return allTypes;
     }
 

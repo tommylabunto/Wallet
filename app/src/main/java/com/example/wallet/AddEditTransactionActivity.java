@@ -47,7 +47,6 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
             "com.example.wallet.EXTRA_OPERATION";
 
     private EditText editTextName;
-    private EditText editTextTypeName;
     private EditText editTextValue;
     private EditText editTextDate;
 
@@ -65,14 +64,13 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
         setContentView(R.layout.activity_new_transaction);
 
         editTextName = findViewById(R.id.edit_text_name);
-        //editTextTypeName = findViewById(R.id.edit_text_type_name);
         editTextValue = findViewById(R.id.edit_text_value);
         editTextDate = findViewById(R.id.edit_text_dateTime);
 
         spinner = findViewById(R.id.spinner_type);
 
         typeList = new ArrayList<>();
-        initViewModel();
+        initTypes();
 
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
 
@@ -114,11 +112,11 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
         }
     }
 
-    private void initViewModel() {
+    private void initTypes() {
 
         typeViewModel = ViewModelProviders.of(this).get(TypeViewModel.class);
 
-        typeViewModel.getAllTypes().observe(this, new Observer<List<String>>() {
+        typeViewModel.getAllTypesString().observe(this, new Observer<List<String>>() {
             @Override
             public void onChanged(@Nullable final List<String> types) {
 
@@ -178,7 +176,6 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
     private void createOrSaveTransaction() {
 
         String name = editTextName.getText().toString().trim();
-        //String typeName = editTextTypeName.getText().toString().trim();
         String dateString = editTextDate.getText().toString();
         String valueString = editTextValue.getText().toString();
         double value = 0;
@@ -201,7 +198,6 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
     private void deleteTransaction() {
 
         String name = editTextName.getText().toString().trim();
-        //String typeName = editTextTypeName.getText().toString().trim();
         String dateString = editTextDate.getText().toString();
         String valueString = editTextValue.getText().toString();
         double value = 0;

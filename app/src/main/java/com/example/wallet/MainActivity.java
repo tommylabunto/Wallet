@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.wallet.adapter.TransactionAdapter;
 import com.example.wallet.db.MonthlyBudgetViewModel;
 import com.example.wallet.db.Transaction;
 import com.example.wallet.db.TransactionViewModel;
@@ -30,8 +31,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-// TODO: create screen for CRUD type, monthlybudget in settings (today)
-// TODO: when CRUD type, then change type in addedittransactionactivity, so dunnid to get types whenever create new activity (today)
+// TODO: create screen for CRUD monthlybudget in settings (today)
 // TODO: throw possible exceptions
 // TODO: try to use functional approach (return, dont set)
 // TODO: implement settings (app theme)
@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
 
         typeViewModel = ViewModelProviders.of(this).get(TypeViewModel.class);
 
-        typeViewModel.getAllTypes().observe(this, new Observer<List<String>>() {
+        typeViewModel.getAllTypesString().observe(this, new Observer<List<String>>() {
             @Override
             public void onChanged(@Nullable final List<String> types) {
 

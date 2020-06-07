@@ -5,11 +5,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProviders;
 
+import com.example.wallet.db.CarryOver;
+import com.example.wallet.db.CarryOverViewModel;
 import com.example.wallet.db.WalletDatabase;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -23,6 +28,13 @@ public class SettingsActivity extends AppCompatActivity {
     private TextView textViewExportImport;
     private TextView textViewReset;
     private TextView textViewType;
+
+    private Switch switchCarryOver;
+
+    private CarryOverViewModel carryOverViewModel;
+    private static CarryOver carryOver;
+
+    private TextView textViewMonthlyBudget;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +58,8 @@ public class SettingsActivity extends AppCompatActivity {
 //                        }
 //                    }
 //                });
+
+        initCarryOver();
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -106,6 +120,53 @@ public class SettingsActivity extends AppCompatActivity {
                 startActivity(goToTypeActivity);
             }
         });
+
+        switchCarryOver = findViewById(R.id.switch_carryover);
+
+        if (carryOver != null && carryOver.isCarryOver()) {
+            switchCarryOver.setChecked(true);
+        }
+
+        switchCarryOver.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    // The toggle is enabled
+                    carryOver.setCarryOver(true);
+                    carryOverViewModel.updateCarryOver(carryOver);
+                } else {
+                    // The toggle is disabled
+                    carryOver.setCarryOver(false);
+                    carryOverViewModel.updateCarryOver(carryOver);
+                }
+            }
+        });
+
+        textViewMonthlyBudget = findViewById(R.id.textView_monthly_budget);
+        textViewMonthlyBudget.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent goToMonthlyBudgetActivity= new Intent(SettingsActivity.this, MonthlyBudgetActivity.class);
+                startActivity(goToMonthlyBudgetActivity);
+            }
+        });
+    }
+
+    private void initCarryOver() {
+
+        carryOverViewModel = ViewModelProviders.of(this).get(CarryOverViewModel.class);
+
+        WalletDatabase.databaseWriteExecutor.execute(() -> {
+            carryOver = deepCopy(carryOverViewModel.getCarryOver());
+        });
+    }
+
+    private CarryOver deepCopy(CarryOver carryOver) {
+
+        CarryOver tempCarryOver = new CarryOver();
+        tempCarryOver.setCarryOverId(carryOver.getCarryOverId());
+        tempCarryOver.setCarryOver(carryOver.isCarryOver());
+
+        return tempCarryOver;
     }
 
 //    @Override

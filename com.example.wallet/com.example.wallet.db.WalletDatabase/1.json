@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "9e7517bfabb42ec432d1c077d1445ee0",
+    "identityHash": "2c8a81178582f2ab272876c9be64a813",
     "entities": [
       {
         "tableName": "MonthlyBudget",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`monthlyBudgetId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `budget` REAL NOT NULL, `yearMonth` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`monthlyBudgetId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `budget` REAL NOT NULL, `year` INTEGER NOT NULL, `month` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "monthlyBudgetId",
@@ -21,8 +21,14 @@
             "notNull": true
           },
           {
-            "fieldPath": "yearMonth",
-            "columnName": "yearMonth",
+            "fieldPath": "year",
+            "columnName": "year",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "month",
+            "columnName": "month",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -129,12 +135,38 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "CarryOver",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`carryOverId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `isCarryOver` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "carryOverId",
+            "columnName": "carryOverId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isCarryOver",
+            "columnName": "isCarryOver",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "carryOverId"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9e7517bfabb42ec432d1c077d1445ee0')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2c8a81178582f2ab272876c9be64a813')"
     ]
   }
 }

@@ -26,6 +26,10 @@ public class MonthlyBudgetViewModel extends AndroidViewModel {
         return allMonthlyBudgets;
     }
 
+    public LiveData<List<MonthlyBudget>> getAllMonthlyBudgetsInAYear(int year) {
+        return monthlyBudgetRepository.getAllMonthlyBudgetsInAYear(year);
+    }
+
     public void insertMonthlyBudget(MonthlyBudget monthlyBudget) {
         monthlyBudgetRepository.insertMonthlyBudget(monthlyBudget);
     }
@@ -36,5 +40,9 @@ public class MonthlyBudgetViewModel extends AndroidViewModel {
 
     public void deleteMonthlyBudget(MonthlyBudget monthlyBudget) {
         monthlyBudgetRepository.deleteMonthlyBudget(monthlyBudget);
+    }
+
+    public void updateAllMonthlyBudgets(double budget) {
+        monthlyBudgetRepository.updateAllMonthlyBudgets(budget);
     }
 }

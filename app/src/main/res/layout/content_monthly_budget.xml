@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_monthly_budget_layout"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior" >
+
+    <ImageButton
+        android:id="@+id/left_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="next year"
+        android:src="@drawable/ic_chevron_left"
+        android:text="Button"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerview_monthly_budget"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/right_button"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/right_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="previous year"
+        android:src="@drawable/ic_chevron_right"
+        android:text="Button"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerview_monthly_budget"
+        app:layout_constraintLeft_toRightOf="@+id/left_button"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerview_monthly_budget"
+        android:layout_width="348dp"
+        android:layout_height="504dp"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/left_button"
+        app:layout_constraintVertical_bias="0.0"
+        tools:listitem="@layout/recyclerview_monthly_budget_item" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

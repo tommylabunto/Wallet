@@ -23,6 +23,10 @@ public class MonthlyBudgetRepository {
         return allMonthlyBudgets;
     }
 
+    public LiveData<List<MonthlyBudget>> getAllMonthlyBudgetsInAYear(int year) {
+        return monthlyBudgetDao.getAllMonthlyBudgetsInAYear(year);
+    }
+
     // You must call this on a non-UI thread or your app will throw an exception. Room ensures
     // that you're not doing any long running operations on the main thread, blocking the UI.
     public void insertMonthlyBudget(MonthlyBudget monthlyBudget) {
@@ -39,6 +43,12 @@ public class MonthlyBudgetRepository {
     public void updateMonthlyBudget(MonthlyBudget monthlyBudget) {
         WalletDatabase.databaseWriteExecutor.execute(() -> {
             monthlyBudgetDao.updateMonthlyBudget(monthlyBudget);
+        });
+    }
+
+    public void updateAllMonthlyBudgets(double budget) {
+        WalletDatabase.databaseWriteExecutor.execute(() -> {
+            monthlyBudgetDao.updateAllMonthlyBudgets(budget);
         });
     }
 }

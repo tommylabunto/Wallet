@@ -31,12 +31,23 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-// TODO: create screen for CRUD monthlybudget in settings (today)
+// TODO: transaction value allow for negative values, but show only positive numbers (today)
+// TODO: use library to get charts amd month view (today)
+// TODO: implement widget for home screen
+// TODO: implement change theme
+
+/* (end)
+// TODO: change string to string resource
+// TODO: use private as much as possible
+// TODO: ensure all get all has ordered by
 // TODO: throw possible exceptions
 // TODO: try to use functional approach (return, dont set)
-// TODO: implement settings (app theme)
-// TODO: change string to string resource
-// TODO: (end) comply with google's standards
+// TODO: !! improve UI
+// TODO: set up cards for user to see when first download
+// TODO:comply with google's standards
+// TODO: learn to handle room migration
+ */
+
 /*
 TODO: import database
 - can get uri from clicking a file -> which gets copies file into files folder
@@ -51,7 +62,9 @@ TODO: refresh after CRUD non-recurring transactions
 
 public class MainActivity extends AppCompatActivity {
 
+    // add
     public static final int ADD_TRANSACTION_ACTIVITY_REQUEST_CODE = 1;
+    // save or delete
     public static final int EDIT_TRANSACTION_ACTIVITY_REQUEST_CODE = 2;
 
     private TypeViewModel typeViewModel;

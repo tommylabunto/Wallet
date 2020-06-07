@@ -16,16 +16,22 @@ public class MonthlyBudget {
 
     @NonNull
     @Size(min = 0)
-    private int yearMonth;
+    private int year;
+
+    // start from 0 to 11
+    @NonNull
+    @Size(min = 0)
+    private int month;
 
     // instantiated every month
     public MonthlyBudget() {
     }
 
-    public MonthlyBudget(double budget, int yearMonth) {
+    public MonthlyBudget(double budget, int year, int month) {
         this();
         this.budget = budget;
-        this.yearMonth = yearMonth;
+        this.year = year;
+        this.month = month;
     }
 
     public long getMonthlyBudgetId() {
@@ -44,11 +50,19 @@ public class MonthlyBudget {
         this.budget = budget;
     }
 
-    public int getYearMonth() {
-        return yearMonth;
+    public int getMonth() {
+        return month;
     }
 
-    public void setYearMonth(int yearMonth) {
-        this.yearMonth = yearMonth;
+    public void setMonth(int month) {
+        this.month = month;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
     }
 }

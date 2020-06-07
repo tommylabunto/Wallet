@@ -24,6 +24,18 @@ public interface MonthlyBudgetDao {
 //    @Query("SELECT budget, yearMonth FROM monthlyBudget WHERE yearMonth = :selectedYearMonth")
 //    public String getMonthlyBudget(int selectedYearMonth);
 
-    @Query("SELECT monthlyBudgetId, budget, yearMonth FROM monthlyBudget")
+    @Query("UPDATE monthlyBudget SET budget = :budget")
+    public void updateAllMonthlyBudgets(double budget);
+
+    @Query("SELECT monthlyBudgetId, budget, year, month FROM monthlyBudget ORDER BY monthlyBudgetId ASC")
     public LiveData<List<MonthlyBudget>> getAllMonthlyBudgets();
+
+    @Query("SELECT monthlyBudgetId, budget, year, month FROM monthlyBudget WHERE year > :year AND month > :month ORDER BY monthlyBudgetId ASC")
+    public List<MonthlyBudget> getAllFutureMonthlyBudgetsList(int year, int month);
+
+    @Query("SELECT monthlyBudgetId, budget, year, month FROM monthlyBudget ORDER BY monthlyBudgetId ASC")
+    public List<MonthlyBudget> getAllMonthlyBudgetsList();
+
+    @Query("SELECT monthlyBudgetId, budget, year, month FROM monthlyBudget WHERE year = :year ORDER BY monthlyBudgetId ASC")
+    public LiveData<List<MonthlyBudget>> getAllMonthlyBudgetsInAYear(int year);
 }

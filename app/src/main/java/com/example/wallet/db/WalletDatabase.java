@@ -10,10 +10,11 @@ import androidx.room.TypeConverters;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import java.io.File;
+import java.util.Calendar;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(version = 1, entities = {MonthlyBudget.class, Transaction.class, Type.class})
+@Database(version = 1, entities = {MonthlyBudget.class, Transaction.class, Type.class, CarryOver.class})
 @TypeConverters({Converters.class})
 public abstract class WalletDatabase extends RoomDatabase {
 
@@ -22,6 +23,8 @@ public abstract class WalletDatabase extends RoomDatabase {
     abstract public TransactionDao getTransactionDao();
 
     abstract public TypeDao getTypeDao();
+
+    abstract public CarryOverDao getCarryOverDao();
 
     // marking the instance as volatile to ensure atomic access to the variable
     public static volatile WalletDatabase INSTANCE;
@@ -63,8 +66,40 @@ public abstract class WalletDatabase extends RoomDatabase {
             // comment out the following block
             databaseWriteExecutor.execute(() -> {
                 // Populate the database in the background.
-                // If you want to start with more words, just add them.
                 TransactionDao transactionDao = INSTANCE.getTransactionDao();
+
+                // one db should only have one instance of a carry over
+                CarryOverDao carryOverDao = INSTANCE.getCarryOverDao();
+
+                if (carryOverDao.getAllCarryOverList().size() == 0) {
+                    carryOverDao.insertCarryOver(new CarryOver());
+                }
+
+                // db creates 10 years worth of monthly budgets if there are no more upcoming budgets
+                // takes at least 2 minutes to populate whole list
+                Calendar calendar = Calendar.getInstance();
+                int year = calendar.get(Calendar.YEAR);
+                int month = calendar.get(Calendar.MONTH);
+
+                MonthlyBudgetDao monthlyBudgetDao = INSTANCE.getMonthlyBudgetDao();
+
+                if (monthlyBudgetDao.getAllFutureMonthlyBudgetsList(year, month).size() == 0) {
+
+                    double budget = 0;
+                    int numOfYearsToCreate = 10;
+                    int totalMonthlyBudgets = numOfYearsToCreate * 12;
+
+                    for (int i = 0; i < totalMonthlyBudgets; i++) {
+
+                        year = calendar.get(Calendar.YEAR);
+                        month = calendar.get(Calendar.MONTH);
+
+                        MonthlyBudget monthlyBudget = new MonthlyBudget(budget, year, month);
+                        monthlyBudgetDao.insertMonthlyBudget(monthlyBudget);
+
+                        calendar.add(Calendar.MONTH, 1);
+                    }
+                }
             });
         }
     };

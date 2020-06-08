@@ -1,8 +1,12 @@
-package com.example.wallet.db;
+package com.example.wallet.db.repository;
 
 import android.app.Application;
 
 import androidx.lifecycle.LiveData;
+
+import com.example.wallet.db.WalletDatabase;
+import com.example.wallet.db.dao.TypeDao;
+import com.example.wallet.db.entity.Type;
 
 import java.util.List;
 

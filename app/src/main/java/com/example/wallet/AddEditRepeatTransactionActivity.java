@@ -24,8 +24,8 @@ import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.example.wallet.db.Type;
-import com.example.wallet.db.TypeViewModel;
+import com.example.wallet.db.entity.Type;
+import com.example.wallet.db.viewmodel.TypeViewModel;
 import com.example.wallet.helper.DateFormatter;
 import com.example.wallet.helper.DatePickerFragment;
 import com.example.wallet.helper.FrequencyStringConverter;

@@ -1,4 +1,4 @@
-package com.example.wallet.db;
+package com.example.wallet.db.dao;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
@@ -6,6 +6,8 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
+
+import com.example.wallet.db.entity.MonthlyBudget;
 
 import java.util.List;
 
@@ -21,8 +23,8 @@ public interface MonthlyBudgetDao {
     @Delete
     public void deleteMonthlyBudget(MonthlyBudget monthlyBudget);
 
-//    @Query("SELECT budget, yearMonth FROM monthlyBudget WHERE yearMonth = :selectedYearMonth")
-//    public String getMonthlyBudget(int selectedYearMonth);
+    @Query("SELECT monthlyBudgetId, budget, year, month FROM monthlyBudget WHERE year = :year AND month = :month")
+    public LiveData<MonthlyBudget> getMonthlyBudget(int year, int month);
 
     @Query("UPDATE monthlyBudget SET budget = :budget")
     public void updateAllMonthlyBudgets(double budget);

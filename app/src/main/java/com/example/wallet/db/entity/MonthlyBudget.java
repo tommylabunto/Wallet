@@ -1,4 +1,4 @@
-package com.example.wallet.db;
+package com.example.wallet.db.entity;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Size;
@@ -12,6 +12,7 @@ public class MonthlyBudget {
     private long monthlyBudgetId;
 
     @NonNull
+    @Size(min = 0)
     private double budget;
 
     @NonNull

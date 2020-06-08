@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -18,10 +19,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.wallet.adapter.TransactionAdapter;
-import com.example.wallet.db.MonthlyBudgetViewModel;
-import com.example.wallet.db.Transaction;
-import com.example.wallet.db.TransactionViewModel;
-import com.example.wallet.db.TypeViewModel;
+import com.example.wallet.db.viewmodel.MonthlyBudgetViewModel;
+import com.example.wallet.db.entity.Transaction;
+import com.example.wallet.db.viewmodel.TransactionViewModel;
+import com.example.wallet.db.viewmodel.TypeViewModel;
 import com.example.wallet.db.WalletDatabase;
 import com.example.wallet.helper.DateFormatter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -31,10 +32,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+// TODO: implement search for main activity (today)
+// TODO: implement widget for home screen (today)
+// TODO: implement night theme??
 // TODO: how to handle app crashes, exceptions
-// TODO: use library to get charts amd month view (today)
-// TODO: implement widget for home screen
-// TODO: implement change theme
 
 /* (end)
 // TODO: change string to string resource
@@ -42,14 +43,15 @@ import java.util.List;
 // TODO: ensure all get all has ordered by
 // TODO: throw possible exceptions
 // TODO: try to use functional approach (return, dont set)
-// TODO: !! improve UI
+// TODO: !! improve UI (use material design, use dribble or ui websites for inspiration)
 // TODO: set up cards for user to see when first download
 // TODO:comply with google's standards
 // TODO: learn to handle room migration
  */
 
 /*
-TODO: import database
+TODO: import database (try update INSTANCE in db, refresh viewmodel)
+TODO: try export without saving to files
 - can get uri from clicking a file -> which gets copies file into files folder
 - can createfromassets successfully
 - but cannot create from file (maybe something to do with the path)
@@ -80,6 +82,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ImageButton prevMonth;
     private ImageButton nextMonth;
+
+    private Button buttonMonthlyTransaction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,6 +133,15 @@ public class MainActivity extends AppCompatActivity {
         initViewModels();
 
         coordinatorLayout = findViewById(R.id.mainActivity);
+
+        buttonMonthlyTransaction = findViewById(R.id.button_monthly_transaction);
+        buttonMonthlyTransaction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent goToMonthlyTransactionActivity = new Intent(MainActivity.this, MonthlyTransactionActivity.class);
+                startActivity(goToMonthlyTransactionActivity);
+            }
+        });
     }
 
     private void initStartEndCal() {

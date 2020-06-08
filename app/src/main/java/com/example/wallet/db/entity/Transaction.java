@@ -1,4 +1,4 @@
-package com.example.wallet.db;
+package com.example.wallet.db.entity;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Size;

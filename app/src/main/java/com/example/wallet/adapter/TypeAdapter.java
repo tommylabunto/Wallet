@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.wallet.R;
-import com.example.wallet.db.Type;
+import com.example.wallet.db.entity.Type;
 
 public class TypeAdapter extends ListAdapter<Type, TypeAdapter.TypeViewHolder> {
 

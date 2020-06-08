@@ -16,8 +16,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.wallet.adapter.TypeAdapter;
-import com.example.wallet.db.Type;
-import com.example.wallet.db.TypeViewModel;
+import com.example.wallet.db.entity.Type;
+import com.example.wallet.db.viewmodel.TypeViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 

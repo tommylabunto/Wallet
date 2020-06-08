@@ -1,4 +1,4 @@
-package com.example.wallet.db;
+package com.example.wallet.db.dao;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
@@ -8,6 +8,8 @@ import androidx.room.Query;
 import androidx.room.RawQuery;
 import androidx.room.Update;
 import androidx.sqlite.db.SupportSQLiteQuery;
+
+import com.example.wallet.db.entity.Transaction;
 
 import java.util.List;
 
@@ -28,6 +30,9 @@ public interface TransactionDao {
 
     @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, isRepeat, frequency, numOfRepeat, isExpenseTransaction FROM `transaction` WHERE date >= :millisecondsStart AND date <= :millisecondsEnd ORDER BY date ASC")
     public LiveData<List<Transaction>> getAllTransactionsInAMonth(Long millisecondsStart, Long millisecondsEnd);
+
+    @Query("SELECT transactionId, transactionRecurringId, date, sum(value) value, name, typeName, isRepeat, frequency, numOfRepeat, isExpenseTransaction FROM `transaction` WHERE date >= :millisecondsStart AND date <= :millisecondsEnd GROUP BY typeName ORDER BY date ASC")
+    public LiveData<List<Transaction>> getAllTransactionsInAMonthView(Long millisecondsStart, Long millisecondsEnd);
 
     /*
     cannot use distinct (all are distinct), group by (don't know which row sqlite selects)

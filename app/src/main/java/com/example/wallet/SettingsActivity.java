@@ -13,8 +13,8 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.example.wallet.db.CarryOver;
-import com.example.wallet.db.CarryOverViewModel;
+import com.example.wallet.db.entity.CarryOver;
+import com.example.wallet.db.viewmodel.CarryOverViewModel;
 import com.example.wallet.db.WalletDatabase;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -121,6 +121,14 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+        /*
+        On second thoughts, I disabled carry over. Because it's not so straightforward to manage money.
+        If you make a few big purchases, it could break your budget for a few months.
+        Even if you save a lot in a month, you will be tempted to spend that excess.
+        Regardless, it presents a illusion on telling you how to manage your money.
+        But its a wallet, not a bank.
+        Also, don't let the money dictate how you live. Its supposed to be just a guide, a reference.
+         */
         switchCarryOver = findViewById(R.id.switch_carryover);
 
         if (carryOver != null && carryOver.isCarryOver()) {

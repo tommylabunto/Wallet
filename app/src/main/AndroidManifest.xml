@@ -12,11 +12,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".MonthlyTransactionActivity"
+            android:parentActivityName=".MainActivity"/>
+        <activity
             android:name=".AddEditMonthlyBudgetActivity"
-            android:parentActivityName=".MonthlyBudgetActivity"/>
+            android:parentActivityName=".MonthlyBudgetActivity" />
         <activity
             android:name=".MonthlyBudgetActivity"
-            android:parentActivityName=".SettingsActivity"/>
+            android:parentActivityName=".SettingsActivity" />
         <activity
             android:name=".AddEditTypeActivity"
             android:parentActivityName=".TypeActivity" />

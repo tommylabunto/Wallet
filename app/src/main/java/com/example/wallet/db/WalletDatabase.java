@@ -9,6 +9,15 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import com.example.wallet.db.dao.CarryOverDao;
+import com.example.wallet.db.dao.MonthlyBudgetDao;
+import com.example.wallet.db.dao.TransactionDao;
+import com.example.wallet.db.dao.TypeDao;
+import com.example.wallet.db.entity.CarryOver;
+import com.example.wallet.db.entity.MonthlyBudget;
+import com.example.wallet.db.entity.Transaction;
+import com.example.wallet.db.entity.Type;
+
 import java.io.File;
 import java.util.Calendar;
 import java.util.concurrent.ExecutorService;

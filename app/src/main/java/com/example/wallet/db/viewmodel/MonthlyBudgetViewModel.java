@@ -1,9 +1,12 @@
-package com.example.wallet.db;
+package com.example.wallet.db.viewmodel;
 
 import android.app.Application;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+
+import com.example.wallet.db.entity.MonthlyBudget;
+import com.example.wallet.db.repository.MonthlyBudgetRepository;
 
 import java.util.List;
 
@@ -28,6 +31,10 @@ public class MonthlyBudgetViewModel extends AndroidViewModel {
 
     public LiveData<List<MonthlyBudget>> getAllMonthlyBudgetsInAYear(int year) {
         return monthlyBudgetRepository.getAllMonthlyBudgetsInAYear(year);
+    }
+
+    public LiveData<MonthlyBudget> getMonthlyBudget(int year, int month) {
+        return monthlyBudgetRepository.getMonthlyBudget(year, month);
     }
 
     public void insertMonthlyBudget(MonthlyBudget monthlyBudget) {

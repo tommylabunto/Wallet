@@ -1,10 +1,13 @@
-package com.example.wallet.db;
+package com.example.wallet.db.viewmodel;
 
 import android.app.Application;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.sqlite.db.SupportSQLiteQuery;
+
+import com.example.wallet.db.entity.Transaction;
+import com.example.wallet.db.repository.TransactionRepository;
 
 import java.util.List;
 
@@ -39,6 +42,10 @@ public class TransactionViewModel extends AndroidViewModel {
 
     public LiveData<List<Transaction>> getAllTransactionsInAMonth(Long millisecondsStart, Long millisecondsEnd) {
         return transactionRepository.getAllTransactionsInAMonth(millisecondsStart, millisecondsEnd);
+    }
+
+    public LiveData<List<Transaction>> getAllTransactionsInAMonthView(Long millisecondsStart, Long millisecondsEnd) {
+        return transactionRepository.getAllTransactionsInAMonthView(millisecondsStart, millisecondsEnd);
     }
 
     public void insertTransaction(Transaction transaction) {

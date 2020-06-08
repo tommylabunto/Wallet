@@ -1,8 +1,12 @@
-package com.example.wallet.db;
+package com.example.wallet.db.repository;
 
 import android.app.Application;
 
 import androidx.lifecycle.LiveData;
+
+import com.example.wallet.db.WalletDatabase;
+import com.example.wallet.db.dao.MonthlyBudgetDao;
+import com.example.wallet.db.entity.MonthlyBudget;
 
 import java.util.List;
 
@@ -25,6 +29,10 @@ public class MonthlyBudgetRepository {
 
     public LiveData<List<MonthlyBudget>> getAllMonthlyBudgetsInAYear(int year) {
         return monthlyBudgetDao.getAllMonthlyBudgetsInAYear(year);
+    }
+
+    public LiveData<MonthlyBudget> getMonthlyBudget(int year, int month) {
+        return monthlyBudgetDao.getMonthlyBudget(year, month);
     }
 
     // You must call this on a non-UI thread or your app will throw an exception. Room ensures

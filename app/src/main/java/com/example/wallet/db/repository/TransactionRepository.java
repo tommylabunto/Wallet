@@ -1,9 +1,13 @@
-package com.example.wallet.db;
+package com.example.wallet.db.repository;
 
 import android.app.Application;
 
 import androidx.lifecycle.LiveData;
 import androidx.sqlite.db.SupportSQLiteQuery;
+
+import com.example.wallet.db.WalletDatabase;
+import com.example.wallet.db.dao.TransactionDao;
+import com.example.wallet.db.entity.Transaction;
 
 import java.util.List;
 
@@ -36,6 +40,10 @@ public class TransactionRepository {
 
     public LiveData<List<Transaction>> getAllTransactionsInAMonth(Long millisecondsStart, Long millisecondsEnd) {
         return transactionDao.getAllTransactionsInAMonth(millisecondsStart, millisecondsEnd);
+    }
+
+    public LiveData<List<Transaction>> getAllTransactionsInAMonthView(Long millisecondsStart, Long millisecondsEnd) {
+        return transactionDao.getAllTransactionsInAMonthView(millisecondsStart, millisecondsEnd);
     }
 
     // You must call this on a non-UI thread or your app will throw an exception. Room ensures

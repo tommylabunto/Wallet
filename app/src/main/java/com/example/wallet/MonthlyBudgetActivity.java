@@ -16,8 +16,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.wallet.adapter.MonthlyBudgetAdapter;
-import com.example.wallet.db.MonthlyBudget;
-import com.example.wallet.db.MonthlyBudgetViewModel;
+import com.example.wallet.db.entity.MonthlyBudget;
+import com.example.wallet.db.viewmodel.MonthlyBudgetViewModel;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Calendar;

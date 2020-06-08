@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.wallet.R;
-import com.example.wallet.db.Transaction;
+import com.example.wallet.db.entity.Transaction;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -93,7 +93,9 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
             return oldItem.getName().equals(newItem.getName()) &&
                     oldItem.getValue() == newItem.getValue() &&
                     oldItem.getTypeName().equals(newItem.getTypeName()) &&
-                    oldItem.getDate().equals(newItem.getDate());
+                    oldItem.getDate().equals(newItem.getDate()) &&
+                    oldItem.isRepeat() == newItem.isRepeat() &&
+                    oldItem.isExpenseTransaction() == newItem.isExpenseTransaction();
         }
     };
 

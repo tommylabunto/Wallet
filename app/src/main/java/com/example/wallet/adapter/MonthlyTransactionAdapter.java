@@ -13,16 +13,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.wallet.R;
 import com.example.wallet.db.entity.Transaction;
 
-import java.util.List;
+public class MonthlyTransactionAdapter extends ListAdapter<Transaction, MonthlyTransactionAdapter.MonthlyTransactionViewHolder> {
 
-public class RepeatTransactionAdapter extends ListAdapter<Transaction, RepeatTransactionAdapter.RepeatTransactionViewHolder> {
+    class MonthlyTransactionViewHolder extends RecyclerView.ViewHolder {
+        private final TextView textViewTypeName;
+        private final TextView textViewTypeAmount;
 
-    class RepeatTransactionViewHolder extends RecyclerView.ViewHolder {
-        private final TextView wordItemView;
-
-        private RepeatTransactionViewHolder(View itemView) {
+        private MonthlyTransactionViewHolder(View itemView) {
             super(itemView);
-            wordItemView = itemView.findViewById(R.id.textView);
+            textViewTypeName = itemView.findViewById(R.id.textView_typeName);
+            textViewTypeAmount = itemView.findViewById(R.id.textView_amount);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -37,11 +37,9 @@ public class RepeatTransactionAdapter extends ListAdapter<Transaction, RepeatTra
     }
 
     private final LayoutInflater mInflater;
-    private RepeatTransactionAdapter.OnItemClickListener listener;
+    private MonthlyTransactionAdapter.OnItemClickListener listener;
 
-    private List<Transaction> transactions;
-
-    public RepeatTransactionAdapter(Context context) {
+    public MonthlyTransactionAdapter(Context context) {
         super(DIFF_CALLBACK);
         mInflater = LayoutInflater.from(context);
     }
@@ -58,31 +56,30 @@ public class RepeatTransactionAdapter extends ListAdapter<Transaction, RepeatTra
                     oldItem.getValue() == newItem.getValue() &&
                     oldItem.getTypeName().equals(newItem.getTypeName()) &&
                     oldItem.getDate().equals(newItem.getDate()) &&
-                    oldItem.getFrequency() == newItem.getFrequency() &&
-                    oldItem.getNumOfRepeat() == newItem.getNumOfRepeat() &&
                     oldItem.isRepeat() == newItem.isRepeat() &&
                     oldItem.isExpenseTransaction() == newItem.isExpenseTransaction();
         }
     };
 
     @Override
-    public RepeatTransactionViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mInflater.inflate(R.layout.recyclerview_item, parent, false);
-        RepeatTransactionViewHolder holder = new RepeatTransactionViewHolder(itemView);
+    public MonthlyTransactionViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = mInflater.inflate(R.layout.recyclerview_monthly_transaction_item, parent, false);
+        MonthlyTransactionViewHolder holder = new MonthlyTransactionViewHolder(itemView);
         return holder;
     }
 
     @Override
-    public void onBindViewHolder(RepeatTransactionViewHolder holder, int position) {
+    public void onBindViewHolder(MonthlyTransactionViewHolder holder, int position) {
         Transaction transaction = getItem(position);
-        holder.wordItemView.setText(transaction.getName());
+        holder.textViewTypeName.setText(transaction.getTypeName());
+        holder.textViewTypeAmount.setText(transaction.getValue() + "");
     }
 
     public interface OnItemClickListener {
         void onItemClick(Transaction transaction);
     }
 
-    public void setOnItemClickListener(RepeatTransactionAdapter.OnItemClickListener listener) {
+    public void setOnItemClickListener(OnItemClickListener listener) {
         this.listener = listener;
     }
 }

@@ -15,9 +15,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.wallet.adapter.RepeatTransactionAdapter;
-import com.example.wallet.db.Transaction;
-import com.example.wallet.db.TransactionViewModel;
-import com.example.wallet.db.TypeViewModel;
+import com.example.wallet.db.entity.Transaction;
+import com.example.wallet.db.viewmodel.TransactionViewModel;
+import com.example.wallet.db.viewmodel.TypeViewModel;
 import com.example.wallet.db.WalletDatabase;
 import com.example.wallet.helper.DateFormatter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;

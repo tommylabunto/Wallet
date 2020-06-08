@@ -22,8 +22,8 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.sqlite.db.SimpleSQLiteQuery;
 
-import com.example.wallet.db.Transaction;
-import com.example.wallet.db.TransactionViewModel;
+import com.example.wallet.db.entity.Transaction;
+import com.example.wallet.db.viewmodel.TransactionViewModel;
 import com.example.wallet.db.WalletDatabase;
 
 import java.io.File;

@@ -9,7 +9,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -63,11 +62,6 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
 
         if (!budgetString.isEmpty()) {
             budget = Double.parseDouble(budgetString);
-        }
-
-        if (budget == 0) {
-            Toast.makeText(this, "Please insert a budget", Toast.LENGTH_SHORT).show();
-            return;
         }
 
         Intent newMonthlyBudget = createIntent(budget, year, month, operation);

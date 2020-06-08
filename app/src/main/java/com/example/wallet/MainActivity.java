@@ -31,7 +31,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-// TODO: transaction value allow for negative values, but show only positive numbers (today)
+// TODO: how to handle app crashes, exceptions
 // TODO: use library to get charts amd month view (today)
 // TODO: implement widget for home screen
 // TODO: implement change theme
@@ -160,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
                 goToAddEditTransactionActivity.putExtra(AddEditTransactionActivity.EXTRA_TYPENAME, transaction.getTypeName());
                 goToAddEditTransactionActivity.putExtra(AddEditTransactionActivity.EXTRA_DATE, DateFormatter.formatDateToString(transaction.getDate()));
                 goToAddEditTransactionActivity.putExtra(AddEditTransactionActivity.EXTRA_VALUE, transaction.getValue());
+                goToAddEditTransactionActivity.putExtra(AddEditTransactionActivity.EXTRA_IS_EXPENSE_TYPE, transaction.isExpenseTransaction());
                 startActivityForResult(goToAddEditTransactionActivity, EDIT_TRANSACTION_ACTIVITY_REQUEST_CODE);
             }
         });
@@ -290,7 +291,9 @@ public class MainActivity extends AppCompatActivity {
         String dateString = data.getStringExtra(AddEditTransactionActivity.EXTRA_DATE);
         Date date = DateFormatter.formatStringToDate(dateString);
 
-        Transaction transaction = new Transaction(date, value, name, typeName);
+        boolean isExpenseType = data.getBooleanExtra(AddEditTransactionActivity.EXTRA_IS_EXPENSE_TYPE, true);
+
+        Transaction transaction = new Transaction(date, value, name, typeName, isExpenseType);
 
         if (id != 0) {
             transaction.setTransactionId(id);

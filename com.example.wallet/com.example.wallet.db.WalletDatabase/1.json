@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "2c8a81178582f2ab272876c9be64a813",
+    "identityHash": "9d626c8709eb5e1f89ce560cf2b2918f",
     "entities": [
       {
         "tableName": "MonthlyBudget",
@@ -44,7 +44,7 @@
       },
       {
         "tableName": "Transaction",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`transactionId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `transactionRecurringId` TEXT, `date` INTEGER NOT NULL, `value` REAL NOT NULL, `name` TEXT NOT NULL, `typeName` TEXT NOT NULL, `isRepeat` INTEGER NOT NULL, `frequency` INTEGER NOT NULL, `numOfRepeat` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`transactionId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `transactionRecurringId` TEXT, `date` INTEGER NOT NULL, `value` REAL NOT NULL, `name` TEXT NOT NULL, `typeName` TEXT NOT NULL, `isRepeat` INTEGER NOT NULL, `frequency` INTEGER NOT NULL, `numOfRepeat` INTEGER NOT NULL, `isExpenseTransaction` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "transactionId",
@@ -99,6 +99,12 @@
             "columnName": "numOfRepeat",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "isExpenseTransaction",
+            "columnName": "isExpenseTransaction",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -112,7 +118,7 @@
       },
       {
         "tableName": "Type",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`typeId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`typeId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `isExpenseType` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "typeId",
@@ -124,6 +130,12 @@
             "fieldPath": "name",
             "columnName": "name",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isExpenseType",
+            "columnName": "isExpenseType",
+            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -166,7 +178,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2c8a81178582f2ab272876c9be64a813')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9d626c8709eb5e1f89ce560cf2b2918f')"
     ]
   }
 }

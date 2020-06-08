@@ -2,6 +2,7 @@ package com.example.wallet;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -33,7 +34,8 @@ public class TypeActivity extends AppCompatActivity {
 
     private CoordinatorLayout coordinatorLayout;
 
-    private static int numOfTypes;
+    private static int numOfExpenseTypes;
+    private static int numOfIncomeTypes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +77,9 @@ public class TypeActivity extends AppCompatActivity {
             @Override
             public void onChanged(@Nullable final List<Type> types) {
                 typeAdapter.submitList(types);
-                numOfTypes = types.size();
+                updateTypeCount(types);
+                Log.d("numOfExpenseTypes", numOfExpenseTypes + "");
+                Log.d("numOfIncomeTypes", numOfIncomeTypes + "");
             }
         });
 
@@ -86,9 +90,25 @@ public class TypeActivity extends AppCompatActivity {
                 Intent goToAddEditTypeActivity = new Intent(TypeActivity.this, AddEditTypeActivity.class);
                 goToAddEditTypeActivity.putExtra(AddEditTypeActivity.EXTRA_ID, type.getTypeId());
                 goToAddEditTypeActivity.putExtra(AddEditTypeActivity.EXTRA_NAME, type.getName());
+                goToAddEditTypeActivity.putExtra(AddEditTypeActivity.EXTRA_IS_EXPENSE_TYPE, type.isExpenseType());
                 startActivityForResult(goToAddEditTypeActivity, EDIT_TYPE_ACTIVITY_REQUEST_CODE);
             }
         });
+    }
+
+    private void updateTypeCount(List<Type> types) {
+
+        // refresh values because onchanged will keep adding it
+        numOfExpenseTypes = 0;
+        numOfIncomeTypes = 0;
+
+        for (Type type : types) {
+            if (type.isExpenseType()) {
+                numOfExpenseTypes++;
+            } else {
+                numOfIncomeTypes++;
+            }
+        }
     }
 
     @Override
@@ -117,18 +137,32 @@ public class TypeActivity extends AppCompatActivity {
                 Type type = extractDataToType(data, id);
 
                 // update type
+                // must have at least one of each type
                 if (data.getStringExtra(AddEditTypeActivity.EXTRA_OPERATION).equals("save")) {
-                    typeViewModel.updateType(type);
-                    Toast.makeText(this, "Type updated", Toast.LENGTH_SHORT).show();
+                    if (numOfExpenseTypes > 1 && numOfIncomeTypes > 1) {
+                        typeViewModel.updateType(type);
+                        Toast.makeText(this, "Type updated", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "number of income or expense types must be greater than 1", Toast.LENGTH_SHORT).show();
+                    }
 
                     // delete type
                 } else {
                     // must have at least one type to create a transaction
-                    if (numOfTypes > 1) {
-                        typeViewModel.deleteType(type);
-                        showSnackbar(type);
+                    if (type.isExpenseType()) {
+                        if (numOfExpenseTypes > 1) {
+                            typeViewModel.deleteType(type);
+                            showSnackbar(type);
+                        } else {
+                            Toast.makeText(this, "number of expense types must be greater than 1", Toast.LENGTH_SHORT).show();
+                        }
                     } else {
-                        Toast.makeText(this, "number of types must be greater than 1", Toast.LENGTH_SHORT).show();
+                        if (numOfIncomeTypes > 1) {
+                            typeViewModel.deleteType(type);
+                            showSnackbar(type);
+                        } else {
+                            Toast.makeText(this, "number of income types must be greater than 1", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
             }
@@ -155,8 +189,9 @@ public class TypeActivity extends AppCompatActivity {
     private Type extractDataToType(Intent data, Long id) {
 
         String name = data.getStringExtra(AddEditTypeActivity.EXTRA_NAME);
+        boolean isExpenseType = data.getBooleanExtra(AddEditTypeActivity.EXTRA_IS_EXPENSE_TYPE, true);
 
-        Type type = new Type(name);
+        Type type = new Type(name, isExpenseType);
 
         if (id != 0) {
             type.setTypeId(id);

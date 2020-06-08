@@ -22,10 +22,12 @@ public class Transaction {
     @NonNull
     private double value;
 
+    // name of transaction
     @NonNull
     @Size(min = 1)
     private String name;
 
+    // name of type of transaction (e.g. food, transport)
     @NonNull
     @Size(min = 1, max = 100)
     private String typeName;
@@ -46,21 +48,27 @@ public class Transaction {
     @Size(min = 1, max = 30)
     private int numOfRepeat;
 
+    @NonNull
+    private boolean isExpenseTransaction;
+
     // can be income(+) or expense (-)
     public Transaction() {
         this.isRepeat = false;
     }
 
-    public Transaction(Date date, double value, String name, String typeName) {
+    // for non-recurring transaction
+    public Transaction(Date date, double value, String name, String typeName, boolean isExpenseTransaction) {
         this();
 
         this.date = date;
         this.value = value;
         this.typeName = typeName;
         this.name = name;
+        this.isExpenseTransaction = isExpenseTransaction;
     }
 
-    public Transaction(Date date, double value, String name, String typeName, int frequency, int numOfRepeat) {
+    // for recurring transaction
+    public Transaction(Date date, double value, String name, String typeName, int frequency, int numOfRepeat, boolean isExpenseTransaction) {
         this();
 
         this.date = date;
@@ -69,6 +77,7 @@ public class Transaction {
         this.name = name;
         this.frequency = frequency;
         this.numOfRepeat = numOfRepeat;
+        this.isExpenseTransaction = isExpenseTransaction;
 
         this.isRepeat = true;
     }
@@ -143,6 +152,14 @@ public class Transaction {
 
     public void setTransactionRecurringId(String transactionRecurringId) {
         this.transactionRecurringId = transactionRecurringId;
+    }
+
+    public boolean isExpenseTransaction() {
+        return isExpenseTransaction;
+    }
+
+    public void setExpenseTransaction(boolean expenseTransaction) {
+        isExpenseTransaction = expenseTransaction;
     }
 }
 

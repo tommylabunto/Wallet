@@ -49,6 +49,28 @@
         android:inputType="text" />
 
     <TextView
+        android:id="@+id/textView_typeOfType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Type" />
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <RadioButton android:id="@+id/radio_expense"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Expense"
+            android:onClick="onRadioButtonClicked"/>
+        <RadioButton android:id="@+id/radio_income"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Income"
+            android:onClick="onRadioButtonClicked"/>
+    </RadioGroup>
+
+    <TextView
         android:id="@+id/textView_typeName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

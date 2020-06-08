@@ -108,6 +108,8 @@ public class RepeatTransactionActivity extends AppCompatActivity {
                         transaction.getFrequency());
                 goToAddEditRepeatTransactionActivity.putExtra(AddEditRepeatTransactionActivity.EXTRA_REPEAT,
                         transaction.getNumOfRepeat());
+                goToAddEditRepeatTransactionActivity.putExtra(AddEditRepeatTransactionActivity.EXTRA_IS_EXPENSE_TYPE,
+                        transaction.isExpenseTransaction());
                 goToAddEditRepeatTransactionActivity.putExtra(AddEditRepeatTransactionActivity.EXTRA_RECURRING_ID,
                         transaction.getTransactionRecurringId());
                 startActivityForResult(goToAddEditRepeatTransactionActivity, EDIT_TRANSACTION_ACTIVITY_REQUEST_CODE);
@@ -285,6 +287,7 @@ public class RepeatTransactionActivity extends AppCompatActivity {
         newTransaction.setRepeat(transaction.isRepeat());
         newTransaction.setFrequency(transaction.getFrequency());
         newTransaction.setNumOfRepeat(transaction.getNumOfRepeat());
+        newTransaction.setExpenseTransaction(transaction.isExpenseTransaction());
         newTransaction.setTransactionRecurringId(transaction.getTransactionRecurringId());
 
         return newTransaction;
@@ -304,7 +307,9 @@ public class RepeatTransactionActivity extends AppCompatActivity {
 
         String recurringId = data.getStringExtra(AddEditRepeatTransactionActivity.EXTRA_RECURRING_ID);
 
-        Transaction transaction = new Transaction(date, value, name, typeName, frequency, repeat);
+        boolean isExpenseType = data.getBooleanExtra(AddEditTransactionActivity.EXTRA_IS_EXPENSE_TYPE, true);
+
+        Transaction transaction = new Transaction(date, value, name, typeName, frequency, repeat, isExpenseType);
 
         if (id != 0) {
             transaction.setTransactionId(id);

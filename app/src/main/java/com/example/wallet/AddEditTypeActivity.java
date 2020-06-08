@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,10 +18,16 @@ public class AddEditTypeActivity extends AppCompatActivity {
             "com.example.wallet.EXTRA_ID";
     public static final String EXTRA_NAME =
             "com.example.wallet.EXTRA_NAME";
+    public static final String EXTRA_IS_EXPENSE_TYPE =
+            "com.example.wallet.EXTRA_IS_EXPENSE_TYPE";
     public static final String EXTRA_OPERATION =
             "com.example.wallet.EXTRA_OPERATION";
 
     private EditText editTextType;
+    private RadioButton radioButtonExpense;
+    private RadioButton radioButtonIncome;
+
+    private boolean isExpenseType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +35,8 @@ public class AddEditTypeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_edit_type);
 
         editTextType = findViewById(R.id.edit_text_type);
+        radioButtonExpense = findViewById(R.id.radio_expense);
+        radioButtonIncome = findViewById(R.id.radio_income);
 
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
 
@@ -37,6 +47,18 @@ public class AddEditTypeActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if (intent.hasExtra(EXTRA_ID)) {
             editTextType.setText(intent.getStringExtra(EXTRA_NAME));
+
+            if (intent.getBooleanExtra(EXTRA_IS_EXPENSE_TYPE, true)) {
+                radioButtonExpense.setChecked(true);
+                isExpenseType = true;
+            } else {
+                radioButtonIncome.setChecked(true);
+                isExpenseType = false;
+            }
+            // set as default option
+        } else {
+            radioButtonExpense.setChecked(true);
+            isExpenseType = true;
         }
     }
 
@@ -75,6 +97,8 @@ public class AddEditTypeActivity extends AppCompatActivity {
         type.putExtra(EXTRA_NAME, name);
         type.putExtra(EXTRA_OPERATION, operation);
 
+        type.putExtra(EXTRA_IS_EXPENSE_TYPE, isExpenseType);
+
         Long id = getIntent().getLongExtra(EXTRA_ID, -1);
         if (id != -1) {
             type.putExtra(EXTRA_ID, id);
@@ -82,6 +106,24 @@ public class AddEditTypeActivity extends AppCompatActivity {
 
         return type;
     }
+
+    public void onRadioButtonClicked(View view) {
+
+        boolean checked = ((RadioButton) view).isChecked();
+
+        // Check which radio button was clicked
+        switch(view.getId()) {
+            case R.id.radio_expense:
+                if (checked)
+                    isExpenseType = true;
+                    break;
+            case R.id.radio_income:
+                if (checked)
+                    isExpenseType = false;
+                    break;
+        }
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

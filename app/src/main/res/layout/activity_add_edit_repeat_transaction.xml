@@ -49,6 +49,28 @@
         android:inputType="text" />
 
     <TextView
+        android:id="@+id/textView_typeOfType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Type" />
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <RadioButton android:id="@+id/radio_expense"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Expense"
+            android:onClick="onRadioButtonClicked"/>
+        <RadioButton android:id="@+id/radio_income"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Income"
+            android:onClick="onRadioButtonClicked"/>
+    </RadioGroup>
+
+    <TextView
         android:id="@+id/textView_typeName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -59,25 +81,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-<!--    <EditText-->
-<!--        android:id="@+id/edit_text_type_name"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:hint="type name"-->
-<!--        android:inputType="text" />-->
-
     <TextView
         android:id="@+id/textView_frequency"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="frequency" />
-
-<!--    <EditText-->
-<!--        android:id="@+id/edit_text_frequency"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:hint="frequency"-->
-<!--        android:inputType="number" />-->
 
     <Spinner
         android:id="@+id/spinner"

@@ -111,9 +111,10 @@ public abstract class WalletDatabase extends RoomDatabase {
             // If you want to start with more words, just add them.
             TypeDao typeDao = INSTANCE.getTypeDao();
 
-            typeDao.insertType(new Type("Food"));
-            typeDao.insertType(new Type("Transport"));
-            typeDao.insertType(new Type("Others"));
+            typeDao.insertType(new Type("Food", true));
+            typeDao.insertType(new Type("Transport", true));
+            typeDao.insertType(new Type("Others", true));
+            typeDao.insertType(new Type("Allowance", false));
         });
     }
 

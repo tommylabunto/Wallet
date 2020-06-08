@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -21,6 +22,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.example.wallet.db.Type;
 import com.example.wallet.db.TypeViewModel;
 import com.example.wallet.helper.DateFormatter;
 import com.example.wallet.helper.DatePickerFragment;
@@ -43,6 +45,8 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
             "com.example.wallet.EXTRA_VALUE";
     public static final String EXTRA_DATE =
             "com.example.wallet.EXTRA_DATE";
+    public static final String EXTRA_IS_EXPENSE_TYPE =
+            "com.example.wallet.EXTRA_IS_EXPENSE_TYPE";
     public static final String EXTRA_OPERATION =
             "com.example.wallet.EXTRA_OPERATION";
 
@@ -54,14 +58,22 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
     private ArrayAdapter<String> adapter;
     private String type;
 
-    private static List<String> typeList;
+    private static List<String> expenseTypeList;
+    private static List<String> incomeTypeList;
 
     private TypeViewModel typeViewModel;
+
+    private RadioButton radioButtonExpense;
+    private RadioButton radioButtonIncome;
+    private static boolean isExpenseType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_transaction);
+        setContentView(R.layout.activity_add_edit_transaction);
+
+        radioButtonExpense = findViewById(R.id.radio_expense);
+        radioButtonIncome = findViewById(R.id.radio_income);
 
         editTextName = findViewById(R.id.edit_text_name);
         editTextValue = findViewById(R.id.edit_text_value);
@@ -69,7 +81,9 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
 
         spinner = findViewById(R.id.spinner_type);
 
-        typeList = new ArrayList<>();
+        isExpenseType = true;
+        expenseTypeList = new ArrayList<>();
+        incomeTypeList = new ArrayList<>();
         initTypes();
 
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
@@ -91,24 +105,37 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
         Intent intent = getIntent();
         if (intent.hasExtra(EXTRA_ID)) {
             editTextName.setText(intent.getStringExtra(EXTRA_NAME));
-//            editTextTypeName.setText(intent.getStringExtra(EXTRA_TYPENAME));
             editTextDate.setText(intent.getStringExtra(EXTRA_DATE));
             editTextValue.setText(intent.getDoubleExtra(EXTRA_VALUE, 1) + "");
 
             type = intent.getStringExtra(EXTRA_TYPENAME);
 
-            if (adapter == null) {
-                adapter = new ArrayAdapter<String>(this,
-                        android.R.layout.simple_spinner_item, typeList);
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                Log.d("typeList.size", typeList.size() + "");
+            if (intent.getBooleanExtra(EXTRA_IS_EXPENSE_TYPE, true)) {
+                radioButtonExpense.setChecked(true);
+                isExpenseType = true;
+            } else {
+                radioButtonIncome.setChecked(true);
+                isExpenseType = false;
             }
 
-            int selectionPosition= adapter.getPosition(type);
+            if (adapter == null) {
+                if (isExpenseType) {
+                    adapter = new ArrayAdapter<String>(this,
+                            android.R.layout.simple_spinner_item, expenseTypeList);
+                } else {
+                    adapter = new ArrayAdapter<String>(this,
+                            android.R.layout.simple_spinner_item, incomeTypeList);
+                }
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            }
+
+            int selectionPosition = adapter.getPosition(type);
             Log.d("selectionPosition", selectionPosition + "");
             spinner.setSelection(selectionPosition);
         } else {
             setTodayDate(editTextDate);
+            radioButtonExpense.setChecked(true);
+            isExpenseType = true;
         }
     }
 
@@ -116,33 +143,42 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
 
         typeViewModel = ViewModelProviders.of(this).get(TypeViewModel.class);
 
-        typeViewModel.getAllTypesString().observe(this, new Observer<List<String>>() {
+        typeViewModel.getAllTypes().observe(this, new Observer<List<Type>>() {
             @Override
-            public void onChanged(@Nullable final List<String> types) {
+            public void onChanged(@Nullable final List<Type> types) {
 
                 deepCopyList(types);
-                Log.d("onchanged","onchanged");
+                Log.d("onchanged", "onchanged");
             }
         });
     }
 
-    private void deepCopyList(List<String> types) {
+    private void deepCopyList(List<Type> types) {
 
-        typeList = new ArrayList<>();
+        expenseTypeList = new ArrayList<>();
+        incomeTypeList = new ArrayList<>();
 
-        for (String type : types) {
+        for (Type type : types) {
 
-            typeList.add(type);
-            Log.d("type", type);
+            if (type.isExpenseType()) {
+                expenseTypeList.add(type.getName());
+            } else {
+                incomeTypeList.add(type.getName());
+            }
         }
 
         showSpinner();
+        extractIntent();
     }
 
     private void showSpinner() {
-
-        adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, typeList);
+        if (isExpenseType) {
+            adapter = new ArrayAdapter<String>(this,
+                    android.R.layout.simple_spinner_item, expenseTypeList);
+        } else {
+            adapter = new ArrayAdapter<String>(this,
+                    android.R.layout.simple_spinner_item, incomeTypeList);
+        }
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -156,8 +192,6 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-
-        extractIntent();
     }
 
     private Calendar convertEditTextToCalendar(EditText editTextDate) {
@@ -221,12 +255,35 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
         transaction.putExtra(EXTRA_VALUE, value);
         transaction.putExtra(EXTRA_OPERATION, operation);
 
+        transaction.putExtra(EXTRA_IS_EXPENSE_TYPE, isExpenseType);
+
         Long id = getIntent().getLongExtra(EXTRA_ID, -1);
         if (id != -1) {
             transaction.putExtra(EXTRA_ID, id);
         }
 
         return transaction;
+    }
+
+    public void onRadioButtonClicked(View view) {
+
+        boolean checked = ((RadioButton) view).isChecked();
+
+        // Check which radio button was clicked
+        switch (view.getId()) {
+            case R.id.radio_expense:
+                if (checked) {
+                    isExpenseType = true;
+                    showSpinner();
+                    break;
+                }
+            case R.id.radio_income:
+                if (checked) {
+                    isExpenseType = false;
+                    showSpinner();
+                    break;
+                }
+        }
     }
 
     @Override

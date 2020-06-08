@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -23,6 +24,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.example.wallet.db.Type;
 import com.example.wallet.db.TypeViewModel;
 import com.example.wallet.helper.DateFormatter;
 import com.example.wallet.helper.DatePickerFragment;
@@ -51,11 +53,12 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
             "com.example.wallet.EXTRA_REPEAT";
     public static final String EXTRA_RECURRING_ID =
             "com.example.wallet.EXTRA_RECURRING_ID";
+    public static final String EXTRA_IS_EXPENSE_TYPE =
+            "com.example.wallet.EXTRA_IS_EXPENSE_TYPE";
     public static final String EXTRA_OPERATION =
             "com.example.wallet.EXTRA_OPERATION";
 
     private EditText editTextName;
-    private EditText editTextTypeName;
     private EditText editTextValue;
     private EditText editTextDate;
     private EditText editTextRepeat;
@@ -65,19 +68,27 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
     private String type;
     private Spinner spinnerType;
     private ArrayAdapter<String> adapterType;
-    private static List<String> typeList;
 
     private ArrayAdapter<CharSequence> spinnerAdapter;
 
+    private static List<String> expenseTypeList;
+    private static List<String> incomeTypeList;
+
     private TypeViewModel typeViewModel;
+
+    private RadioButton radioButtonExpense;
+    private RadioButton radioButtonIncome;
+    private static boolean isExpenseType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_repeat_transaction);
 
+        radioButtonExpense = findViewById(R.id.radio_expense);
+        radioButtonIncome = findViewById(R.id.radio_income);
+
         editTextName = findViewById(R.id.edit_text_name);
-        //editTextTypeName = findViewById(R.id.edit_text_type_name);
         editTextValue = findViewById(R.id.edit_text_value);
         editTextDate = findViewById(R.id.edit_text_dateTime);
         spinner = findViewById(R.id.spinner);
@@ -111,7 +122,9 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
 
         spinnerType = findViewById(R.id.spinner_repeat_type);
 
-        typeList = new ArrayList<>();
+        isExpenseType = true;
+        expenseTypeList = new ArrayList<>();
+        incomeTypeList = new ArrayList<>();
         initViewModel();
 
         extractIntent();
@@ -134,11 +147,23 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
 
             type = intent.getStringExtra(EXTRA_TYPENAME);
 
+            if (intent.getBooleanExtra(EXTRA_IS_EXPENSE_TYPE, true)) {
+                radioButtonExpense.setChecked(true);
+                isExpenseType = true;
+            } else {
+                radioButtonIncome.setChecked(true);
+                isExpenseType = false;
+            }
+
             if (adapterType == null) {
-                adapterType = new ArrayAdapter<String>(this,
-                        android.R.layout.simple_spinner_item, typeList);
+                if (isExpenseType) {
+                    adapterType = new ArrayAdapter<String>(this,
+                            android.R.layout.simple_spinner_item, expenseTypeList);
+                } else {
+                    adapterType = new ArrayAdapter<String>(this,
+                            android.R.layout.simple_spinner_item, incomeTypeList);
+                }
                 adapterType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                Log.d("typeList.size", typeList.size() + "");
             }
 
             int selectionPositionType = adapterType.getPosition(type);
@@ -146,6 +171,8 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
             spinnerType.setSelection(selectionPositionType);
         } else {
             setTodayDate(editTextDate);
+            radioButtonExpense.setChecked(true);
+            isExpenseType = true;
         }
     }
 
@@ -153,9 +180,9 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
 
         typeViewModel = ViewModelProviders.of(this).get(TypeViewModel.class);
 
-        typeViewModel.getAllTypesString().observe(this, new Observer<List<String>>() {
+        typeViewModel.getAllTypes().observe(this, new Observer<List<Type>>() {
             @Override
-            public void onChanged(@Nullable final List<String> types) {
+            public void onChanged(@Nullable final List<Type> types) {
 
                 deepCopyList(types);
                 Log.d("onchanged","onchanged");
@@ -163,23 +190,33 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
         });
     }
 
-    private void deepCopyList(List<String> types) {
+    private void deepCopyList(List<Type> types) {
 
-        typeList = new ArrayList<>();
+        expenseTypeList = new ArrayList<>();
+        incomeTypeList = new ArrayList<>();
 
-        for (String type : types) {
+        for (Type type : types) {
 
-            typeList.add(type);
-            Log.d("type", type);
+            if (type.isExpenseType()) {
+                expenseTypeList.add(type.getName());
+            } else {
+                incomeTypeList.add(type.getName());
+            }
         }
 
         showSpinner();
+        extractIntent();
     }
 
     private void showSpinner() {
 
-        adapterType = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, typeList);
+        if (isExpenseType) {
+            adapterType = new ArrayAdapter<String>(this,
+                    android.R.layout.simple_spinner_item, expenseTypeList);
+        } else {
+            adapterType = new ArrayAdapter<String>(this,
+                    android.R.layout.simple_spinner_item, incomeTypeList);
+        }
         adapterType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerType.setAdapter(adapterType);
         spinnerType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -193,8 +230,6 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-
-        extractIntent();
     }
 
     private Calendar convertEditTextToCalendar(EditText editTextDate) {
@@ -210,7 +245,6 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
     private void createOrSaveTransaction() {
 
         String name = editTextName.getText().toString().trim();
-        //String typeName = editTextTypeName.getText().toString().trim();
         String dateString = editTextDate.getText().toString();
         String valueString = editTextValue.getText().toString();
         double value = 0;
@@ -283,6 +317,8 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
         transaction.putExtra(EXTRA_REPEAT, repeat);
         transaction.putExtra(EXTRA_OPERATION, operation);
 
+        transaction.putExtra(EXTRA_IS_EXPENSE_TYPE, isExpenseType);
+
         Long id = getIntent().getLongExtra(EXTRA_ID, -1);
         if (id != -1) {
             transaction.putExtra(EXTRA_ID, id);
@@ -312,6 +348,27 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void onRadioButtonClicked(View view) {
+
+        boolean checked = ((RadioButton) view).isChecked();
+
+        // Check which radio button was clicked
+        switch (view.getId()) {
+            case R.id.radio_expense:
+                if (checked) {
+                    isExpenseType = true;
+                    showSpinner();
+                    break;
+                }
+            case R.id.radio_income:
+                if (checked) {
+                    isExpenseType = false;
+                    showSpinner();
+                    break;
+                }
         }
     }
 

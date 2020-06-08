@@ -27,6 +27,6 @@ public interface TypeDao {
     @Query("SELECT name FROM type ORDER BY name ASC")
     public LiveData<List<String>> getAllTypesString();
 
-    @Query("SELECT typeId, name FROM type ORDER BY name ASC")
+    @Query("SELECT typeId, name, isExpenseType FROM type ORDER BY name ASC")
     public LiveData<List<Type>> getAllTypes();
 }

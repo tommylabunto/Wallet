@@ -3,6 +3,7 @@ package com.example.wallet;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.util.Log;
@@ -12,21 +13,22 @@ import android.view.View;
 import android.widget.SearchView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.wallet.adapter.SearchTransactionAdapter;
+import com.example.wallet.db.WalletDatabase;
 import com.example.wallet.db.entity.Transaction;
 import com.example.wallet.db.viewmodel.TransactionViewModel;
 import com.example.wallet.helper.DateFormatter;
 import com.example.wallet.helper.SearchSuggestionProvider;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -42,10 +44,14 @@ public class SearchTransactionActivity extends AppCompatActivity {
     // save or delete
     public static final int EDIT_TRANSACTION_ACTIVITY_REQUEST_CODE = 2;
 
+    private static WalletDatabase walletDatabase;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_transaction);
+
+        walletDatabase = WalletDatabase.getDatabase(this);
 
         coordinatorLayout = findViewById(R.id.searchTransactionActivity);
 
@@ -82,18 +88,65 @@ public class SearchTransactionActivity extends AppCompatActivity {
 
     private void searchTransactions(String query) {
 
-        StringBuilder searchNameSb = new StringBuilder();
-        searchNameSb.append("%");
-        searchNameSb.append(query);
-        searchNameSb.append("%");
+//        StringBuilder searchNameSb = new StringBuilder();
+//        searchNameSb.append("%");
+//        searchNameSb.append(query);
+//        searchNameSb.append("%");
+//
+//        transactionViewModel.searchAllTransactions(searchNameSb.toString()).observe(this, new Observer<List<Transaction>>() {
+//            @Override
+//            public void onChanged(@Nullable final List<Transaction> transactions) {
+//                // Update the cached copy of the words in the transactionAdapter.
+//                searchTransactionAdapter.submitList(transactions);
+//            }
+//        });
 
-        transactionViewModel.searchAllTransactions(searchNameSb.toString()).observe(this, new Observer<List<Transaction>>() {
-            @Override
-            public void onChanged(@Nullable final List<Transaction> transactions) {
-                // Update the cached copy of the words in the transactionAdapter.
-                searchTransactionAdapter.submitList(transactions);
+        List<Transaction> transactions = new ArrayList<>();
+
+        Cursor cursor = walletDatabase.getNameMatches(query, null);
+
+        final int idIndex = cursor.getColumnIndex(WalletDatabase.COL_ID);
+        final int nameIndex = cursor.getColumnIndex(WalletDatabase.COL_NAME);
+        final int valueIndex = cursor.getColumnIndex(WalletDatabase.COL_VALUE);
+        final int typeNameIndex = cursor.getColumnIndex(WalletDatabase.COL_TYPE_NAME);
+        final int dateIndex = cursor.getColumnIndex(WalletDatabase.COL_DATE);
+        final int isRepeatIndex = cursor.getColumnIndex(WalletDatabase.COL_IS_REPEAT);
+        final int isExpenseTransactionIndex = cursor.getColumnIndex(WalletDatabase.COL_IS_EXPENSE_TRANSACTION);
+
+        try {
+
+            // If moveToFirst() returns false then cursor is empty
+            if (!cursor.moveToFirst()) {
             }
-        });
+            do {
+                // Read the values of a row in the table using the indexes acquired above
+                final long id = cursor.getLong(idIndex);
+                final String name = cursor.getString(nameIndex);
+                final double value = cursor.getDouble(valueIndex);
+                final String typeName = cursor.getString(typeNameIndex);
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(cursor.getLong(dateIndex));
+                final Date date = calendar.getTime();
+
+                final boolean isRepeat = cursor.getInt(isRepeatIndex) > 0;
+                final boolean isExpenseTransaction = cursor.getInt(isExpenseTransactionIndex) > 0;
+
+                Transaction transaction = new Transaction(date, value, name, typeName, isExpenseTransaction);
+                transaction.setTransactionId(id);
+
+                transactions.add(transaction);
+
+            } while (cursor.moveToNext());
+
+            searchTransactionAdapter.submitList(transactions);
+        } finally {
+            // Don't forget to close the Cursor once you are done to avoid memory leaks.
+            // Using a try/finally like in this example is usually the best way to handle this
+            cursor.close();
+            // close the database
+            //database.close();
+        }
     }
 
     private void handleIntent(Intent intent) {

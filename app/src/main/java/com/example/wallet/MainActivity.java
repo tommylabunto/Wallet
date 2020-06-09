@@ -39,9 +39,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-// TODO: implement widget for home screen (today)
-// TODO: implement night theme??
-// TODO: how to handle app crashes, exceptions
+// TODO: implement night theme?? (today)
+// TODO: how to handle app crashes, exceptions (today)
 
 /* (end)
 // TODO: change string to string resource
@@ -66,6 +65,11 @@ TODO: try export without saving to files
 TODO: refresh after CRUD non-recurring transactions (try putting adapter in a separate class, so can invoke method whenever you want)
 - after crud, activity is refreshed
 - see if there is a way to invoke updateHeader(transaction, holder); from TransactionAdapter
+ */
+/*
+FUTURE updates:
+// TODO: try using fts3 to search, instead of using LIKE %keyword%, which takes up more time when there are more transactions
+// TODO: implement widgets
  */
 
 public class MainActivity extends AppCompatActivity {

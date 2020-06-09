@@ -1,12 +1,18 @@
 package com.example.wallet;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.SearchRecentSuggestions;
+import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -19,12 +25,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.wallet.adapter.TransactionAdapter;
-import com.example.wallet.db.viewmodel.MonthlyBudgetViewModel;
+import com.example.wallet.db.WalletDatabase;
 import com.example.wallet.db.entity.Transaction;
+import com.example.wallet.db.viewmodel.MonthlyBudgetViewModel;
 import com.example.wallet.db.viewmodel.TransactionViewModel;
 import com.example.wallet.db.viewmodel.TypeViewModel;
-import com.example.wallet.db.WalletDatabase;
 import com.example.wallet.helper.DateFormatter;
+import com.example.wallet.helper.SearchSuggestionProvider;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -32,7 +39,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-// TODO: implement search for main activity (today)
 // TODO: implement widget for home screen (today)
 // TODO: implement night theme??
 // TODO: how to handle app crashes, exceptions
@@ -57,7 +63,7 @@ TODO: try export without saving to files
 - but cannot create from file (maybe something to do with the path)
  */
 /*
-TODO: refresh after CRUD non-recurring transactions
+TODO: refresh after CRUD non-recurring transactions (try putting adapter in a separate class, so can invoke method whenever you want)
 - after crud, activity is refreshed
 - see if there is a way to invoke updateHeader(transaction, holder); from TransactionAdapter
  */
@@ -84,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton nextMonth;
 
     private Button buttonMonthlyTransaction;
+    private Button buttonSearchTransaction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,6 +149,17 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(goToMonthlyTransactionActivity);
             }
         });
+
+        buttonSearchTransaction = findViewById(R.id.button_search_transaction);
+        buttonSearchTransaction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent goToSearchTransactionActivity = new Intent(MainActivity.this, SearchTransactionActivity.class);
+                startActivity(goToSearchTransactionActivity);
+            }
+        });
+
+        handleIntent(getIntent());
     }
 
     private void initStartEndCal() {
@@ -314,10 +332,37 @@ public class MainActivity extends AppCompatActivity {
         return transaction;
     }
 
+    private void handleIntent(Intent intent) {
+
+        // Get the intent, verify the action and get the query
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            Log.d("query main", query);
+            Intent goToSearchTransactionActivity = new Intent(MainActivity.this, SearchTransactionActivity.class);
+            goToSearchTransactionActivity.setAction(Intent.ACTION_SEARCH);
+            goToSearchTransactionActivity.putExtra(SearchTransactionActivity.EXTRA_SEARCH, query);
+
+            SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
+                    SearchSuggestionProvider.AUTHORITY, SearchSuggestionProvider.MODE);
+            suggestions.saveRecentQuery(query, null);
+
+            startActivity(goToSearchTransactionActivity);
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+
+        // Get the SearchView and set the searchable configuration
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        // Assumes current activity is the searchable activity
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
+
         return true;
     }
 

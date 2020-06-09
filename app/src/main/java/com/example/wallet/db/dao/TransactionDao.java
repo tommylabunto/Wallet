@@ -47,6 +47,9 @@ public interface TransactionDao {
     @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, isRepeat, frequency, numOfRepeat, isExpenseTransaction FROM `transaction` ORDER BY date ASC")
     public LiveData<List<Transaction>> getAllTransactions();
 
+    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, isRepeat, frequency, numOfRepeat, isExpenseTransaction FROM `transaction` WHERE name LIKE :searchName ORDER BY date ASC")
+    public LiveData<List<Transaction>> searchAllTransactions(String searchName);
+
     @Query("DELETE FROM `transaction`")
     public void deleteAllTransactions();
 

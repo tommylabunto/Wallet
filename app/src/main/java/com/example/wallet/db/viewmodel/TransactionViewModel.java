@@ -48,6 +48,10 @@ public class TransactionViewModel extends AndroidViewModel {
         return transactionRepository.getAllTransactionsInAMonthView(millisecondsStart, millisecondsEnd);
     }
 
+    public LiveData<List<Transaction>> searchAllTransactions(String searchName) {
+        return transactionRepository.searchAllTransactions(searchName);
+    }
+
     public void insertTransaction(Transaction transaction) {
         transactionRepository.insertTransaction(transaction);
     }

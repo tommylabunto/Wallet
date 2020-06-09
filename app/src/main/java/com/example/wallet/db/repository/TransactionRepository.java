@@ -46,6 +46,10 @@ public class TransactionRepository {
         return transactionDao.getAllTransactionsInAMonthView(millisecondsStart, millisecondsEnd);
     }
 
+    public LiveData<List<Transaction>> searchAllTransactions(String searchName) {
+        return transactionDao.searchAllTransactions(searchName);
+    }
+
     // You must call this on a non-UI thread or your app will throw an exception. Room ensures
     // that you're not doing any long running operations on the main thread, blocking the UI.
     public void insertTransaction(Transaction transaction) {

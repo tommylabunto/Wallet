@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.SearchRecentSuggestions;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
@@ -16,6 +17,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.example.wallet.db.entity.CarryOver;
 import com.example.wallet.db.viewmodel.CarryOverViewModel;
 import com.example.wallet.db.WalletDatabase;
+import com.example.wallet.helper.SearchSuggestionProvider;
 
 public class SettingsActivity extends AppCompatActivity {
 //public class SettingsActivity extends AppCompatActivity implements PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
@@ -35,6 +37,7 @@ public class SettingsActivity extends AppCompatActivity {
     private static CarryOver carryOver;
 
     private TextView textViewMonthlyBudget;
+    private TextView textViewClearSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,6 +158,16 @@ public class SettingsActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent goToMonthlyBudgetActivity= new Intent(SettingsActivity.this, MonthlyBudgetActivity.class);
                 startActivity(goToMonthlyBudgetActivity);
+            }
+        });
+
+        textViewClearSearch = findViewById(R.id.textView_clear_search);
+        textViewClearSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SearchRecentSuggestions suggestions = new SearchRecentSuggestions(SettingsActivity.this,
+                        SearchSuggestionProvider.AUTHORITY, SearchSuggestionProvider.MODE);
+                suggestions.clearHistory();
             }
         });
     }

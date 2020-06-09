@@ -9,6 +9,16 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <Button
+        android:id="@+id/button_search_transaction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        tools:layout_editor_absoluteX="304dp"
+        tools:layout_editor_absoluteY="9dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+    <Button
         android:id="@+id/button_monthly_transaction"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

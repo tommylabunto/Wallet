@@ -12,6 +12,7 @@
         android:layout_width="348dp"
         android:layout_height="504dp"
         android:layout_marginBottom="5dp"
-        tools:listitem="@layout/recyclerview_type_item" />
+        tools:listitem="@layout/recyclerview_type_item"
+        android:scrollbars="vertical"/>
 
 </LinearLayout>

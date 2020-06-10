@@ -4,4 +4,5 @@
     android:hint="Search transactions"
     android:searchSuggestAuthority="com.example.wallet.SearchSuggestionProvider"
     android:searchSuggestSelection=" ?" >
+
 </searchable>

@@ -39,8 +39,14 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-// TODO: implement night theme?? (today)
-// TODO: how to handle app crashes, exceptions (today)
+// MUST FINISH
+/*
+TODO: import database (try update INSTANCE in db, refresh viewmodel) (second)
+TODO: try export without saving to files (first)
+- can get uri from clicking a file -> which gets copies file into files folder
+- can createfromassets successfully
+- but cannot create from file (maybe something to do with the path)
+ */
 
 /* (end)
 // TODO: change string to string resource
@@ -50,19 +56,12 @@ import java.util.List;
 // TODO: try to use functional approach (return, dont set)
 // TODO: !! improve UI (use material design, use dribble or ui websites for inspiration)
 // TODO: set up cards for user to see when first download
-// TODO:comply with google's standards
+// TODO: comply with google's standards
 // TODO: learn to handle room migration
  */
 
 /*
-TODO: import database (try update INSTANCE in db, refresh viewmodel)
-TODO: try export without saving to files
-- can get uri from clicking a file -> which gets copies file into files folder
-- can createfromassets successfully
-- but cannot create from file (maybe something to do with the path)
- */
-/*
-TODO: refresh after CRUD non-recurring transactions (try putting adapter in a separate class, so can invoke method whenever you want)
+TODO: refresh after CRUD non-recurring transactions (try putting adapter in a separate class, so can invoke method whenever you want), defaultitemanimator
 - after crud, activity is refreshed
 - see if there is a way to invoke updateHeader(transaction, holder); from TransactionAdapter
  */
@@ -70,6 +69,8 @@ TODO: refresh after CRUD non-recurring transactions (try putting adapter in a se
 FUTURE updates:
 // TODO: try using fts3 to search, instead of using LIKE %keyword%, which takes up more time when there are more transactions
 // TODO: implement widgets
+// TODO: send crash reports
+// TODO: drag and hold in recyclerview to update and delete
  */
 
 public class MainActivity extends AppCompatActivity {

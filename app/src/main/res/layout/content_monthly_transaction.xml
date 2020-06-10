@@ -92,6 +92,7 @@
         android:layout_marginBottom="40dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        tools:listitem="@layout/recyclerview_monthly_transaction_item" />
+        tools:listitem="@layout/recyclerview_monthly_transaction_item"
+        android:scrollbars="vertical"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

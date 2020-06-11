@@ -14,13 +14,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class AddEditTypeActivity extends AppCompatActivity {
 
-    public static final String EXTRA_ID =
+    protected static final String EXTRA_ID =
             "com.example.wallet.EXTRA_ID";
-    public static final String EXTRA_NAME =
+    protected static final String EXTRA_NAME =
             "com.example.wallet.EXTRA_NAME";
-    public static final String EXTRA_IS_EXPENSE_TYPE =
+    protected static final String EXTRA_IS_EXPENSE_TYPE =
             "com.example.wallet.EXTRA_IS_EXPENSE_TYPE";
-    public static final String EXTRA_OPERATION =
+    protected static final String EXTRA_OPERATION =
             "com.example.wallet.EXTRA_OPERATION";
 
     private EditText editTextType;

@@ -24,7 +24,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     private static final String TITLE_TAG = "settingsActivityTitle";
 
-    public static final int REPEAT_ACTIVITY_REQUEST_CODE = 3;
+    protected static final int REPEAT_ACTIVITY_REQUEST_CODE = 3;
 
     private TextView textViewRepeat;
     private TextView textViewExportImport;

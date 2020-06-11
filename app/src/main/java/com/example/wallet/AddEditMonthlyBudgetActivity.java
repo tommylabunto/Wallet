@@ -14,15 +14,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
 
-    public static final String EXTRA_ID =
+    protected static final String EXTRA_ID =
             "com.example.wallet.EXTRA_ID";
-    public static final String EXTRA_OPERATION =
+    protected static final String EXTRA_OPERATION =
             "com.example.wallet.EXTRA_OPERATION";
-    public static final String EXTRA_BUDGET =
+    protected static final String EXTRA_BUDGET =
             "com.example.wallet.EXTRA_BUDGET";
-    public static final String EXTRA_YEAR =
+    protected static final String EXTRA_YEAR =
             "com.example.wallet.EXTRA_YEAR";
-    public static final String EXTRA_MONTH =
+    protected static final String EXTRA_MONTH =
             "com.example.wallet.EXTRA_MONTH";
 
     private TextView textViewYear;

@@ -25,8 +25,8 @@ import java.util.List;
 
 public class TypeActivity extends AppCompatActivity {
 
-    public static final int ADD_TYPE_ACTIVITY_REQUEST_CODE = 1;
-    public static final int EDIT_TYPE_ACTIVITY_REQUEST_CODE = 2;
+    protected static final int ADD_TYPE_ACTIVITY_REQUEST_CODE = 1;
+    protected static final int EDIT_TYPE_ACTIVITY_REQUEST_CODE = 2;
 
     private TypeViewModel typeViewModel;
 

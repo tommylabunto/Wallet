@@ -138,7 +138,7 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
 
         if (transactions != null || !transactions.isEmpty()) {
 
-            String totalAmount = calculateTotalAmountInAMonth(transaction);
+            String totalAmount = calculateTotalAmountInADay(transaction);
 
             if (this.isFirst) {
                 holder.showHeader(formattedDate, totalAmount);
@@ -150,7 +150,7 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
         }
     }
 
-    private String calculateTotalAmountInAMonth(Transaction transaction) {
+    private String calculateTotalAmountInADay(Transaction transaction) {
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(transaction.getDate());

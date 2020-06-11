@@ -30,8 +30,8 @@ import java.util.UUID;
 
 public class RepeatTransactionActivity extends AppCompatActivity {
 
-    public static final int ADD_TRANSACTION_ACTIVITY_REQUEST_CODE = 1;
-    public static final int EDIT_TRANSACTION_ACTIVITY_REQUEST_CODE = 2;
+    protected static final int ADD_TRANSACTION_ACTIVITY_REQUEST_CODE = 1;
+    protected static final int EDIT_TRANSACTION_ACTIVITY_REQUEST_CODE = 2;
 
     private TransactionViewModel transactionViewModel;
     private TypeViewModel typeViewModel;

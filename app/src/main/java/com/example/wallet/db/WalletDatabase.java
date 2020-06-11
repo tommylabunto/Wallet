@@ -47,7 +47,7 @@ public abstract class WalletDatabase extends RoomDatabase {
             synchronized (WalletDatabase.class) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                            WalletDatabase.class, "WalletDatabase")
+                            WalletDatabase.class, "WalletDatabase.db")
                             .addCallback(sRoomDatabaseCallback)
                             //.createFromFile(new File("data/data/com.example.wallet/files/WalletDatabase.db"))
                             //.createFromAsset("WalletDatabase.db")
@@ -130,7 +130,8 @@ public abstract class WalletDatabase extends RoomDatabase {
 
     public static WalletDatabase prepopulateDB(final Context context, File file) {
 
-        INSTANCE = Room.databaseBuilder(context.getApplicationContext(), WalletDatabase.class, "WalletDatabase")
+        // takes some time to copy the table
+        INSTANCE = Room.databaseBuilder(context.getApplicationContext(), WalletDatabase.class, "WalletDatabase.db")
                 .createFromFile(file)
                 .fallbackToDestructiveMigration()
                 .build();

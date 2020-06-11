@@ -157,7 +157,7 @@ public class MonthlyBudgetActivity extends AppCompatActivity {
                 // delete Monthly Budget
                 else {
                     monthlyBudgetViewModel.deleteMonthlyBudget(monthlyBudget);
-                    showSnackbar(monthlyBudget);
+                    //showSnackbar(monthlyBudget);
                 }
             }
         }

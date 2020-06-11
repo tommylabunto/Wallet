@@ -39,32 +39,23 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-// MUST FINISH
-/*
-TODO: import database (try update INSTANCE in db, refresh viewmodel) (second)
-TODO: try export without saving to files (first)
-- can get uri from clicking a file -> which gets copies file into files folder
-- can createfromassets successfully
-- but cannot create from file (maybe something to do with the path)
- */
+// TODO: throw possible exceptions (check if not null)
+// TODO: try to use functional approach (return, dont set)
 
 /* (end)
 // TODO: change string to string resource
-// TODO: use private as much as possible
-// TODO: ensure all get all has ordered by
-// TODO: throw possible exceptions
-// TODO: try to use functional approach (return, dont set)
 // TODO: !! improve UI (use material design, use dribble or ui websites for inspiration)
 // TODO: set up cards for user to see when first download
 // TODO: comply with google's standards
 // TODO: learn to handle room migration
  */
-
 /*
-TODO: refresh after CRUD non-recurring transactions (try putting adapter in a separate class, so can invoke method whenever you want), defaultitemanimator
-- after crud, activity is refreshed
-- see if there is a way to invoke updateHeader(transaction, holder); from TransactionAdapter
+TODO: import database (try update INSTANCE in db, refresh viewmodel) (second)
+- can createfromassets successfully
+- works if change the name in wallet database (prepopulate db), it takes a while,
+ then need to change the name in getInstance to load it
  */
+
 /*
 FUTURE updates:
 // TODO: try using fts3 to search, instead of using LIKE %keyword%, which takes up more time when there are more transactions
@@ -76,9 +67,9 @@ FUTURE updates:
 public class MainActivity extends AppCompatActivity {
 
     // add
-    public static final int ADD_TRANSACTION_ACTIVITY_REQUEST_CODE = 1;
+    protected static final int ADD_TRANSACTION_ACTIVITY_REQUEST_CODE = 1;
     // save or delete
-    public static final int EDIT_TRANSACTION_ACTIVITY_REQUEST_CODE = 2;
+    protected static final int EDIT_TRANSACTION_ACTIVITY_REQUEST_CODE = 2;
 
     private TypeViewModel typeViewModel;
     private TransactionViewModel transactionViewModel;
@@ -272,7 +263,8 @@ public class MainActivity extends AppCompatActivity {
                     // delete transaction
                 } else {
                     transactionViewModel.deleteTransaction(transaction);
-                    showSnackbar(transaction);
+                    //showSnackbar(transaction);
+                    reload();
                 }
             }
         }

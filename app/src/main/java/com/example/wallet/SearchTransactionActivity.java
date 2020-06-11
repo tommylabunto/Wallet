@@ -153,7 +153,7 @@ public class SearchTransactionActivity extends AppCompatActivity {
                     // delete transaction
                 } else {
                     transactionViewModel.deleteTransaction(transaction);
-                    showSnackbar(transaction);
+                    //showSnackbar(transaction);
                 }
             }
         }

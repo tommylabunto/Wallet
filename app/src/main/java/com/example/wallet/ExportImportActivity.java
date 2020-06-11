@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -22,9 +23,9 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.sqlite.db.SimpleSQLiteQuery;
 
+import com.example.wallet.db.WalletDatabase;
 import com.example.wallet.db.entity.Transaction;
 import com.example.wallet.db.viewmodel.TransactionViewModel;
-import com.example.wallet.db.WalletDatabase;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -56,6 +57,11 @@ public class ExportImportActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_export_import);
 
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
         textViewExport = findViewById(R.id.textView_export);
         textViewExport.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,6 +77,8 @@ public class ExportImportActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 checkPermissionToReadExternalFiles();
+
+                syncDB();
 
                 selectDBFile();
             }
@@ -147,7 +155,8 @@ public class ExportImportActivity extends AppCompatActivity {
      */
     private void copyToFiles() {
         try {
-            File dbFile = new File(this.getDatabasePath("WalletDatabase").getAbsolutePath());
+            File dbFile = new File(this.getDatabasePath("WalletDatabase.db").getAbsolutePath());
+            Log.d("dbfile path", dbFile.getAbsolutePath());
             FileInputStream fis = new FileInputStream(dbFile);
 
             String outFileName = directoryName + File.separator +
@@ -228,9 +237,11 @@ public class ExportImportActivity extends AppCompatActivity {
             Log.d("file path", file.getPath());
             Log.d("file name", file.getName());
             // prepopulate with db from files folder
-            WalletDatabase instance = WalletDatabase.prepopulateDB(this, file);
+            WalletDatabase.prepopulateDB(this, file);
 
-            instance.getTransactionDao().getAllNonRecurringTransactions().observe(this, new Observer<List<Transaction>>() {
+            transactionViewModel = ViewModelProviders.of(this).get(TransactionViewModel.class);
+
+            transactionViewModel.getAllNonRecurringTransactions().observe(this, new Observer<List<Transaction>>() {
                 @Override
                 public void onChanged(@Nullable final List<Transaction> transactions) {
                     // Update the cached copy of the words in the transactionAdapter.
@@ -247,7 +258,7 @@ public class ExportImportActivity extends AppCompatActivity {
             InputStream fis = getContentResolver().openInputStream(path);;
 
             String outFileName = directoryName + File.separator +
-                    DATABASE_NAME + ".db";
+                    DATABASE_NAME + "Import" + ".db";
 
             File outputFile = new File(outFileName);
 

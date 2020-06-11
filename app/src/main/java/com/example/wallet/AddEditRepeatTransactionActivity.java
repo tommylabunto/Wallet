@@ -37,25 +37,25 @@ import java.util.List;
 
 public class AddEditRepeatTransactionActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener{
 
-    public static final String EXTRA_ID =
+    protected static final String EXTRA_ID =
             "com.example.wallet.EXTRA_ID";
-    public static final String EXTRA_NAME =
+    protected static final String EXTRA_NAME =
             "com.example.wallet.EXTRA_NAME";
-    public static final String EXTRA_TYPENAME =
+    protected static final String EXTRA_TYPENAME =
             "com.example.wallet.EXTRA_TYPENAME";
-    public static final String EXTRA_VALUE =
+    protected static final String EXTRA_VALUE =
             "com.example.wallet.EXTRA_VALUE";
-    public static final String EXTRA_DATE =
+    protected static final String EXTRA_DATE =
             "com.example.wallet.EXTRA_DATE";
-    public static final String EXTRA_FREQUENCY =
+    protected static final String EXTRA_FREQUENCY =
             "com.example.wallet.EXTRA_FREQUENCY";
-    public static final String EXTRA_REPEAT =
+    protected static final String EXTRA_REPEAT =
             "com.example.wallet.EXTRA_REPEAT";
-    public static final String EXTRA_RECURRING_ID =
+    protected static final String EXTRA_RECURRING_ID =
             "com.example.wallet.EXTRA_RECURRING_ID";
-    public static final String EXTRA_IS_EXPENSE_TYPE =
+    protected static final String EXTRA_IS_EXPENSE_TYPE =
             "com.example.wallet.EXTRA_IS_EXPENSE_TYPE";
-    public static final String EXTRA_OPERATION =
+    protected static final String EXTRA_OPERATION =
             "com.example.wallet.EXTRA_OPERATION";
 
     private EditText editTextName;

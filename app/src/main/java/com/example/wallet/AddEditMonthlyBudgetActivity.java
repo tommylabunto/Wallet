@@ -9,6 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -55,13 +56,26 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
 
     private void createOrSaveMonthlyBudget(String operation) {
 
-        int year = Integer.parseInt(textViewYear.getText().toString());
-        int month = Integer.parseInt(textViewMonth.getText().toString());
-        String budgetString = editTextBudget.getText().toString();
+        int year = 0;
+        int month = 0;
         double budget = 0;
+
+        String yearString = textViewYear.getText().toString().trim();
+        String monthString = textViewMonth.getText().toString().trim();
+        String budgetString = editTextBudget.getText().toString().trim();
+
+        if (!yearString.isEmpty()) {
+            year = Integer.parseInt(yearString);
+        }
+        if (!monthString.isEmpty()) {
+            month = Integer.parseInt(monthString);
+        }
 
         if (!budgetString.isEmpty()) {
             budget = Double.parseDouble(budgetString);
+        } else {
+            Toast.makeText(this, "Please insert a value", Toast.LENGTH_SHORT).show();
+            return;
         }
 
         Intent newMonthlyBudget = createIntent(budget, year, month, operation);
@@ -76,13 +90,26 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
      */
     private void deleteMonthlyBudget() {
 
-        int year = Integer.parseInt(textViewYear.getText().toString());
-        int month = Integer.parseInt(textViewMonth.getText().toString());
-        String budgetString = editTextBudget.getText().toString();
+        int year = 0;
+        int month = 0;
         double budget = 0;
+
+        String yearString = textViewYear.getText().toString().trim();
+        String monthString = textViewMonth.getText().toString().trim();
+        String budgetString = editTextBudget.getText().toString().trim();
+
+        if (!yearString.isEmpty()) {
+            year = Integer.parseInt(yearString);
+        }
+        if (!monthString.isEmpty()) {
+            month = Integer.parseInt(monthString);
+        }
 
         if (!budgetString.isEmpty()) {
             budget = Double.parseDouble(budgetString);
+        } else {
+            Toast.makeText(this, "Please insert a value", Toast.LENGTH_SHORT).show();
+            return;
         }
 
         Intent oldMonthlyBudget = createIntent(budget, year, month, "delete");
@@ -110,9 +137,9 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.add_transaction_menu, menu);
+        menuInflater.inflate(R.menu.add_item_menu, menu);
 
-        MenuItem delete = menu.findItem(R.id.delete_transaction);
+        MenuItem delete = menu.findItem(R.id.delete_item);
         delete.setVisible(false);
         return true;
     }
@@ -120,7 +147,7 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.save_transaction:
+            case R.id.save_item:
 
                 new AlertDialog.Builder(this)
                         .setTitle("Update")
@@ -146,7 +173,7 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
                         .create().show();
 
                 return true;
-            case R.id.delete_transaction:
+            case R.id.delete_item:
                 deleteMonthlyBudget();
                 return true;
             default:

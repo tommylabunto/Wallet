@@ -135,21 +135,22 @@ public class RepeatTransactionActivity extends AppCompatActivity {
 
         String recurringId = "";
 
-        for (int i = 0; i < transactions.size(); i++) {
+        if (transactions != null) {
+            for (int i = 0; i < transactions.size(); i++) {
 
-            Transaction transaction = transactions.get(i);
+                Transaction transaction = transactions.get(i);
 
-            if (recurringId.isEmpty()) {
-                recurringId = transaction.getTransactionRecurringId();
-                distinctTransactions.add(transaction);
-            }
+                if (recurringId.isEmpty()) {
+                    recurringId = transaction.getTransactionRecurringId();
+                    distinctTransactions.add(transaction);
+                }
 
-            if (!recurringId.equals(transaction.getTransactionRecurringId())) {
-                recurringId = transaction.getTransactionRecurringId();
-                distinctTransactions.add(transaction);
+                if (!recurringId.equals(transaction.getTransactionRecurringId())) {
+                    recurringId = transaction.getTransactionRecurringId();
+                    distinctTransactions.add(transaction);
+                }
             }
         }
-
         return distinctTransactions;
     }
 
@@ -188,25 +189,6 @@ public class RepeatTransactionActivity extends AppCompatActivity {
                 }
             }
         }
-    }
-
-    private void deleteRecurringTransactions(Transaction transaction) {
-
-        transactionViewModel.deleteFutureRecurringTransactions(
-                transaction.getTransactionRecurringId(),
-                transaction.getDate().getTime());
-
-        transactionViewModel.deleteTransaction(transaction);
-    }
-
-    // doesn't update the list of recurring transactions, but delete and create a new list
-    private void updateRecurringTransactions(Transaction transaction) {
-
-        deleteRecurringTransactions(transaction);
-
-        addRecurringTransactions(transaction);
-
-        Toast.makeText(this, "Transaction updated", Toast.LENGTH_SHORT).show();
     }
 
     private void addRecurringTransactions(Transaction transaction) {
@@ -265,6 +247,25 @@ public class RepeatTransactionActivity extends AppCompatActivity {
         }
 
         Toast.makeText(this, "Transaction saved", Toast.LENGTH_LONG).show();
+    }
+
+    // doesn't update the list of recurring transactions, but delete and create a new list
+    private void updateRecurringTransactions(Transaction transaction) {
+
+        deleteRecurringTransactions(transaction);
+
+        addRecurringTransactions(transaction);
+
+        Toast.makeText(this, "Transaction updated", Toast.LENGTH_SHORT).show();
+    }
+
+    private void deleteRecurringTransactions(Transaction transaction) {
+
+        transactionViewModel.deleteFutureRecurringTransactions(
+                transaction.getTransactionRecurringId(),
+                transaction.getDate().getTime());
+
+        transactionViewModel.deleteTransaction(transaction);
     }
 
     private int countRemainingRepeat(int count, int repeat, int frequency) {

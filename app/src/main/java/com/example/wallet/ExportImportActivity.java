@@ -37,7 +37,7 @@ import java.util.List;
 
 public class ExportImportActivity extends AppCompatActivity {
 
-    static final int REQUEST_SQLITE_GET = 1;
+    protected static final int REQUEST_SQLITE_GET = 1;
 
     private static final int STORAGE_PERMISSION_CODE = 2;
 

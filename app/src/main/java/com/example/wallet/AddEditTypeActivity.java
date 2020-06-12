@@ -128,17 +128,17 @@ public class AddEditTypeActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.add_transaction_menu, menu);
+        menuInflater.inflate(R.menu.add_item_menu, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.save_transaction:
+            case R.id.save_item:
                 createOrSaveType();
                 return true;
-            case R.id.delete_transaction:
+            case R.id.delete_item:
                 deleteType();
                 return true;
             default:

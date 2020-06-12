@@ -62,22 +62,25 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
     private EditText editTextValue;
     private EditText editTextDate;
     private EditText editTextRepeat;
-    private Spinner spinner;
-    private int frequency;
 
-    private String type;
+    private Spinner spinnerFrequency;
+    private ArrayAdapter<CharSequence> adapterFrequency;
+
     private Spinner spinnerType;
     private ArrayAdapter<String> adapterType;
-
-    private ArrayAdapter<CharSequence> spinnerAdapter;
-
-    private static List<String> expenseTypeList;
-    private static List<String> incomeTypeList;
 
     private TypeViewModel typeViewModel;
 
     private RadioButton radioButtonExpense;
     private RadioButton radioButtonIncome;
+
+    private static String type;
+
+    private static int frequency;
+
+    private static List<String> expenseTypeList;
+    private static List<String> incomeTypeList;
+
     private static boolean isExpenseType;
 
     @Override
@@ -91,7 +94,8 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
         editTextName = findViewById(R.id.edit_text_name);
         editTextValue = findViewById(R.id.edit_text_value);
         editTextDate = findViewById(R.id.edit_text_dateTime);
-        spinner = findViewById(R.id.spinner);
+        spinnerFrequency = findViewById(R.id.spinner);
+        spinnerType = findViewById(R.id.spinner_repeat_type);
         editTextRepeat = findViewById(R.id.edit_text_num_repeat);
 
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
@@ -105,11 +109,11 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
             }
         });
 
-        spinnerAdapter = ArrayAdapter.createFromResource(this,
+        adapterFrequency = ArrayAdapter.createFromResource(this,
                 R.array.frequency_array, android.R.layout.simple_spinner_item);
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(spinnerAdapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        adapterFrequency.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerFrequency.setAdapter(adapterFrequency);
+        spinnerFrequency.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String frequencyString = parent.getItemAtPosition(position).toString();
@@ -120,60 +124,12 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
             }
         });
 
-        spinnerType = findViewById(R.id.spinner_repeat_type);
-
         isExpenseType = true;
         expenseTypeList = new ArrayList<>();
         incomeTypeList = new ArrayList<>();
         initViewModel();
 
         extractIntent();
-    }
-
-    private void extractIntent() {
-
-        Intent intent = getIntent();
-        if (intent.hasExtra(EXTRA_ID)) {
-            editTextName.setText(intent.getStringExtra(EXTRA_NAME));
-            //editTextTypeName.setText(intent.getStringExtra(EXTRA_TYPENAME));
-            editTextDate.setText(intent.getStringExtra(EXTRA_DATE));
-            editTextValue.setText(intent.getDoubleExtra(EXTRA_VALUE, 1) + "");
-            editTextRepeat.setText(intent.getIntExtra(EXTRA_REPEAT, 1) + "");
-
-            frequency = intent.getIntExtra(EXTRA_FREQUENCY, 12);
-            String frequencyString = FrequencyStringConverter.convertFrequencyIntToString(frequency);
-            int selectionPosition= spinnerAdapter.getPosition(frequencyString);
-            spinner.setSelection(selectionPosition);
-
-            type = intent.getStringExtra(EXTRA_TYPENAME);
-
-            if (intent.getBooleanExtra(EXTRA_IS_EXPENSE_TYPE, true)) {
-                radioButtonExpense.setChecked(true);
-                isExpenseType = true;
-            } else {
-                radioButtonIncome.setChecked(true);
-                isExpenseType = false;
-            }
-
-            if (adapterType == null) {
-                if (isExpenseType) {
-                    adapterType = new ArrayAdapter<String>(this,
-                            android.R.layout.simple_spinner_item, expenseTypeList);
-                } else {
-                    adapterType = new ArrayAdapter<String>(this,
-                            android.R.layout.simple_spinner_item, incomeTypeList);
-                }
-                adapterType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            }
-
-            int selectionPositionType = adapterType.getPosition(type);
-            Log.d("selectionPositionType", selectionPositionType + "");
-            spinnerType.setSelection(selectionPositionType);
-        } else {
-            setTodayDate(editTextDate);
-            radioButtonExpense.setChecked(true);
-            isExpenseType = true;
-        }
     }
 
     private void initViewModel() {
@@ -204,20 +160,13 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
             }
         }
 
-        showSpinner();
-        extractIntent();
+        showSpinnerType();
+        //extractIntent();
     }
 
-    private void showSpinner() {
+    private void showSpinnerType() {
 
-        if (isExpenseType) {
-            adapterType = new ArrayAdapter<String>(this,
-                    android.R.layout.simple_spinner_item, expenseTypeList);
-        } else {
-            adapterType = new ArrayAdapter<String>(this,
-                    android.R.layout.simple_spinner_item, incomeTypeList);
-        }
-        adapterType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        initAdapterType();
         spinnerType.setAdapter(adapterType);
         spinnerType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -230,6 +179,57 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+    }
+
+    private void extractIntent() {
+
+        Intent intent = getIntent();
+        if (intent.hasExtra(EXTRA_ID)) {
+            editTextName.setText(intent.getStringExtra(EXTRA_NAME));
+            //editTextTypeName.setText(intent.getStringExtra(EXTRA_TYPENAME));
+            editTextDate.setText(intent.getStringExtra(EXTRA_DATE));
+            editTextValue.setText(intent.getDoubleExtra(EXTRA_VALUE, 1) + "");
+            editTextRepeat.setText(intent.getIntExtra(EXTRA_REPEAT, 1) + "");
+
+            frequency = intent.getIntExtra(EXTRA_FREQUENCY, 12);
+            String frequencyString = FrequencyStringConverter.convertFrequencyIntToString(frequency);
+            int selectionPosition= adapterFrequency.getPosition(frequencyString);
+            spinnerFrequency.setSelection(selectionPosition);
+
+            if (intent.getBooleanExtra(EXTRA_IS_EXPENSE_TYPE, true)) {
+                radioButtonExpense.setChecked(true);
+                isExpenseType = true;
+            } else {
+                radioButtonIncome.setChecked(true);
+                isExpenseType = false;
+            }
+
+            if (adapterType == null) {
+                initAdapterType();
+            }
+
+            type = intent.getStringExtra(EXTRA_TYPENAME);
+            int selectionPositionType = adapterType.getPosition(type);
+            Log.d("selectionPositionType", selectionPositionType + "");
+            spinnerType.setSelection(selectionPositionType);
+        } else {
+            setTodayDate(editTextDate);
+            radioButtonExpense.setChecked(true);
+            isExpenseType = true;
+        }
+    }
+
+    // it takes a while to copy types, so the list might be null
+    private void initAdapterType() {
+
+        if (isExpenseType) {
+            adapterType = new ArrayAdapter<String>(this,
+                    android.R.layout.simple_spinner_item, expenseTypeList);
+        } else {
+            adapterType = new ArrayAdapter<String>(this,
+                    android.R.layout.simple_spinner_item, incomeTypeList);
+        }
+        adapterType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     }
 
     private Calendar convertEditTextToCalendar(EditText editTextDate) {
@@ -245,8 +245,8 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
     private void createOrSaveTransaction() {
 
         String name = editTextName.getText().toString().trim();
-        String dateString = editTextDate.getText().toString();
-        String valueString = editTextValue.getText().toString();
+        String dateString = editTextDate.getText().toString().trim();
+        String valueString = editTextValue.getText().toString().trim();
         double value = 0;
 
         String repeatString = editTextRepeat.getText().toString();
@@ -280,11 +280,11 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
 
         String name = editTextName.getText().toString().trim();
         //String typeName = editTextTypeName.getText().toString().trim();
-        String dateString = editTextDate.getText().toString();
-        String valueString = editTextValue.getText().toString();
+        String dateString = editTextDate.getText().toString().trim();
+        String valueString = editTextValue.getText().toString().trim();
         double value = 0;
 
-        String repeatString = editTextRepeat.getText().toString();
+        String repeatString = editTextRepeat.getText().toString().trim();
 
         int repeat = 0;
 
@@ -333,17 +333,17 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.add_transaction_menu, menu);
+        menuInflater.inflate(R.menu.add_item_menu, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.save_transaction:
+            case R.id.save_item:
                 createOrSaveTransaction();
                 return true;
-            case R.id.delete_transaction:
+            case R.id.delete_item:
                 deleteTransaction();
                 return true;
             default:
@@ -360,13 +360,13 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
             case R.id.radio_expense:
                 if (checked) {
                     isExpenseType = true;
-                    showSpinner();
+                    showSpinnerType();
                     break;
                 }
             case R.id.radio_income:
                 if (checked) {
                     isExpenseType = false;
-                    showSpinner();
+                    showSpinnerType();
                     break;
                 }
         }

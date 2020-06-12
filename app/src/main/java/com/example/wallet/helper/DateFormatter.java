@@ -13,20 +13,22 @@ public class DateFormatter {
      */
     public static Date formatStringToDate(String dateString) {
 
-        // dateString is in the format of "02/12/2020"
-        String dayString = dateString.substring(0,2);
-        String monthString = dateString.substring(3,5);
-        String yearString = dateString.substring(6,10);
-
         Calendar calendar = Calendar.getInstance();
 
-        int day = Integer.parseInt(dayString);
-        int month = Integer.parseInt(monthString) - 1;
-        int year = Integer.parseInt(yearString);
+        if (!dateString.isEmpty()) {
+            // dateString is in the format of "02/12/2020"
+            String dayString = dateString.substring(0,2);
+            String monthString = dateString.substring(3,5);
+            String yearString = dateString.substring(6,10);
 
-        calendar.set(Calendar.DAY_OF_MONTH, day);
-        calendar.set(Calendar.MONTH, month);
-        calendar.set(Calendar.YEAR, year);
+            int day = Integer.parseInt(dayString);
+            int month = Integer.parseInt(monthString) - 1;
+            int year = Integer.parseInt(yearString);
+
+            calendar.set(Calendar.DAY_OF_MONTH, day);
+            calendar.set(Calendar.MONTH, month);
+            calendar.set(Calendar.YEAR, year);
+        }
 
         return calendar.getTime();
     }

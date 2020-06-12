@@ -25,8 +25,8 @@ import java.util.List;
 
 public class MonthlyBudgetActivity extends AppCompatActivity {
 
-    public static final int ADD_MONTHLY_BUDGET_ACTIVITY_REQUEST_CODE = 1;
-    public static final int EDIT_MONTHLY_BUDGET_ACTIVITY_REQUEST_CODE = 2;
+    protected static final int ADD_MONTHLY_BUDGET_ACTIVITY_REQUEST_CODE = 1;
+    protected static final int EDIT_MONTHLY_BUDGET_ACTIVITY_REQUEST_CODE = 2;
 
     private MonthlyBudgetViewModel monthlyBudgetViewModel;
 
@@ -163,6 +163,20 @@ public class MonthlyBudgetActivity extends AppCompatActivity {
         }
     }
 
+    private MonthlyBudget extractDataToMonthlyBudget(Intent data, Long id) {
+
+        double budget = data.getDoubleExtra(AddEditMonthlyBudgetActivity.EXTRA_BUDGET, 0);
+        int year = data.getIntExtra(AddEditMonthlyBudgetActivity.EXTRA_YEAR, 0);
+        int month = data.getIntExtra(AddEditMonthlyBudgetActivity.EXTRA_MONTH, 0);
+
+        MonthlyBudget monthlyBudget = new MonthlyBudget(budget, year, month);
+
+        if (id != 0) {
+            monthlyBudget.setMonthlyBudgetId(id);
+        }
+        return monthlyBudget;
+    }
+
     private void showSnackbar(MonthlyBudget monthlyBudget) {
 
         Snackbar snackbar = Snackbar.make(coordinatorLayout, "Monthly Budget deleted", Snackbar.LENGTH_LONG)
@@ -178,19 +192,5 @@ public class MonthlyBudgetActivity extends AppCompatActivity {
                 });
 
         snackbar.show();
-    }
-
-    private MonthlyBudget extractDataToMonthlyBudget(Intent data, Long id) {
-
-        double budget = data.getDoubleExtra(AddEditMonthlyBudgetActivity.EXTRA_BUDGET, 0);
-        int year = data.getIntExtra(AddEditMonthlyBudgetActivity.EXTRA_YEAR, 0);
-        int month = data.getIntExtra(AddEditMonthlyBudgetActivity.EXTRA_MONTH, 0);
-
-        MonthlyBudget monthlyBudget = new MonthlyBudget(budget, year, month);
-
-        if (id != 0) {
-            monthlyBudget.setMonthlyBudgetId(id);
-        }
-        return monthlyBudget;
     }
 }

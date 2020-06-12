@@ -41,7 +41,7 @@ public class SearchTransactionActivity extends AppCompatActivity {
     private CoordinatorLayout coordinatorLayout;
 
     // save or delete
-    public static final int EDIT_TRANSACTION_ACTIVITY_REQUEST_CODE = 2;
+    protected static final int EDIT_TRANSACTION_ACTIVITY_REQUEST_CODE = 2;
 
     private static WalletDatabase walletDatabase;
 

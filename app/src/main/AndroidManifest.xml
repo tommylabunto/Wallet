@@ -83,6 +83,9 @@
             android:name=".helper.SearchSuggestionProvider"
             android:authorities="com.example.wallet.SearchSuggestionProvider" />
 
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>

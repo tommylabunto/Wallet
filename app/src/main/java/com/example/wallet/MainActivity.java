@@ -27,7 +27,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.wallet.adapter.TransactionAdapter;
 import com.example.wallet.db.WalletDatabase;
 import com.example.wallet.db.entity.Transaction;
-import com.example.wallet.db.viewmodel.MonthlyBudgetViewModel;
 import com.example.wallet.db.viewmodel.TransactionViewModel;
 import com.example.wallet.db.viewmodel.TypeViewModel;
 import com.example.wallet.helper.DateFormatter;
@@ -39,18 +38,28 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-// TODO: throw possible exceptions (check if not null)
-// TODO: try to use functional approach (return, dont set)
+/*
+TODO: (note):  use sp for text and container for text -> it scales with phone size and font size preference on phone
+TODO: (note): try to use flat view hierachy, instead of nested
+TODO: (note): change all input types to material design
+
+ */
+// TODO: improve UI for settings (change to cardview) (today)
+// TODO: improve UI for type (today)
+// TODO: improve UI for monthly budget (today)
+// TODO: improve UI for main, month view, add
+
 
 /* (end)
+// TODO: use error text for repeat transaction
 // TODO: change string to string resource
-// TODO: !! improve UI (use material design, use dribble or ui websites for inspiration)
 // TODO: set up cards for user to see when first download
 // TODO: comply with google's standards
 // TODO: learn to handle room migration
  */
 /*
 TODO: import database (try update INSTANCE in db, refresh viewmodel) (second)
+TODO: use sp or dp
 - can createfromassets successfully
 - works if change the name in wallet database (prepopulate db), it takes a while,
  then need to change the name in getInstance to load it
@@ -73,14 +82,13 @@ public class MainActivity extends AppCompatActivity {
 
     private TypeViewModel typeViewModel;
     private TransactionViewModel transactionViewModel;
-    private MonthlyBudgetViewModel monthlyBudgetViewModel;
 
     private TransactionAdapter transactionAdapter;
 
     private CoordinatorLayout coordinatorLayout;
 
-    private Calendar startMonthCal;
-    private Calendar endMonthCal;
+    private static Calendar startMonthCal;
+    private static Calendar endMonthCal;
 
     private ImageButton prevMonth;
     private ImageButton nextMonth;
@@ -203,17 +211,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-//
-//        monthlyBudgetViewModel = ViewModelProviders.of(this).get(MonthlyBudgetViewModel.class);
-//
-//        monthlyBudgetViewModel.getAllMonthlyBudgets().observe(this, new Observer<List<MonthlyBudget>>() {
-//            @Override
-//            public void onChanged(@Nullable final List<MonthlyBudget> monthlyBudgets) {
-//                // Update the cached copy of the words in the adapter.
-//                //adapter.setWords(words);
-//            }
-//        });
     }
 
     private void updateTransactionsInAMonth() {

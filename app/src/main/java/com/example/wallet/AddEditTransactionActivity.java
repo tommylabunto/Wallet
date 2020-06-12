@@ -56,7 +56,7 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
 
     private Spinner spinner;
     private ArrayAdapter<String> adapter;
-    private String type;
+    private static String type;
 
     private static List<String> expenseTypeList;
     private static List<String> incomeTypeList;
@@ -119,14 +119,7 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
             }
 
             if (adapter == null) {
-                if (isExpenseType) {
-                    adapter = new ArrayAdapter<String>(this,
-                            android.R.layout.simple_spinner_item, expenseTypeList);
-                } else {
-                    adapter = new ArrayAdapter<String>(this,
-                            android.R.layout.simple_spinner_item, incomeTypeList);
-                }
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                initAdapterType();
             }
 
             int selectionPosition = adapter.getPosition(type);
@@ -168,18 +161,11 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
         }
 
         showSpinner();
-        extractIntent();
+        //extractIntent();
     }
 
     private void showSpinner() {
-        if (isExpenseType) {
-            adapter = new ArrayAdapter<String>(this,
-                    android.R.layout.simple_spinner_item, expenseTypeList);
-        } else {
-            adapter = new ArrayAdapter<String>(this,
-                    android.R.layout.simple_spinner_item, incomeTypeList);
-        }
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        initAdapterType();
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -192,6 +178,19 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+    }
+
+    // it takes a while to copy types, so the list might be null
+    private void initAdapterType() {
+
+        if (isExpenseType) {
+            adapter = new ArrayAdapter<String>(this,
+                    android.R.layout.simple_spinner_item, expenseTypeList);
+        } else {
+            adapter = new ArrayAdapter<String>(this,
+                    android.R.layout.simple_spinner_item, incomeTypeList);
+        }
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     }
 
     private Calendar convertEditTextToCalendar(EditText editTextDate) {
@@ -210,8 +209,8 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
     private void createOrSaveTransaction() {
 
         String name = editTextName.getText().toString().trim();
-        String dateString = editTextDate.getText().toString();
-        String valueString = editTextValue.getText().toString();
+        String dateString = editTextDate.getText().toString().trim();
+        String valueString = editTextValue.getText().toString().trim();
         double value = 0;
 
         if (!valueString.isEmpty()) {
@@ -232,8 +231,8 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
     private void deleteTransaction() {
 
         String name = editTextName.getText().toString().trim();
-        String dateString = editTextDate.getText().toString();
-        String valueString = editTextValue.getText().toString();
+        String dateString = editTextDate.getText().toString().trim();
+        String valueString = editTextValue.getText().toString().trim();
         double value = 0;
 
         if (!valueString.isEmpty()) {
@@ -289,17 +288,17 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.add_transaction_menu, menu);
+        menuInflater.inflate(R.menu.add_item_menu, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.save_transaction:
+            case R.id.save_item:
                 createOrSaveTransaction();
                 return true;
-            case R.id.delete_transaction:
+            case R.id.delete_item:
                 deleteTransaction();
                 return true;
             default:

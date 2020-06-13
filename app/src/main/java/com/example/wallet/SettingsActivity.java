@@ -11,7 +11,6 @@ import android.provider.SearchRecentSuggestions;
 import android.util.Log;
 import android.view.View;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -48,18 +47,11 @@ public class SettingsActivity extends AppCompatActivity {
 
     protected static final int REPEAT_ACTIVITY_REQUEST_CODE = 3;
 
-    private TextView textViewRepeat;
-    private TextView textViewExportImport;
-    private TextView textViewReset;
-    private TextView textViewType;
-
     private Switch switchCarryOver;
 
     private CarryOverViewModel carryOverViewModel;
     private static CarryOver carryOver;
 
-    private TextView textViewMonthlyBudget;
-    private TextView textViewClearSearch;
 
     protected static final int REQUEST_SQLITE_GET = 1;
 
@@ -67,10 +59,16 @@ public class SettingsActivity extends AppCompatActivity {
 
     private TransactionViewModel transactionViewModel;
 
-    private TextView textViewExport;
-    private TextView textViewImport;
-
     private CardView cardViewRepeat;
+    private CardView cardViewType;
+    private CardView cardViewMonthlyBudget;
+
+    private CardView cardViewClearSearch;
+    private CardView cardViewEraseAllData;
+
+    private CardView cardViewExport;
+    private CardView cardViewImport;
+
 
     private static final String DATABASE_NAME = "WalletDatabase";
     //    private static final String DirectoryName = "data/user/0/com.example.wallet/databases/WalletDatabase";
@@ -117,30 +115,52 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        textViewExport = findViewById(R.id.textView_export);
-        textViewExport.setOnClickListener(new View.OnClickListener() {
+        cardViewType = findViewById(R.id.cardview_type);
+        cardViewType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                syncDB();
-                copyToFiles();
-                exportDB();
+                Intent goToTypeActivity= new Intent(SettingsActivity.this, TypeActivity.class);
+                startActivity(goToTypeActivity);
             }
         });
 
-        textViewImport = findViewById(R.id.textView_import);
-        textViewImport.setOnClickListener(new View.OnClickListener() {
+        cardViewMonthlyBudget = findViewById(R.id.cardview_monthly_budget);
+        cardViewMonthlyBudget.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                checkPermissionToReadExternalFiles();
-
-                syncDB();
-
-                selectDBFile();
+                Intent goToMonthlyBudgetActivity= new Intent(SettingsActivity.this, MonthlyBudgetActivity.class);
+                startActivity(goToMonthlyBudgetActivity);
             }
         });
 
-        textViewReset = findViewById(R.id.textView_erase_all_data);
-        textViewReset.setOnClickListener(new View.OnClickListener() {
+        cardViewClearSearch = findViewById(R.id.cardview_clear_search);
+        cardViewClearSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SearchRecentSuggestions suggestions = new SearchRecentSuggestions(SettingsActivity.this,
+                        SearchSuggestionProvider.AUTHORITY, SearchSuggestionProvider.MODE);
+
+                new AlertDialog.Builder(SettingsActivity.this)
+                        .setTitle("Warning")
+                        .setMessage("Are you sure you want to clear search history?")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                suggestions.clearHistory();
+                            }
+                        })
+                        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .create().show();
+            }
+        });
+
+        cardViewEraseAllData = findViewById(R.id.cardview_erase_all_data);
+        cardViewEraseAllData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -167,14 +187,28 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        textViewType = findViewById(R.id.textView_type);
-        textViewType.setOnClickListener(new View.OnClickListener() {
+        cardViewExport = findViewById(R.id.cardview_export);
+        cardViewExport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent goToTypeActivity= new Intent(SettingsActivity.this, TypeActivity.class);
-                startActivity(goToTypeActivity);
+                syncDB();
+                copyToFiles();
+                exportDB();
             }
         });
+
+        cardViewImport = findViewById(R.id.cardview_import);
+        cardViewImport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                checkPermissionToReadExternalFiles();
+
+                syncDB();
+
+                selectDBFile();
+            }
+        });
+
 //        switchCarryOver = findViewById(R.id.switch_carryover);
 //
 //        if (carryOver != null && carryOver.isCarryOver()) {
@@ -194,41 +228,6 @@ public class SettingsActivity extends AppCompatActivity {
 //                }
 //            }
 //        });
-
-        textViewMonthlyBudget = findViewById(R.id.textView_monthly_budget);
-        textViewMonthlyBudget.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent goToMonthlyBudgetActivity= new Intent(SettingsActivity.this, MonthlyBudgetActivity.class);
-                startActivity(goToMonthlyBudgetActivity);
-            }
-        });
-
-        textViewClearSearch = findViewById(R.id.textView_clear_search);
-        textViewClearSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                SearchRecentSuggestions suggestions = new SearchRecentSuggestions(SettingsActivity.this,
-                        SearchSuggestionProvider.AUTHORITY, SearchSuggestionProvider.MODE);
-
-                new AlertDialog.Builder(SettingsActivity.this)
-                        .setTitle("Warning")
-                        .setMessage("Are you sure you want to clear search history?")
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                suggestions.clearHistory();
-                            }
-                        })
-                        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .create().show();
-            }
-        });
     }
 
     private void initCarryOver() {

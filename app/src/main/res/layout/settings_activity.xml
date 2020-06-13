@@ -2,7 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/settings"
@@ -19,7 +19,7 @@
             android:layout_marginTop="10dp"
             android:fontFamily="@font/roboto_bold"
             android:text="Data"
-            android:textSize="24sp"
+            android:textSize="20sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -28,12 +28,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:orientation="vertical"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView_data_header"
             android:clickable="true"
             android:foreground="?android:attr/selectableItemBackground"
-            app:cardElevation="0dp">
+            android:orientation="vertical"
+            app:cardElevation="0dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView_data_header">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraint_layout_repeat"
@@ -66,60 +66,99 @@
 
         </androidx.cardview.widget.CardView>
 
-        <TextView
-            android:id="@+id/textView_type"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardview_type"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="70dp"
             android:layout_marginTop="10dp"
             android:clickable="true"
-            android:text="Type"
-            android:textSize="20sp"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:orientation="vertical"
+            app:cardElevation="0dp"
             app:layout_constraintLeft_toLeftOf="parent"
-            android:background="?attr/selectableItemBackground"
-            app:layout_constraintTop_toBottomOf="@+id/cardview_transaction" />
+            app:layout_constraintTop_toBottomOf="@+id/cardview_transaction">
 
-        <TextView
-            android:id="@+id/textView_description_type"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraint_layout_type"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textView_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="70dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Type"
+                    android:textSize="20sp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/constraint_layout_type" />
+
+                <TextView
+                    android:id="@+id/textView_description_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="70dp"
+                    android:layout_marginEnd="10dp"
+                    android:fontFamily="@font/roboto_light"
+                    android:text="Edit transaction types."
+                    android:textSize="16sp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView_type" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardview_monthly_budget"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="70dp"
-            android:layout_marginEnd="10dp"
-            android:fontFamily="@font/roboto_light"
-            android:text="Edit transaction types."
-            android:textSize="16sp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView_type" />
-
-        <TextView
-            android:id="@+id/textView_monthly_budget"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="70dp"
             android:layout_marginTop="10dp"
             android:clickable="true"
-            android:text="Monthly Budget"
-            android:textSize="20sp"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:orientation="vertical"
+            app:cardElevation="0dp"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView_description_type" />
+            app:layout_constraintTop_toBottomOf="@+id/cardview_type">
 
-        <TextView
-            android:id="@+id/textView_description_monthly_budget"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="70dp"
-            android:layout_marginEnd="10dp"
-            android:fontFamily="@font/roboto_light"
-            android:text="Edit Monthly Budgets."
-            android:textSize="16sp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView_monthly_budget" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraint_layout_monthly_budget"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textView_monthly_budget"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="70dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Monthly Budget"
+                    android:textSize="20sp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/constraint_layout_monthly_budget" />
+
+                <TextView
+                    android:id="@+id/textView_description_monthly_budget"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="70dp"
+                    android:layout_marginEnd="10dp"
+                    android:fontFamily="@font/roboto_light"
+                    android:text="Edit Monthly Budgets."
+                    android:textSize="16sp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView_monthly_budget" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
 
         <View
             android:id="@+id/divider_one"
             style="@style/divider"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView_description_monthly_budget" />
+            app:layout_constraintTop_toBottomOf="@+id/cardview_monthly_budget" />
 
         <TextView
             android:id="@+id/textView_reset_header"
@@ -129,63 +168,103 @@
             android:layout_marginTop="15dp"
             android:fontFamily="@font/roboto_bold"
             android:text="Reset"
-            android:textSize="24sp"
+            android:textSize="20sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/divider_one" />
 
-        <TextView
-            android:id="@+id/textView_clear_search"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardview_clear_search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="70dp"
             android:layout_marginTop="10dp"
             android:clickable="true"
-            android:text="Clear search history"
-            android:textSize="20sp"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:orientation="vertical"
+            app:cardElevation="0dp"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView_reset_header" />
+            app:layout_constraintTop_toBottomOf="@+id/textView_reset_header">
 
-        <TextView
-            android:id="@+id/textView_description_clear_search"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraint_layout_clear_search"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textView_clear_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="70dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Clear search history"
+                    android:textSize="20sp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/constraint_layout_clear_search" />
+
+                <TextView
+                    android:id="@+id/textView_description_clear_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="70dp"
+                    android:layout_marginEnd="10dp"
+                    android:fontFamily="@font/roboto_light"
+                    android:text="Remove all keywords from search history."
+                    android:textSize="16sp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView_clear_search" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardview_erase_all_data"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="70dp"
-            android:layout_marginEnd="10dp"
-            android:fontFamily="@font/roboto_light"
-            android:text="Remove all keywords from search history."
-            android:textSize="16sp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView_clear_search" />
-
-        <TextView
-            android:id="@+id/textView_erase_all_data"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="70dp"
             android:layout_marginTop="10dp"
             android:clickable="true"
-            android:text="Erase all data"
-            android:textSize="20sp"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:orientation="vertical"
+            app:cardElevation="0dp"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView_description_clear_search" />
+            app:layout_constraintTop_toBottomOf="@+id/cardview_clear_search">
 
-        <TextView
-            android:id="@+id/textView_description_erase_all_data"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="70dp"
-            android:layout_marginEnd="10dp"
-            android:fontFamily="@font/roboto_light"
-            android:text="Erases all data in database and deleted data cannot be restored."
-            android:textSize="16sp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView_erase_all_data" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraint_layout_erase_all_data"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textView_erase_all_data"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="70dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Erase all data"
+                    android:textSize="20sp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/constraint_layout_erase_all_data" />
+
+                <TextView
+                    android:id="@+id/textView_description_erase_all_data"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="70dp"
+                    android:layout_marginEnd="10dp"
+                    android:fontFamily="@font/roboto_light"
+                    android:text="Erases all data in database and deleted data cannot be restored."
+                    android:textSize="16sp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView_erase_all_data" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
 
         <View
             android:id="@+id/divider_two"
             style="@style/divider"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView_description_erase_all_data" />
+            app:layout_constraintTop_toBottomOf="@+id/cardview_erase_all_data" />
 
         <TextView
             android:id="@+id/textView_backup_header"
@@ -196,57 +275,98 @@
             android:clickable="true"
             android:fontFamily="@font/roboto_bold"
             android:text="Backup"
-            android:textSize="24sp"
+            android:textSize="20sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/divider_two" />
 
-        <TextView
-            android:id="@+id/textView_export"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardview_export"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="70dp"
             android:layout_marginTop="10dp"
             android:clickable="true"
-            android:text="Export"
-            android:textSize="20sp"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:orientation="vertical"
+            app:cardElevation="0dp"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView_backup_header" />
+            app:layout_constraintTop_toBottomOf="@+id/textView_backup_header">
 
-        <TextView
-            android:id="@+id/textView_description_export"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraint_layout_export"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textView_export"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="70dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Export"
+                    android:textSize="20sp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/constraint_layout_export" />
+
+                <TextView
+                    android:id="@+id/textView_description_export"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="70dp"
+                    android:layout_marginEnd="10dp"
+                    android:fontFamily="@font/roboto_light"
+                    android:text="Export database through one of your communication app."
+                    android:textSize="16sp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView_export" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardview_import"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="70dp"
-            android:layout_marginEnd="10dp"
-            android:fontFamily="@font/roboto_light"
-            android:text="Export database through one of your communication app."
-            android:textSize="16sp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView_export" />
-
-        <TextView
-            android:id="@+id/textView_import"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="70dp"
             android:layout_marginTop="10dp"
             android:clickable="true"
-            android:text="Import"
-            android:textSize="20sp"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:orientation="vertical"
+            app:cardElevation="0dp"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView_description_export" />
+            app:layout_constraintTop_toBottomOf="@+id/cardview_export">
 
-        <TextView
-            android:id="@+id/textView_description_import"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="70dp"
-            android:layout_marginEnd="10dp"
-            android:fontFamily="@font/roboto_light"
-            android:text="Import database by selecting a document in your local storage. Data in the existing database wil be removed."
-            android:textSize="16sp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView_import" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraint_layout_import"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textView_import"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="70dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Import"
+                    android:textSize="20sp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/constraint_layout_import" />
+
+                <TextView
+                    android:id="@+id/textView_description_import"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="70dp"
+                    android:layout_marginEnd="10dp"
+                    android:fontFamily="@font/roboto_light"
+                    android:text="Import database by selecting a document in your local storage. Data in the existing database wil be removed."
+                    android:textSize="16sp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView_import" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
 
         <!--    <TextView-->
         <!--        android:id="@+id/textView_carryOver"-->

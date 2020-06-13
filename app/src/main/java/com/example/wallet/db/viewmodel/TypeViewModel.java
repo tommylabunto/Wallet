@@ -35,6 +35,14 @@ public class TypeViewModel extends AndroidViewModel {
         return allTypes;
     }
 
+    public LiveData<List<Type>> getAllExpenseTypes() {
+        return typeRepository.getAllExpenseTypes();
+    }
+
+    public LiveData<List<Type>> getAllIncomeTypes() {
+        return typeRepository.getAllIncomeTypes();
+    }
+
     public void insertType(Type type) {
         typeRepository.insertType(type);
     }

@@ -4,9 +4,12 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,6 +42,24 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
         textViewYear = findViewById(R.id.textView_year);
         textViewMonth = findViewById(R.id.textView_month);
         editTextBudget = findViewById(R.id.edit_text_budget);
+
+        // bring focus to edit text and show keybaord
+        if (editTextBudget.requestFocus()) {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        }
+
+        // submit form when clicked 'enter' on soft keyboard
+        editTextBudget.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_SEND) {
+                    showAlertDialog();
+                    handled = true;
+                }
+                return handled;
+            }
+        });
 
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
 
@@ -148,30 +169,7 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.save_item:
-
-                new AlertDialog.Builder(this)
-                        .setTitle("Update")
-                        .setMessage("Do you want to set this amount as a default budget?")
-                        .setPositiveButton("yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                createOrSaveMonthlyBudget("save all");
-                            }
-                        })
-                        .setNegativeButton("no", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                createOrSaveMonthlyBudget("save");
-                            }
-                        })
-                        .setNeutralButton("cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .create().show();
-
+                showAlertDialog();
                 return true;
             case R.id.delete_item:
                 deleteMonthlyBudget();
@@ -179,5 +177,30 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void showAlertDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Update")
+                .setMessage("Do you want to set this amount as a default budget?")
+                .setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        createOrSaveMonthlyBudget("save all");
+                    }
+                })
+                .setNegativeButton("no", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        createOrSaveMonthlyBudget("save");
+                    }
+                })
+                .setNeutralButton("cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create().show();
     }
 }

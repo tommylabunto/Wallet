@@ -2,12 +2,16 @@ package com.example.wallet;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -37,6 +41,25 @@ public class AddEditTypeActivity extends AppCompatActivity {
         editTextType = findViewById(R.id.edit_text_type);
         radioButtonExpense = findViewById(R.id.radio_expense);
         radioButtonIncome = findViewById(R.id.radio_income);
+
+        // bring focus to edit text and show keybaord
+        if (editTextType.requestFocus()) {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        }
+
+        // submit form when clicked 'enter' on soft keyboard
+        editTextType.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_SEND) {
+                    createOrSaveType();
+                    handled = true;
+                }
+                return handled;
+            }
+        });
+
 
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
 

@@ -31,4 +31,10 @@ public interface TypeDao {
 
     @Query("SELECT typeId, name, isExpenseType FROM type ORDER BY name ASC")
     public LiveData<List<Type>> getAllTypes();
+
+    @Query("SELECT typeId, name, isExpenseType FROM type WHERE isExpenseType = 1 ORDER BY name ASC")
+    public LiveData<List<Type>> getAllExpenseTypes();
+
+    @Query("SELECT typeId, name, isExpenseType FROM type WHERE isExpenseType = 0 ORDER BY name ASC")
+    public LiveData<List<Type>> getAllIncomeTypes();
 }

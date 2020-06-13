@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_type_layout"
@@ -7,12 +7,50 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerview_type"
-        android:layout_width="348dp"
-        android:layout_height="504dp"
-        android:layout_marginBottom="5dp"
-        tools:listitem="@layout/recyclerview_type_item"
-        android:scrollbars="vertical"/>
+    <TextView
+        android:id="@+id/textView_expense"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/roboto_bold"
+        android:text="Expense"
+        android:textSize="20sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"  />
 
-</LinearLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerview_expense_type"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_marginLeft="70dp"
+        android:layout_marginTop="10dp"
+        android:scrollbars="vertical"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_expense"
+        tools:listitem="@layout/recyclerview_type_item" />
+
+    <TextView
+        android:id="@+id/textView_income"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/roboto_bold"
+        android:text="Income"
+        android:textSize="20sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerview_expense_type"  />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerview_income_type"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_marginLeft="70dp"
+        android:layout_marginTop="10dp"
+        android:scrollbars="vertical"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_income"
+        tools:listitem="@layout/recyclerview_type_item" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

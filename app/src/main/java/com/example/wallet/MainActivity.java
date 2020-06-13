@@ -44,11 +44,11 @@ TODO: (note): try to use flat view hierachy, instead of nested
 TODO: (note): change all input types to material design
 
  */
-// TODO: improve UI for settings (change to cardview) (today)
-// TODO: improve UI for type (today)
-// TODO: improve UI for monthly budget (today)
+// TODO: improve UI for monthly budget, allow for CRUD, check for null in monthly view (today)
 // TODO: improve UI for main, month view, add
-
+// TODO: decide on app color
+// TODO: improve UI for recycler view item
+// TODO: material text fields yes or no?
 
 /* (end)
 // TODO: use error text for repeat transaction

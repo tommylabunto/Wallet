@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.wallet.adapter.TypeAdapter;
@@ -28,9 +28,12 @@ public class TypeActivity extends AppCompatActivity {
     protected static final int ADD_TYPE_ACTIVITY_REQUEST_CODE = 1;
     protected static final int EDIT_TYPE_ACTIVITY_REQUEST_CODE = 2;
 
+    private static final int numOfColumns = 2;
+
     private TypeViewModel typeViewModel;
 
-    private TypeAdapter typeAdapter;
+    private TypeAdapter typeExpenseAdapter;
+    private TypeAdapter typeIncomeAdapter;
 
     private CoordinatorLayout coordinatorLayout;
 
@@ -53,11 +56,17 @@ public class TypeActivity extends AppCompatActivity {
         });
 
         // show transaction in recycler view
-        RecyclerView recyclerView = findViewById(R.id.recyclerview_type);
-        typeAdapter = new TypeAdapter(this);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setAdapter(typeAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        RecyclerView recyclerViewExpense = findViewById(R.id.recyclerview_expense_type);
+        typeExpenseAdapter = new TypeAdapter(this);
+        recyclerViewExpense.setHasFixedSize(true);
+        recyclerViewExpense.setAdapter(typeExpenseAdapter);
+        recyclerViewExpense.setLayoutManager(new GridLayoutManager(this, numOfColumns));
+
+        RecyclerView recyclerViewIncome = findViewById(R.id.recyclerview_income_type);
+        typeIncomeAdapter = new TypeAdapter(this);
+        recyclerViewIncome.setHasFixedSize(true);
+        recyclerViewIncome.setAdapter(typeIncomeAdapter);
+        recyclerViewIncome.setLayoutManager(new GridLayoutManager(this, numOfColumns));
 
         initViewModels();
 
@@ -73,18 +82,40 @@ public class TypeActivity extends AppCompatActivity {
 
         typeViewModel = ViewModelProviders.of(this).get(TypeViewModel.class);
 
-        typeViewModel.getAllTypes().observe(this, new Observer<List<Type>>() {
+        typeViewModel.getAllExpenseTypes().observe(this, new Observer<List<Type>>() {
             @Override
             public void onChanged(@Nullable final List<Type> types) {
-                typeAdapter.submitList(types);
-                updateTypeCount(types);
+                typeExpenseAdapter.submitList(types);
+                updateExpenseTypeCount(types);
                 Log.d("numOfExpenseTypes", numOfExpenseTypes + "");
                 Log.d("numOfIncomeTypes", numOfIncomeTypes + "");
             }
         });
 
         // when click on item in recycler view -> populate data and open up to edit
-        typeAdapter.setOnItemClickListener(new TypeAdapter.OnItemClickListener() {
+        typeExpenseAdapter.setOnItemClickListener(new TypeAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Type type) {
+                Intent goToAddEditTypeActivity = new Intent(TypeActivity.this, AddEditTypeActivity.class);
+                goToAddEditTypeActivity.putExtra(AddEditTypeActivity.EXTRA_ID, type.getTypeId());
+                goToAddEditTypeActivity.putExtra(AddEditTypeActivity.EXTRA_NAME, type.getName());
+                goToAddEditTypeActivity.putExtra(AddEditTypeActivity.EXTRA_IS_EXPENSE_TYPE, type.isExpenseType());
+                startActivityForResult(goToAddEditTypeActivity, EDIT_TYPE_ACTIVITY_REQUEST_CODE);
+            }
+        });
+
+        typeViewModel.getAllIncomeTypes().observe(this, new Observer<List<Type>>() {
+            @Override
+            public void onChanged(@Nullable final List<Type> types) {
+                typeIncomeAdapter.submitList(types);
+                updateIncomeTypeCount(types);
+                Log.d("numOfExpenseTypes", numOfExpenseTypes + "");
+                Log.d("numOfIncomeTypes", numOfIncomeTypes + "");
+            }
+        });
+
+        // when click on item in recycler view -> populate data and open up to edit
+        typeIncomeAdapter.setOnItemClickListener(new TypeAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Type type) {
                 Intent goToAddEditTypeActivity = new Intent(TypeActivity.this, AddEditTypeActivity.class);
@@ -96,19 +127,20 @@ public class TypeActivity extends AppCompatActivity {
         });
     }
 
-    private void updateTypeCount(List<Type> types) {
+    private void updateExpenseTypeCount(List<Type> expenseTypes) {
 
         // refresh values because onchanged will keep adding it
         numOfExpenseTypes = 0;
+
+        numOfExpenseTypes = expenseTypes.size();
+    }
+
+    private void updateIncomeTypeCount(List<Type> incomeTypes) {
+
+        // refresh values because onchanged will keep adding it
         numOfIncomeTypes = 0;
 
-        for (Type type : types) {
-            if (type.isExpenseType()) {
-                numOfExpenseTypes++;
-            } else {
-                numOfIncomeTypes++;
-            }
-        }
+        numOfIncomeTypes = incomeTypes.size();
     }
 
     @Override
@@ -139,11 +171,11 @@ public class TypeActivity extends AppCompatActivity {
                 // update type
                 // must have at least one of each type
                 if (data.getStringExtra(AddEditTypeActivity.EXTRA_OPERATION).equals("save")) {
-                    if (numOfExpenseTypes > 1 && numOfIncomeTypes > 1) {
+                    if (numOfExpenseTypes >= 1 && numOfIncomeTypes >= 1) {
                         typeViewModel.updateType(type);
                         Toast.makeText(this, "Type updated", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(this, "number of income or expense types must be greater than 1", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "number of income or expense types must be greater than or equal to 1", Toast.LENGTH_SHORT).show();
                     }
 
                     // delete type

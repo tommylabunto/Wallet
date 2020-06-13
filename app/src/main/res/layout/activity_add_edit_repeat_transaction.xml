@@ -18,7 +18,6 @@
         android:id="@+id/edit_text_dateTime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="date"
         android:focusable="false"
         android:inputType="text" />
 
@@ -32,7 +31,6 @@
         android:id="@+id/edit_text_value"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="value"
         android:inputType="numberDecimal" />
 
     <TextView
@@ -45,7 +43,6 @@
         android:id="@+id/edit_text_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="name"
         android:inputType="text" />
 
     <TextView
@@ -102,7 +99,6 @@
         android:id="@+id/edit_text_num_repeat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="repeat"
         android:inputType="number" />
 
 </LinearLayout>

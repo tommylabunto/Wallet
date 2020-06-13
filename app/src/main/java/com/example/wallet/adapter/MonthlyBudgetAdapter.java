@@ -1,6 +1,7 @@
 package com.example.wallet.adapter;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,14 +14,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.wallet.R;
 import com.example.wallet.db.entity.MonthlyBudget;
 
+import java.time.Month;
+import java.util.Calendar;
+
 public class MonthlyBudgetAdapter extends ListAdapter<MonthlyBudget, MonthlyBudgetAdapter.MonthlyBudgetViewHolder> {
 
     class MonthlyBudgetViewHolder extends RecyclerView.ViewHolder {
-        private final TextView wordItemView;
+        private final Calendar calendar = Calendar.getInstance();
+        private final TextView textViewMonth;
+        private final TextView textViewBudget;
 
         private MonthlyBudgetViewHolder(View itemView) {
             super(itemView);
-            wordItemView = itemView.findViewById(R.id.textView);
+            textViewMonth = itemView.findViewById(R.id.textView);
+
+            textViewBudget = itemView.findViewById(R.id.textView_budget);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -66,7 +74,23 @@ public class MonthlyBudgetAdapter extends ListAdapter<MonthlyBudget, MonthlyBudg
     @Override
     public void onBindViewHolder(MonthlyBudgetViewHolder holder, int position) {
         MonthlyBudget monthlyBudget = getItem(position);
-        holder.wordItemView.setText(monthlyBudget.getMonth() + "");
+
+        holder.textViewBudget.setText(monthlyBudget.getBudget() + "");
+
+        // month uses 1 (jan) to 12 (dec)
+        Month month = Month.of(monthlyBudget.getMonth() + 1);
+        // originally is all caps
+        String monthString = month.name().substring(0,1) + month.name().substring(1).toLowerCase();
+
+        holder.textViewMonth.setText(monthString);
+
+        int tempMonth = holder.calendar.get(Calendar.MONTH) + 1;
+
+        // bold same month
+        if (tempMonth == month.getValue()) {
+            holder.textViewMonth.setTypeface(holder.textViewMonth.getTypeface(), Typeface.BOLD);
+            holder.textViewBudget.setTypeface(holder.textViewBudget.getTypeface(), Typeface.BOLD);
+        }
     }
 
     public interface OnItemClickListener {

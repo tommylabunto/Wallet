@@ -16,6 +16,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.time.Month;
+
 public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
 
     protected static final String EXTRA_ID =
@@ -32,6 +34,8 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
     private TextView textViewYear;
     private TextView textViewMonth;
     private EditText editTextBudget;
+
+    private static int month;
 
     // cannot add or delete, only can save
     @Override
@@ -70,30 +74,34 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if (intent.hasExtra(EXTRA_ID)) {
             textViewYear.setText(intent.getIntExtra(EXTRA_YEAR, 0) + "");
-            textViewMonth.setText(intent.getIntExtra(EXTRA_MONTH, 0) + "");
-            editTextBudget.setText(intent.getDoubleExtra(EXTRA_BUDGET, 0) + "");
+
+            month = intent.getIntExtra(EXTRA_MONTH, 0);
+
+            // month uses 1 (jan) to 12 (dec)
+            Month tempMonth = Month.of(month + 1);
+
+            // originally is all caps
+            String monthString = tempMonth.name().substring(0,1) + tempMonth.name().substring(1,3).toLowerCase();
+
+            textViewMonth.setText(monthString);
+            editTextBudget.setText(intent.getIntExtra(EXTRA_BUDGET, 0) + "");
         }
     }
 
     private void createOrSaveMonthlyBudget(String operation) {
 
         int year = 0;
-        int month = 0;
-        double budget = 0;
+        int budget = 0;
 
         String yearString = textViewYear.getText().toString().trim();
-        String monthString = textViewMonth.getText().toString().trim();
         String budgetString = editTextBudget.getText().toString().trim();
 
         if (!yearString.isEmpty()) {
             year = Integer.parseInt(yearString);
         }
-        if (!monthString.isEmpty()) {
-            month = Integer.parseInt(monthString);
-        }
 
         if (!budgetString.isEmpty()) {
-            budget = Double.parseDouble(budgetString);
+            budget = Integer.parseInt(budgetString);
         } else {
             Toast.makeText(this, "Please insert a value", Toast.LENGTH_SHORT).show();
             return;
@@ -112,22 +120,17 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
     private void deleteMonthlyBudget() {
 
         int year = 0;
-        int month = 0;
-        double budget = 0;
+        int budget = 0;
 
         String yearString = textViewYear.getText().toString().trim();
-        String monthString = textViewMonth.getText().toString().trim();
         String budgetString = editTextBudget.getText().toString().trim();
 
         if (!yearString.isEmpty()) {
             year = Integer.parseInt(yearString);
         }
-        if (!monthString.isEmpty()) {
-            month = Integer.parseInt(monthString);
-        }
 
         if (!budgetString.isEmpty()) {
-            budget = Double.parseDouble(budgetString);
+            budget = Integer.parseInt(budgetString);
         } else {
             Toast.makeText(this, "Please insert a value", Toast.LENGTH_SHORT).show();
             return;
@@ -139,7 +142,7 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
         finish();
     }
 
-    private Intent createIntent(double budget, int year, int month, String operation) {
+    private Intent createIntent(int budget, int year, int month, String operation) {
 
         Intent monthlyBudget = new Intent();
         monthlyBudget.putExtra(EXTRA_BUDGET, budget);

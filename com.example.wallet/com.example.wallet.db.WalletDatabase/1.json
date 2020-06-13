@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "9d626c8709eb5e1f89ce560cf2b2918f",
+    "identityHash": "c702d65fe453c4e62ec791ce8566d775",
     "entities": [
       {
         "tableName": "MonthlyBudget",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`monthlyBudgetId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `budget` REAL NOT NULL, `year` INTEGER NOT NULL, `month` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`monthlyBudgetId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `budget` INTEGER NOT NULL, `year` INTEGER NOT NULL, `month` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "monthlyBudgetId",
@@ -17,7 +17,7 @@
           {
             "fieldPath": "budget",
             "columnName": "budget",
-            "affinity": "REAL",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
@@ -178,7 +178,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9d626c8709eb5e1f89ce560cf2b2918f')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c702d65fe453c4e62ec791ce8566d775')"
     ]
   }
 }

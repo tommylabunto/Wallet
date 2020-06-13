@@ -95,7 +95,7 @@ public abstract class WalletDatabase extends RoomDatabase {
 
                 if (monthlyBudgetDao.getAllFutureMonthlyBudgetsList(year, month).size() == 0) {
 
-                    double budget = 0;
+                    int budget = 0;
                     int numOfYearsToCreate = 10;
                     int totalMonthlyBudgets = numOfYearsToCreate * 12;
 

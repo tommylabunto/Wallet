@@ -13,7 +13,7 @@ public class MonthlyBudget {
 
     @NonNull
     @Size(min = 0)
-    private double budget;
+    private int budget;
 
     @NonNull
     @Size(min = 0)
@@ -28,7 +28,7 @@ public class MonthlyBudget {
     public MonthlyBudget() {
     }
 
-    public MonthlyBudget(double budget, int year, int month) {
+    public MonthlyBudget(int budget, int year, int month) {
         this();
         this.budget = budget;
         this.year = year;
@@ -43,11 +43,11 @@ public class MonthlyBudget {
         this.monthlyBudgetId = monthlyBudgetId;
     }
 
-    public double getBudget() {
+    public int getBudget() {
         return budget;
     }
 
-    public void setBudget(double budget) {
+    public void setBudget(int budget) {
         this.budget = budget;
     }
 

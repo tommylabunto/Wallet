@@ -39,19 +39,19 @@ import java.util.Date;
 import java.util.List;
 
 /*
-TODO: (note):  use sp for text and container for text -> it scales with phone size and font size preference on phone
+TODO: (note): use sp for text and container for text -> it scales with phone size and font size preference on phone
 TODO: (note): try to use flat view hierachy, instead of nested
-TODO: (note): change all input types to material design
+TODO: (note): change all input types to material design (except input text -> remove hint)
 
  */
-// TODO: improve UI for monthly budget, allow for CRUD, check for null in monthly view (today)
-// TODO: improve UI for main, month view, add
+// TODO: improve UI for main, repeat, month view (today)
+// TODO: use error text for input, remove toast (today)
+// TODO: remove constraint layout in recyclerview item
 // TODO: decide on app color
 // TODO: improve UI for recycler view item
-// TODO: material text fields yes or no?
+// TODO: add soft rounded border for edit text
 
 /* (end)
-// TODO: use error text for repeat transaction
 // TODO: change string to string resource
 // TODO: set up cards for user to see when first download
 // TODO: comply with google's standards
@@ -59,7 +59,6 @@ TODO: (note): change all input types to material design
  */
 /*
 TODO: import database (try update INSTANCE in db, refresh viewmodel) (second)
-TODO: use sp or dp
 - can createfromassets successfully
 - works if change the name in wallet database (prepopulate db), it takes a while,
  then need to change the name in getInstance to load it

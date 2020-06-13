@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -37,6 +38,8 @@ public class MonthlyBudgetActivity extends AppCompatActivity {
     private ImageButton prevYear;
     private ImageButton nextYear;
 
+    private TextView textViewYear;
+
     private static Calendar calendar = Calendar.getInstance();
 
     @Override
@@ -55,6 +58,8 @@ public class MonthlyBudgetActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(monthlyBudgetAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        textViewYear = findViewById(R.id.textView_year);
 
         initViewModels();
 
@@ -89,12 +94,16 @@ public class MonthlyBudgetActivity extends AppCompatActivity {
                 monthlyBudgetAdapter.submitList(monthlyBudgets);
             }
         });
+
+        textViewYear.setText(year + "");
     }
 
     private void initViewModels() {
 
         Calendar tempCalendar = Calendar.getInstance();
         int year = tempCalendar.get(Calendar.YEAR);
+
+        textViewYear.setText(year + "");
 
         monthlyBudgetViewModel = ViewModelProviders.of(this).get(MonthlyBudgetViewModel.class);
 
@@ -165,7 +174,7 @@ public class MonthlyBudgetActivity extends AppCompatActivity {
 
     private MonthlyBudget extractDataToMonthlyBudget(Intent data, Long id) {
 
-        double budget = data.getDoubleExtra(AddEditMonthlyBudgetActivity.EXTRA_BUDGET, 0);
+        int budget = data.getIntExtra(AddEditMonthlyBudgetActivity.EXTRA_BUDGET, 0);
         int year = data.getIntExtra(AddEditMonthlyBudgetActivity.EXTRA_YEAR, 0);
         int month = data.getIntExtra(AddEditMonthlyBudgetActivity.EXTRA_MONTH, 0);
 

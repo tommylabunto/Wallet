@@ -12,47 +12,66 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="70dp"
         android:layout_marginTop="10dp"
+        android:fontFamily="@font/roboto_bold"
+        android:textSize="16sp"
         android:text="Type"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"  />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <RadioButton
-        android:id="@+id/radio_expense"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="70dp"
-        android:onClick="onRadioButtonClicked"
-        android:text="Expense"
-        app:layout_constraintBaseline_toBaselineOf="@+id/radio_income"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <RadioButton
-        android:id="@+id/radio_income"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onRadioButtonClicked"
-        android:text="Income"
-        app:layout_constraintStart_toEndOf="@+id/radio_expense"
-        app:layout_constraintTop_toBottomOf="@+id/textView_typeOfType" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textField"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_marginLeft="70dp"
+    <RadioGroup
+        android:id="@+id/radio_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/radio_expense"
-        app:layout_constraintTop_toBottomOf="@+id/radio_expense">
+        app:layout_constraintTop_toBottomOf="@+id/textView_typeOfType">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edit_text_type"
-            android:layout_width="314dp"
+        <RadioButton
+            android:id="@+id/radio_expense"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Type name"
-            android:inputType="textCapSentences"
-            android:imeOptions="actionSend"/>
+            android:layout_marginLeft="70dp"
+            android:onClick="onRadioButtonClicked"
+            android:text="Expense"
+            android:fontFamily="@font/roboto"
+            android:textSize="16sp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/radio_income"
+            app:layout_constraintStart_toStartOf="parent" />
 
-    </com.google.android.material.textfield.TextInputLayout>
+        <RadioButton
+            android:id="@+id/radio_income"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onRadioButtonClicked"
+            android:text="Income"
+            android:fontFamily="@font/roboto"
+            android:textSize="16sp"
+            app:layout_constraintStart_toEndOf="@+id/radio_expense"
+            app:layout_constraintTop_toBottomOf="@+id/textView_typeOfType" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/textView_type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="10dp"
+        android:text="Type"
+        android:fontFamily="@font/roboto_bold"
+        android:textSize="16sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radio_group" />
+
+    <EditText
+        android:id="@+id/edit_text_type"
+        android:layout_width="314dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="70dp"
+        android:imeOptions="actionSend"
+        android:fontFamily="@font/roboto"
+        android:textSize="16sp"
+        android:inputType="textCapSentences"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_type" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

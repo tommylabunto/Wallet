@@ -1,5 +1,6 @@
 package com.example.wallet.helper;
 
+import java.time.Month;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -46,6 +47,30 @@ public class DateFormatter {
         String yearString = String.valueOf(calendar.get(Calendar.YEAR));
 
         return appendDateString(yearString, monthString, dayString);
+    }
+
+    public static String beautifyDateString(String dateString) {
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        String dayString = dateString.substring(0,2);
+        String tempMonthString = dateString.substring(3,5);
+        String yearString = dateString.substring(6,10);
+
+        int month = Integer.parseInt(tempMonthString);
+
+        // month uses 1 (jan) to 12 (dec)
+        Month tempMonth = Month.of(month);
+        // originally is all caps
+        String monthString = tempMonth.name().substring(0,1) + tempMonth.name().substring(1,3).toLowerCase();
+
+        stringBuilder.append(dayString);
+        stringBuilder.append(" ");
+        stringBuilder.append(monthString);
+        stringBuilder.append(" ");
+        stringBuilder.append(yearString);
+
+        return stringBuilder.toString();
     }
 
     public static String appendDateString(String year, String month, String day) {

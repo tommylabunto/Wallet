@@ -19,10 +19,12 @@ public class RepeatTransactionAdapter extends ListAdapter<Transaction, RepeatTra
 
     class RepeatTransactionViewHolder extends RecyclerView.ViewHolder {
         private final TextView wordItemView;
+        private final TextView textViewValue;
 
         private RepeatTransactionViewHolder(View itemView) {
             super(itemView);
             wordItemView = itemView.findViewById(R.id.textView);
+            textViewValue = itemView.findViewById(R.id.textView_value);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -67,7 +69,7 @@ public class RepeatTransactionAdapter extends ListAdapter<Transaction, RepeatTra
 
     @Override
     public RepeatTransactionViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mInflater.inflate(R.layout.recyclerview_item, parent, false);
+        View itemView = mInflater.inflate(R.layout.recyclerview_repeat_item, parent, false);
         RepeatTransactionViewHolder holder = new RepeatTransactionViewHolder(itemView);
         return holder;
     }
@@ -76,6 +78,7 @@ public class RepeatTransactionAdapter extends ListAdapter<Transaction, RepeatTra
     public void onBindViewHolder(RepeatTransactionViewHolder holder, int position) {
         Transaction transaction = getItem(position);
         holder.wordItemView.setText(transaction.getName());
+        holder.textViewValue.setText(transaction.getValue() + "");
     }
 
     public interface OnItemClickListener {

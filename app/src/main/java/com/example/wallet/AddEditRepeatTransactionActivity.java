@@ -1,8 +1,6 @@
 package com.example.wallet;
 
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,7 +18,6 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,13 +30,14 @@ import com.example.wallet.db.viewmodel.TypeViewModel;
 import com.example.wallet.helper.DateFormatter;
 import com.example.wallet.helper.DatePickerFragment;
 import com.example.wallet.helper.FrequencyStringConverter;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class AddEditRepeatTransactionActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener{
+public class AddEditRepeatTransactionActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
 
     protected static final String EXTRA_ID =
             "com.example.wallet.EXTRA_ID";
@@ -66,6 +64,13 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
     private EditText editTextValue;
     private EditText editTextDate;
     private EditText editTextRepeat;
+
+    private TextInputLayout textInputLayoutValue;
+    private TextInputLayout textInputLayoutName;
+    private TextInputLayout textInputLayoutRepeat;
+
+    // in the format of "02/12/2020"
+    private static String formattedDate;
 
     private Spinner spinnerFrequency;
     private ArrayAdapter<CharSequence> adapterFrequency;
@@ -102,12 +107,21 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
         spinnerType = findViewById(R.id.spinner_repeat_type);
         editTextRepeat = findViewById(R.id.edit_text_num_repeat);
 
+        // remove grey background on edit text
+        editTextValue.setBackground(null);
+        editTextName.setBackground(null);
+        editTextRepeat.setBackground(null);
+
+        textInputLayoutValue = findViewById(R.id.edit_text_num_value_input_layout);
+        textInputLayoutName = findViewById(R.id.edit_text_num_name_input_layout);
+        textInputLayoutRepeat = findViewById(R.id.edit_text_num_repeat_input_layout);
+
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
 
         editTextDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Calendar calendar = convertEditTextToCalendar(editTextDate);
+                Calendar calendar = formatSelectedDate();
                 DialogFragment datePicker = new DatePickerFragment(calendar);
                 datePicker.show(getSupportFragmentManager(), "date picker");
             }
@@ -123,6 +137,7 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
                 String frequencyString = parent.getItemAtPosition(position).toString();
                 frequency = FrequencyStringConverter.convertFrequencyStringToInt(frequencyString);
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
@@ -163,7 +178,7 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
             public void onChanged(@Nullable final List<Type> types) {
 
                 deepCopyList(types);
-                Log.d("onchanged","onchanged");
+                Log.d("onchanged", "onchanged");
             }
         });
     }
@@ -208,14 +223,16 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
         Intent intent = getIntent();
         if (intent.hasExtra(EXTRA_ID)) {
             editTextName.setText(intent.getStringExtra(EXTRA_NAME));
-            //editTextTypeName.setText(intent.getStringExtra(EXTRA_TYPENAME));
-            editTextDate.setText(intent.getStringExtra(EXTRA_DATE));
+
+            formattedDate = intent.getStringExtra(EXTRA_DATE);
+            editTextDate.setText(DateFormatter.beautifyDateString(formattedDate));
+
             editTextValue.setText(intent.getDoubleExtra(EXTRA_VALUE, 1) + "");
             editTextRepeat.setText(intent.getIntExtra(EXTRA_REPEAT, 1) + "");
 
             frequency = intent.getIntExtra(EXTRA_FREQUENCY, 12);
             String frequencyString = FrequencyStringConverter.convertFrequencyIntToString(frequency);
-            int selectionPosition= adapterFrequency.getPosition(frequencyString);
+            int selectionPosition = adapterFrequency.getPosition(frequencyString);
             spinnerFrequency.setSelection(selectionPosition);
 
             if (intent.getBooleanExtra(EXTRA_IS_EXPENSE_TYPE, true)) {
@@ -254,11 +271,10 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
         adapterType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     }
 
-    private Calendar convertEditTextToCalendar(EditText editTextDate) {
+    private Calendar formatSelectedDate() {
 
         Calendar calendar = Calendar.getInstance();
-        String dateString = editTextDate.getText().toString();
-        Date date = DateFormatter.formatStringToDate(dateString);
+        Date date = DateFormatter.formatStringToDate(formattedDate);
         calendar.setTime(date);
 
         return calendar;
@@ -267,13 +283,13 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
     private void createOrSaveTransaction() {
 
         String name = editTextName.getText().toString().trim();
-        String dateString = editTextDate.getText().toString().trim();
         String valueString = editTextValue.getText().toString().trim();
         double value = 0;
 
         String repeatString = editTextRepeat.getText().toString();
-
         int repeat = -1;
+
+        boolean emptyField = false;
 
         if (!valueString.isEmpty()) {
             value = Double.parseDouble(valueString);
@@ -283,26 +299,41 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
             repeat = Integer.parseInt(repeatString);
         }
 
-        if (name.isEmpty() || value == 0 || frequency == 0  || repeat == -1 ) {
-            Toast.makeText(this, "Please insert a name or typeName or value or frequency or repeat", Toast.LENGTH_SHORT).show();
-            return;
+        if (name.isEmpty()) {
+            textInputLayoutName.setError("Please enter a name.");
+            emptyField = true;
+        } else {
+            textInputLayoutName.setError("");
+        }
+
+        if (value == 0) {
+            textInputLayoutValue.setError("Please enter an amount.");
+            emptyField = true;
+        } else {
+            textInputLayoutValue.setError("");
         }
 
         if (repeat < 0 || repeat > 30) {
-            showAlertDialog();
+            textInputLayoutRepeat.setError("Please enter a value between 0 and 30.");
+            emptyField = true;
         } else {
-            Intent newTransaction = createIntent(dateString, value, name, type, frequency, repeat, "save");
-
-            setResult(RESULT_OK, newTransaction);
-            finish();
+            textInputLayoutRepeat.setError("");
         }
+
+        if (emptyField) {
+            return;
+        }
+
+        Intent newTransaction = createIntent(formattedDate, value, name, type, frequency, repeat, "save");
+
+        setResult(RESULT_OK, newTransaction);
+        finish();
+
     }
 
-    private void deleteTransaction(){
+    private void deleteTransaction() {
 
         String name = editTextName.getText().toString().trim();
-        //String typeName = editTextTypeName.getText().toString().trim();
-        String dateString = editTextDate.getText().toString().trim();
         String valueString = editTextValue.getText().toString().trim();
         double value = 0;
 
@@ -318,14 +349,15 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
             repeat = Integer.parseInt(repeatString);
         }
 
+        // force value to be within acceptable range, since user is going to delete anyway
         if (repeat < 0 || repeat > 30) {
-            showAlertDialog();
-        } else {
-            Intent oldTransaction = createIntent(dateString, value, name, type, frequency, repeat, "delete");
-
-            setResult(RESULT_OK, oldTransaction);
-            finish();
+            repeat = 0;
         }
+        Intent oldTransaction = createIntent(formattedDate, value, name, type, frequency, repeat, "delete");
+
+        setResult(RESULT_OK, oldTransaction);
+        finish();
+
     }
 
     private Intent createIntent(String dateString, double value, String name, String typeName, int frequency, int repeat, String operation) {
@@ -402,28 +434,14 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
         calendar.set(Calendar.MONTH, month);
         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
-        String dateString = DateFormatter.formatDateToString(calendar.getTime());
-        editTextDate.setText(dateString);
+        formattedDate = DateFormatter.formatDateToString(calendar.getTime());
+        editTextDate.setText(DateFormatter.beautifyDateString(formattedDate));
     }
 
     private void setTodayDate(EditText editTextDate) {
 
         Calendar calendar = Calendar.getInstance();
-        String dateString = DateFormatter.formatDateToString(calendar.getTime());
-        editTextDate.setText(dateString);
-    }
-
-    private void showAlertDialog() {
-
-        new AlertDialog.Builder(AddEditRepeatTransactionActivity.this)
-                .setTitle("Warning")
-                .setMessage("Repeat must be within 0 and 30")
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // do nothing, just go back to previous screen
-                    }
-                })
-                .create().show();
+        formattedDate = DateFormatter.formatDateToString(calendar.getTime());
+        editTextDate.setText(DateFormatter.beautifyDateString(formattedDate));
     }
 }

@@ -23,10 +23,16 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
 
     class TransactionViewHolder extends RecyclerView.ViewHolder {
         private final TextView wordItemView;
+        private final TextView textViewValue;
+        private final TextView textView_date;
+        private final TextView textView_totalAmount;
 
         private TransactionViewHolder(View itemView) {
             super(itemView);
             wordItemView = itemView.findViewById(R.id.textView);
+            textViewValue = itemView.findViewById(R.id.textView_value);
+            textView_date = itemView.findViewById(R.id.textView_date);
+            textView_totalAmount = itemView.findViewById(R.id.textView_totalAmount);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -40,13 +46,10 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
         }
 
         public void showHeader(String date, String totalAmount) {
-            TextView textView_date = itemView.findViewById(R.id.textView_date);
 
             if (textView_date != null) {
                 textView_date.setText(date);
             }
-
-            TextView textView_totalAmount = itemView.findViewById(R.id.textView_totalAmount);
 
             if (textView_totalAmount != null) {
                 textView_totalAmount.setText(totalAmount);
@@ -62,10 +65,8 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
          */
         public void removeHeader() {
 
-            TextView textView_date = itemView.findViewById(R.id.textView_date);
             textView_date.setVisibility(View.GONE);
 
-            TextView textView_totalAmount = itemView.findViewById(R.id.textView_totalAmount);
             textView_totalAmount.setVisibility(View.GONE);
         }
     }
@@ -110,6 +111,7 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
     public void onBindViewHolder(TransactionViewHolder holder, int position) {
         Transaction transaction = getItem(position);
         holder.wordItemView.setText(transaction.getName());
+        holder.textViewValue.setText(transaction.getValue() + "");
 
         updateHeader(transaction, holder);
     }
@@ -131,7 +133,7 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(transaction.getDate());
 
-        SimpleDateFormat formatter = new SimpleDateFormat("ddMMyyyy");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd MMM");
         String formattedDate = formatter.format(calendar.getTime());
 
         this.isFirst = false;

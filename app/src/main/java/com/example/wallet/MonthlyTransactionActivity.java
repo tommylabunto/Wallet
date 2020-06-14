@@ -1,15 +1,21 @@
 package com.example.wallet;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.SearchRecentSuggestions;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -21,9 +27,11 @@ import com.example.wallet.db.entity.MonthlyBudget;
 import com.example.wallet.db.entity.Transaction;
 import com.example.wallet.db.viewmodel.MonthlyBudgetViewModel;
 import com.example.wallet.db.viewmodel.TransactionViewModel;
+import com.example.wallet.helper.SearchSuggestionProvider;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Month;
 import java.util.Calendar;
 import java.util.List;
 
@@ -42,9 +50,8 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
 
     private static Calendar calendar = Calendar.getInstance();
 
-    private Button buttonMainActivity;
-
     private TextView textViewMonth;
+    private TextView textViewYear;
     private TextView textViewTotalAmount;
     private TextView textViewMonthlyBudget;
     private TextView textViewRemaining;
@@ -59,12 +66,8 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_monthly_transaction);
 
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-
-        textViewMonth = findViewById(R.id.textView_Month);
+        textViewMonth = findViewById(R.id.textView_month);
+        textViewYear = findViewById(R.id.textView_year);
         textViewTotalAmount = findViewById(R.id.textView_totalAmount);
         textViewMonthlyBudget = findViewById(R.id.textView_monthly_budget);
         textViewRemaining = findViewById(R.id.textView_remaining);
@@ -102,14 +105,7 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
             }
         });
 
-        buttonMainActivity = findViewById(R.id.button_main_activity);
-        buttonMainActivity.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent goToMainActivity = new Intent(MonthlyTransactionActivity.this, MainActivity.class);
-                startActivity(goToMainActivity);
-            }
-        });
+        handleIntent(getIntent());
     }
 
     private void initStartEndCal() {
@@ -121,6 +117,16 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
         endMonthCal = Calendar.getInstance();
         int lastDay = endMonthCal.getActualMaximum(Calendar.DAY_OF_MONTH);
         endMonthCal.set(Calendar.DAY_OF_MONTH, lastDay);
+
+        int yearInt = startMonthCal.get(Calendar.YEAR);
+        int monthInt = startMonthCal.get(Calendar.MONTH);
+        // month uses 1 (jan) to 12 (dec)
+        Month month = Month.of(monthInt + 1);
+        // originally is all caps
+        String monthString = month.name().substring(0,1) + month.name().substring(1,3).toLowerCase();
+
+        textViewYear.setText(yearInt + "");
+        textViewMonth.setText(monthString);
     }
 
     private void initViewModels() {
@@ -200,19 +206,19 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
                 analyzeTransactions(transactions);
             }
         });
+
+        int yearInt = startMonthCal.get(Calendar.YEAR);
+        int monthInt = startMonthCal.get(Calendar.MONTH);
+        // month uses 1 (jan) to 12 (dec)
+        Month month = Month.of(monthInt + 1);
+        // originally is all caps
+        String monthString = month.name().substring(0,1) + month.name().substring(1,3).toLowerCase();
+
+        textViewYear.setText(yearInt + "");
+        textViewMonth.setText(monthString);
     }
 
     private void analyzeTransactions(List<Transaction> transactions) {
-
-        int year = startMonthCal.get(Calendar.YEAR);
-        int month = startMonthCal.get(Calendar.MONTH);
-
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append((month+1));
-        stringBuilder.append("/");
-        stringBuilder.append(year);
-
-        textViewMonth.setText(stringBuilder.toString());
 
         double tempTotalExpenses = 0;
         double tempTotalIncome = 0;
@@ -235,5 +241,63 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
         BigDecimal totalAmountBd = new BigDecimal(totalExpenses).setScale(2, RoundingMode.HALF_UP);
 
         textViewTotalAmount.setText(totalAmountBd.doubleValue() + "/");
+    }
+
+    private void handleIntent(Intent intent) {
+
+        Log.d("handle intent"," here");
+
+        // Get the intent, verify the action and get the query
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            Log.d("query main", query);
+            Intent goToSearchTransactionActivity = new Intent(MonthlyTransactionActivity.this, SearchTransactionActivity.class);
+            goToSearchTransactionActivity.setAction(Intent.ACTION_SEARCH);
+            goToSearchTransactionActivity.putExtra(SearchTransactionActivity.EXTRA_SEARCH, query);
+
+            SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
+                    SearchSuggestionProvider.AUTHORITY, SearchSuggestionProvider.MODE);
+            suggestions.saveRecentQuery(query, null);
+
+            startActivity(goToSearchTransactionActivity);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+
+        // Get the SearchView and set the searchable configuration
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        // Assumes current activity is the searchable activity
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
+
+        MenuItem monthView = menu.findItem(R.id.action_month_view);
+        monthView.setVisible(false);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                Intent goToSettingsActivity = new Intent(MonthlyTransactionActivity.this, SettingsActivity.class);
+                startActivity(goToSettingsActivity);
+                return true;
+            case R.id.action_normal_view:
+                Intent goToMainActivity = new Intent(MonthlyTransactionActivity.this, MainActivity.class);
+                startActivity(goToMainActivity);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

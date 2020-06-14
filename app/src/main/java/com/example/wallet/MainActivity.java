@@ -10,9 +10,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -34,6 +34,7 @@ import com.example.wallet.helper.SearchSuggestionProvider;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.time.Month;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -44,14 +45,17 @@ TODO: (note): try to use flat view hierachy, instead of nested
 TODO: (note): change all input types to material design (except input text -> remove hint)
 
  */
-// TODO: improve UI for main, repeat, month view (today)
-// TODO: use error text for input, remove toast (today)
-// TODO: remove constraint layout in recyclerview item
-// TODO: decide on app color
-// TODO: improve UI for recycler view item
-// TODO: add soft rounded border for edit text
+// TODO: use error text for input (textinputlayout) , remove toast for input (main, monthly budget, type), force value when out of range in delete (today)
+// TODO: refactor all recycler view item name to specific textview, change adapter also (today)
+// TODO: remove constraint layout in recyclerview item (today)
+// TODO: decide on app color, change app bar color (today)
+// TODO: improve UI for recycler view item (today)
+// TODO: add soft rounded border for edit text (today)
+// TODO: improve search UI (make history white, remove search icon when typing, provide suggestions while typing)
+// TODO: use simple dialog with choices for delete monthly budget (include from this month onwards)
 
 /* (end)
+// TODO: make sure all constraints are done proper
 // TODO: change string to string resource
 // TODO: set up cards for user to see when first download
 // TODO: comply with google's standards
@@ -92,8 +96,8 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton prevMonth;
     private ImageButton nextMonth;
 
-    private Button buttonMonthlyTransaction;
-    private Button buttonSearchTransaction;
+    private TextView textViewYear;
+    private TextView textViewMonth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +116,9 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(goToAddEditActivity, ADD_TRANSACTION_ACTIVITY_REQUEST_CODE);
             }
         });
+
+        textViewYear = findViewById(R.id.textView_year);
+        textViewMonth = findViewById(R.id.textView_month);
 
         prevMonth = findViewById(R.id.left_button);
         prevMonth.setOnClickListener(new View.OnClickListener() {
@@ -144,24 +151,6 @@ public class MainActivity extends AppCompatActivity {
 
         coordinatorLayout = findViewById(R.id.mainActivity);
 
-        buttonMonthlyTransaction = findViewById(R.id.button_monthly_transaction);
-        buttonMonthlyTransaction.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent goToMonthlyTransactionActivity = new Intent(MainActivity.this, MonthlyTransactionActivity.class);
-                startActivity(goToMonthlyTransactionActivity);
-            }
-        });
-
-        buttonSearchTransaction = findViewById(R.id.button_search_transaction);
-        buttonSearchTransaction.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent goToSearchTransactionActivity = new Intent(MainActivity.this, SearchTransactionActivity.class);
-                startActivity(goToSearchTransactionActivity);
-            }
-        });
-
         handleIntent(getIntent());
     }
 
@@ -174,6 +163,16 @@ public class MainActivity extends AppCompatActivity {
         endMonthCal = Calendar.getInstance();
         int lastDay = endMonthCal.getActualMaximum(Calendar.DAY_OF_MONTH);
         endMonthCal.set(Calendar.DAY_OF_MONTH, lastDay);
+
+        int yearInt = startMonthCal.get(Calendar.YEAR);
+        int monthInt = startMonthCal.get(Calendar.MONTH);
+        // month uses 1 (jan) to 12 (dec)
+        Month month = Month.of(monthInt + 1);
+        // originally is all caps
+        String monthString = month.name().substring(0,1) + month.name().substring(1,3).toLowerCase();
+
+        textViewYear.setText(yearInt + "");
+        textViewMonth.setText(monthString);
     }
 
     private void initViewModels() {
@@ -222,6 +221,16 @@ public class MainActivity extends AppCompatActivity {
                 transactionAdapter.passTransactions(transactions);
             }
         });
+
+        int yearInt = startMonthCal.get(Calendar.YEAR);
+        int monthInt = startMonthCal.get(Calendar.MONTH);
+        // month uses 1 (jan) to 12 (dec)
+        Month month = Month.of(monthInt + 1);
+        // originally is all caps
+        String monthString = month.name().substring(0,1) + month.name().substring(1,3).toLowerCase();
+
+        textViewYear.setText(yearInt + "");
+        textViewMonth.setText(monthString);
     }
 
     @Override
@@ -356,6 +365,9 @@ public class MainActivity extends AppCompatActivity {
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
 
+        MenuItem normalView = menu.findItem(R.id.action_normal_view);
+        normalView.setVisible(false);
+
         return true;
     }
 
@@ -368,6 +380,11 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_settings:
                 Intent goToSettingsActivity = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(goToSettingsActivity);
+                return true;
+
+            case R.id.action_month_view:
+                Intent goToMonthlyTransactionActivity = new Intent(MainActivity.this, MonthlyTransactionActivity.class);
+                startActivity(goToMonthlyTransactionActivity);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

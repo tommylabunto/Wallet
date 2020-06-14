@@ -13,8 +13,8 @@
         android:layout_marginLeft="70dp"
         android:layout_marginTop="10dp"
         android:fontFamily="@font/roboto_bold"
-        android:textSize="16sp"
         android:text="Type"
+        android:textSize="16sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -31,9 +31,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="70dp"
+            android:fontFamily="@font/roboto"
             android:onClick="onRadioButtonClicked"
             android:text="Expense"
-            android:fontFamily="@font/roboto"
             android:textSize="16sp"
             app:layout_constraintBaseline_toBaselineOf="@+id/radio_income"
             app:layout_constraintStart_toStartOf="parent" />
@@ -42,9 +42,9 @@
             android:id="@+id/radio_income"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto"
             android:onClick="onRadioButtonClicked"
             android:text="Income"
-            android:fontFamily="@font/roboto"
             android:textSize="16sp"
             app:layout_constraintStart_toEndOf="@+id/radio_expense"
             app:layout_constraintTop_toBottomOf="@+id/textView_typeOfType" />
@@ -56,8 +56,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="70dp"
         android:layout_marginTop="10dp"
-        android:text="Type"
         android:fontFamily="@font/roboto_bold"
+        android:text="Type"
         android:textSize="16sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/radio_group" />
@@ -67,10 +67,10 @@
         android:layout_width="314dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="70dp"
-        android:imeOptions="actionSend"
         android:fontFamily="@font/roboto"
-        android:textSize="16sp"
+        android:imeOptions="actionSend"
         android:inputType="textCapSentences"
+        android:textSize="16sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView_type" />
 

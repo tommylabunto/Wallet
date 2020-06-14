@@ -43,7 +43,7 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_monthly_budget);
 
-        textViewYear = findViewById(R.id.textView_year);
+        textViewYear = findViewById(R.id.textView_month);
         textViewMonth = findViewById(R.id.textView_month);
         editTextBudget = findViewById(R.id.edit_text_budget);
 

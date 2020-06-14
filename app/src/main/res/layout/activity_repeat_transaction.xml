@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".RepeatTransactionActivity"
-    android:id="@+id/repeatTransactionActivity">
+    android:layout_height="match_parent">
 
-    <include layout="@layout/content_repeat" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/repeat_fab"
-        android:layout_width="wrap_content"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/repeatTransactionActivity"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clickable="true"
-        android:layout_margin="32dp"
-        android:layout_gravity="bottom|end"
-        android:src="@drawable/ic_add" />
+        tools:context=".RepeatTransactionActivity">
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        <include layout="@layout/content_repeat" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/repeat_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="32dp"
+            android:clickable="true"
+            android:src="@drawable/ic_add" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</ScrollView>

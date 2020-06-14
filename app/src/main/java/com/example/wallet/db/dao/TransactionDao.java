@@ -41,6 +41,12 @@ public interface TransactionDao {
     @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, isRepeat, frequency, numOfRepeat, isExpenseTransaction FROM `transaction` WHERE isRepeat = 1 AND date >= :millisecondsToday ORDER BY transactionRecurringId ASC, date ASC")
     public LiveData<List<Transaction>> getAllRecurringTransactions(Long millisecondsToday);
 
+    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, isRepeat, frequency, numOfRepeat, isExpenseTransaction FROM `transaction` WHERE isRepeat = 1 AND date >= :millisecondsToday AND isExpenseTransaction = 1 ORDER BY transactionRecurringId ASC, date ASC")
+    public LiveData<List<Transaction>> getExpenseRecurringTransactions(Long millisecondsToday);
+
+    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, isRepeat, frequency, numOfRepeat, isExpenseTransaction FROM `transaction` WHERE isRepeat = 1 AND date >= :millisecondsToday AND isExpenseTransaction = 0 ORDER BY transactionRecurringId ASC, date ASC")
+    public LiveData<List<Transaction>> getIncomeRecurringTransactions(Long millisecondsToday);
+
     @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, isRepeat, frequency, numOfRepeat, isExpenseTransaction FROM `transaction` WHERE isRepeat = 0 ORDER BY date ASC")
     public LiveData<List<Transaction>> getAllNonRecurringTransactions();
 

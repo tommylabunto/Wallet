@@ -1,81 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
     tools:context=".AddEditTransactionActivity">
 
     <TextView
         android:id="@+id/textView_dateTime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="date" />
+        android:layout_marginLeft="70dp"
+        android:layout_marginTop="10dp"
+        android:text="date"
+        android:fontFamily="@font/roboto_bold"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/edit_text_dateTime"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/edit_text_dateTime"
-        android:layout_width="match_parent"
+        android:layout_width="314dp"
         android:layout_height="wrap_content"
         android:focusable="false"
-        android:inputType="text" />
+        android:fontFamily="@font/roboto"
+        android:layout_marginLeft="70dp"
+        android:inputType="text"
+        android:textSize="16sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_dateTime" />
 
     <TextView
         android:id="@+id/textView_Value"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Value" />
+        android:layout_marginLeft="70dp"
+        android:fontFamily="@font/roboto_bold"
+        android:textSize="16sp"
+        android:layout_marginTop="10dp"
+        android:text="Value"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/edit_text_value"
+        app:layout_constraintTop_toBottomOf="@+id/edit_text_dateTime" />
 
     <EditText
         android:id="@+id/edit_text_value"
-        android:layout_width="match_parent"
+        android:layout_width="314dp"
         android:layout_height="wrap_content"
-        android:inputType="numberDecimal" />
+        android:layout_marginLeft="70dp"
+        android:fontFamily="@font/roboto"
+        android:textSize="16sp"
+        android:layout_marginTop="10dp"
+        android:inputType="numberDecimal"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_Value" />
 
     <TextView
         android:id="@+id/textView_Name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Name" />
+        android:layout_marginLeft="70dp"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/roboto_bold"
+        android:textSize="16sp"
+        android:text="Name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/edit_text_name"
+        app:layout_constraintTop_toBottomOf="@+id/edit_text_value" />
 
     <EditText
         android:id="@+id/edit_text_name"
-        android:layout_width="match_parent"
+        android:layout_width="314dp"
         android:layout_height="wrap_content"
-        android:inputType="text" />
+        android:layout_marginLeft="70dp"
+        android:layout_marginTop="10dp"
+        android:inputType="text"
+        android:fontFamily="@font/roboto"
+        android:textSize="16sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_Name" />
 
     <TextView
         android:id="@+id/textView_typeOfType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Type" />
+        android:layout_marginLeft="70dp"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/roboto_bold"
+        android:textSize="16sp"
+        android:text="Type"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edit_text_name" />
 
     <RadioGroup
+        android:id="@+id/radio_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <RadioButton android:id="@+id/radio_expense"
+        android:orientation="horizontal"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_typeOfType">
+
+        <RadioButton
+            android:id="@+id/radio_expense"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="70dp"
+            android:onClick="onRadioButtonClicked"
             android:text="Expense"
-            android:onClick="onRadioButtonClicked"/>
-        <RadioButton android:id="@+id/radio_income"
+            android:fontFamily="@font/roboto"
+            android:textSize="16sp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/radio_income"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <RadioButton
+            android:id="@+id/radio_income"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="onRadioButtonClicked"
             android:text="Income"
-            android:onClick="onRadioButtonClicked"/>
+            android:fontFamily="@font/roboto"
+            android:textSize="16sp"
+            app:layout_constraintStart_toEndOf="@+id/radio_expense"
+            app:layout_constraintTop_toBottomOf="@+id/textView_typeOfType" />
     </RadioGroup>
 
     <TextView
         android:id="@+id/textView_typeName"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Type Name" />
+        android:layout_marginLeft="70dp"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/roboto_bold"
+        android:textSize="16sp"
+        android:text="Type Name"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radio_group" />
 
     <Spinner
         android:id="@+id/spinner_type"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="70dp"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/roboto_bold"
+        android:textSize="16sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_typeName" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

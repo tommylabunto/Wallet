@@ -34,6 +34,14 @@ public class TransactionRepository {
         return transactionDao.getAllRecurringTransactions(millisecondsToday);
     }
 
+    public LiveData<List<Transaction>> getExpenseRecurringTransactions(Long millisecondsToday) {
+        return transactionDao.getExpenseRecurringTransactions(millisecondsToday);
+    }
+
+    public LiveData<List<Transaction>> getIncomeRecurringTransactions(Long millisecondsToday) {
+        return transactionDao.getIncomeRecurringTransactions(millisecondsToday);
+    }
+
     public LiveData<List<Transaction>> getAllNonRecurringTransactions() {
         return allNonRecurringTransactions;
     }

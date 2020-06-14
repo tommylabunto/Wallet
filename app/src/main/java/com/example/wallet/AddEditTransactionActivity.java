@@ -58,6 +58,9 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
     private EditText editTextValue;
     private EditText editTextDate;
 
+    // in the format of "02/12/2020"
+    private static String formattedDate;
+
     private Spinner spinner;
     private ArrayAdapter<String> adapter;
     private static String type;
@@ -114,7 +117,7 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
             @Override
             public void onClick(View v) {
 
-                Calendar calendar = convertEditTextToCalendar(editTextDate);
+                Calendar calendar = formatSelectedDate();
                 DialogFragment datePicker = new DatePickerFragment(calendar);
                 datePicker.show(getSupportFragmentManager(), "date picker");
             }
@@ -127,7 +130,10 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
         Intent intent = getIntent();
         if (intent.hasExtra(EXTRA_ID)) {
             editTextName.setText(intent.getStringExtra(EXTRA_NAME));
-            editTextDate.setText(intent.getStringExtra(EXTRA_DATE));
+
+            formattedDate = intent.getStringExtra(EXTRA_DATE);
+            editTextDate.setText(DateFormatter.beautifyDateString(formattedDate));
+
             editTextValue.setText(intent.getDoubleExtra(EXTRA_VALUE, 1) + "");
 
             type = intent.getStringExtra(EXTRA_TYPENAME);
@@ -215,11 +221,10 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     }
 
-    private Calendar convertEditTextToCalendar(EditText editTextDate) {
+    private Calendar formatSelectedDate() {
 
         Calendar calendar = Calendar.getInstance();
-        String dateString = editTextDate.getText().toString();
-        Date date = DateFormatter.formatStringToDate(dateString);
+        Date date = DateFormatter.formatStringToDate(formattedDate);
         calendar.setTime(date);
 
         return calendar;
@@ -231,7 +236,6 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
     private void createOrSaveTransaction() {
 
         String name = editTextName.getText().toString().trim();
-        String dateString = editTextDate.getText().toString().trim();
         String valueString = editTextValue.getText().toString().trim();
         double value = 0;
 
@@ -244,7 +248,7 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
             return;
         }
 
-        Intent newTransaction = createIntent(dateString, value, name, type, "save");
+        Intent newTransaction = createIntent(formattedDate, value, name, type, "save");
 
         setResult(RESULT_OK, newTransaction);
         finish();
@@ -253,7 +257,6 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
     private void deleteTransaction() {
 
         String name = editTextName.getText().toString().trim();
-        String dateString = editTextDate.getText().toString().trim();
         String valueString = editTextValue.getText().toString().trim();
         double value = 0;
 
@@ -261,7 +264,7 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
             value = Double.parseDouble(valueString);
         }
 
-        Intent oldTransaction = createIntent(dateString, value, name, type, "delete");
+        Intent oldTransaction = createIntent(formattedDate, value, name, type, "delete");
 
         setResult(RESULT_OK, oldTransaction);
         finish();
@@ -336,14 +339,14 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
         calendar.set(Calendar.MONTH, month);
         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
-        String dateString = DateFormatter.formatDateToString(calendar.getTime());
-        editTextDate.setText(dateString);
+        formattedDate = DateFormatter.formatDateToString(calendar.getTime());
+        editTextDate.setText(DateFormatter.beautifyDateString(formattedDate));
     }
 
     private void setTodayDate(EditText editTextDate) {
 
         Calendar calendar = Calendar.getInstance();
-        String dateString = DateFormatter.formatDateToString(calendar.getTime());
-        editTextDate.setText(dateString);
+        formattedDate = DateFormatter.formatDateToString(calendar.getTime());
+        editTextDate.setText(DateFormatter.beautifyDateString(formattedDate));
     }
 }

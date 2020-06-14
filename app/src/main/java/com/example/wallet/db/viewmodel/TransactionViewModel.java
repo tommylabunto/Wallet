@@ -36,6 +36,14 @@ public class TransactionViewModel extends AndroidViewModel {
         return transactionRepository.getAllRecurringTransactions(millisecondsToday);
     }
 
+    public LiveData<List<Transaction>> getExpenseRecurringTransactions(Long millisecondsToday) {
+        return transactionRepository.getExpenseRecurringTransactions(millisecondsToday);
+    }
+
+    public LiveData<List<Transaction>> getIncomeRecurringTransactions(Long millisecondsToday) {
+        return transactionRepository.getIncomeRecurringTransactions(millisecondsToday);
+    }
+
     public LiveData<List<Transaction>> getAllNonRecurringTransactions() {
         return allNonRecurringTransactions;
     }

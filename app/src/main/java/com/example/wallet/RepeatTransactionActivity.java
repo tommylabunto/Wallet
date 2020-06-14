@@ -36,7 +36,8 @@ public class RepeatTransactionActivity extends AppCompatActivity {
     private TransactionViewModel transactionViewModel;
     private TypeViewModel typeViewModel;
 
-    private RepeatTransactionAdapter repeatTransactionAdapter;
+    private RepeatTransactionAdapter repeatExpenseTransactionAdapter;
+    private RepeatTransactionAdapter repeatIncomeTransactionAdapter;
 
     private CoordinatorLayout coordinatorLayout;
 
@@ -56,11 +57,18 @@ public class RepeatTransactionActivity extends AppCompatActivity {
         });
 
         // show transaction in recycler view
-        RecyclerView recyclerView = findViewById(R.id.recyclerview);
-        repeatTransactionAdapter = new RepeatTransactionAdapter(this);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setAdapter(repeatTransactionAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        RecyclerView recyclerViewExpense = findViewById(R.id.recyclerview_expense_type);
+        repeatExpenseTransactionAdapter = new RepeatTransactionAdapter(this);
+        recyclerViewExpense.setHasFixedSize(true);
+        recyclerViewExpense.setAdapter(repeatExpenseTransactionAdapter);
+        recyclerViewExpense.setLayoutManager(new LinearLayoutManager(this));
+
+        // show transaction in recycler view
+        RecyclerView recyclerViewIncome = findViewById(R.id.recyclerview_income_type);
+        repeatIncomeTransactionAdapter = new RepeatTransactionAdapter(this);
+        recyclerViewIncome.setHasFixedSize(true);
+        recyclerViewIncome.setAdapter(repeatIncomeTransactionAdapter);
+        recyclerViewIncome.setLayoutManager(new LinearLayoutManager(this));
 
         initViewModels();
 
@@ -78,18 +86,56 @@ public class RepeatTransactionActivity extends AppCompatActivity {
 
         transactionViewModel = ViewModelProviders.of(this).get(TransactionViewModel.class);
 
-        transactionViewModel.getAllRecurringTransactions(today.getTimeInMillis()).observe(this, new Observer<List<Transaction>>() {
+        transactionViewModel.getExpenseRecurringTransactions(today.getTimeInMillis()).observe(this, new Observer<List<Transaction>>() {
             @Override
             public void onChanged(@Nullable final List<Transaction> transactions) {
                 // Update the cached copy of the words in the transactionAdapter.
                 // list received is not distinct by recurring id
                 List<Transaction> distinctTransactions = deepCopyDistinctTransaction(transactions);
-                repeatTransactionAdapter.submitList(distinctTransactions);
+                repeatExpenseTransactionAdapter.submitList(distinctTransactions);
             }
         });
 
         // when click on item in recycler view -> populate data and open up to edit
-        repeatTransactionAdapter.setOnItemClickListener(new RepeatTransactionAdapter.OnItemClickListener() {
+        repeatExpenseTransactionAdapter.setOnItemClickListener(new RepeatTransactionAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Transaction transaction) {
+                Intent goToAddEditRepeatTransactionActivity = new Intent(
+                        RepeatTransactionActivity.this, AddEditRepeatTransactionActivity.class);
+                goToAddEditRepeatTransactionActivity.putExtra(AddEditRepeatTransactionActivity.EXTRA_ID,
+                        transaction.getTransactionId());
+                goToAddEditRepeatTransactionActivity.putExtra(AddEditRepeatTransactionActivity.EXTRA_NAME,
+                        transaction.getName());
+                goToAddEditRepeatTransactionActivity.putExtra(AddEditRepeatTransactionActivity.EXTRA_TYPENAME,
+                        transaction.getTypeName());
+                goToAddEditRepeatTransactionActivity.putExtra(AddEditRepeatTransactionActivity.EXTRA_DATE,
+                        DateFormatter.formatDateToString(transaction.getDate()));
+                goToAddEditRepeatTransactionActivity.putExtra(AddEditRepeatTransactionActivity.EXTRA_VALUE,
+                        transaction.getValue());
+                goToAddEditRepeatTransactionActivity.putExtra(AddEditRepeatTransactionActivity.EXTRA_FREQUENCY,
+                        transaction.getFrequency());
+                goToAddEditRepeatTransactionActivity.putExtra(AddEditRepeatTransactionActivity.EXTRA_REPEAT,
+                        transaction.getNumOfRepeat());
+                goToAddEditRepeatTransactionActivity.putExtra(AddEditRepeatTransactionActivity.EXTRA_IS_EXPENSE_TYPE,
+                        transaction.isExpenseTransaction());
+                goToAddEditRepeatTransactionActivity.putExtra(AddEditRepeatTransactionActivity.EXTRA_RECURRING_ID,
+                        transaction.getTransactionRecurringId());
+                startActivityForResult(goToAddEditRepeatTransactionActivity, EDIT_TRANSACTION_ACTIVITY_REQUEST_CODE);
+            }
+        });
+
+        transactionViewModel.getIncomeRecurringTransactions(today.getTimeInMillis()).observe(this, new Observer<List<Transaction>>() {
+            @Override
+            public void onChanged(@Nullable final List<Transaction> transactions) {
+                // Update the cached copy of the words in the transactionAdapter.
+                // list received is not distinct by recurring id
+                List<Transaction> distinctTransactions = deepCopyDistinctTransaction(transactions);
+                repeatIncomeTransactionAdapter.submitList(distinctTransactions);
+            }
+        });
+
+        // when click on item in recycler view -> populate data and open up to edit
+        repeatIncomeTransactionAdapter.setOnItemClickListener(new RepeatTransactionAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Transaction transaction) {
                 Intent goToAddEditRepeatTransactionActivity = new Intent(

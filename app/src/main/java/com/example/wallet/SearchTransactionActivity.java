@@ -8,6 +8,7 @@ import android.provider.SearchRecentSuggestions;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -231,6 +232,28 @@ public class SearchTransactionActivity extends AppCompatActivity {
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
 
+        MenuItem monthView = menu.findItem(R.id.action_month_view);
+        monthView.setVisible(false);
+
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                Intent goToSettingsActivity = new Intent(SearchTransactionActivity.this, SettingsActivity.class);
+                startActivity(goToSettingsActivity);
+                return true;
+            case R.id.action_normal_view:
+                Intent goToMainActivity = new Intent(SearchTransactionActivity.this, MainActivity.class);
+                startActivity(goToMainActivity);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

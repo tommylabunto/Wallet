@@ -20,7 +20,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/textView_year"
+        android:id="@+id/textView_month"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/roboto_bold"
@@ -39,10 +39,10 @@
         android:contentDescription="previous year"
         android:src="@drawable/ic_chevron_right"
         android:text="Button"
-        app:layout_constraintBottom_toBottomOf="@+id/textView_year"
+        app:layout_constraintBottom_toBottomOf="@+id/textView_month"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView_year"
-        app:layout_constraintTop_toTopOf="@+id/textView_year" />
+        app:layout_constraintStart_toEndOf="@+id/textView_month"
+        app:layout_constraintTop_toTopOf="@+id/textView_month" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview_monthly_budget"

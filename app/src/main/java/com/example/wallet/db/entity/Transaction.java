@@ -41,11 +41,12 @@ public class Transaction {
     // 4 (quarterly)
     // 2 (biannually)
     // 1 (annually)
+    @Size(min = 1)
     private int frequency;
 
     // min 0 year to max 30 years
     // 0 means no more recurring in current year
-    @Size(min = 1, max = 30)
+    @Size(min = 0, max = 30)
     private int numOfRepeat;
 
     @NonNull

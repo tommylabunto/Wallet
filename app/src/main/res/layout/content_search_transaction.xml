@@ -10,13 +10,14 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview_search_transaction"
-        android:layout_width="348dp"
-        android:layout_height="504dp"
-        android:layout_marginLeft="28dp"
-        android:layout_marginBottom="40dp"
+        android:layout_width="265dp"
+        android:layout_height="match_parent"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="70dp"
+        android:layout_marginBottom="132dp"
+        android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        tools:listitem="@layout/recyclerview_search_transaction_item"
-        android:scrollbars="vertical"/>
+        tools:listitem="@layout/recyclerview_search_transaction_item" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -26,8 +26,7 @@ public class MonthlyBudgetAdapter extends ListAdapter<MonthlyBudget, MonthlyBudg
 
         private MonthlyBudgetViewHolder(View itemView) {
             super(itemView);
-            textViewMonth = itemView.findViewById(R.id.textView);
-
+            textViewMonth = itemView.findViewById(R.id.textView_month);
             textViewBudget = itemView.findViewById(R.id.textView_budget);
 
             itemView.setOnClickListener(new View.OnClickListener() {

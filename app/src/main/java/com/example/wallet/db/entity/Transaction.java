@@ -20,6 +20,7 @@ public class Transaction {
     private Date date;
 
     @NonNull
+    @Size(min = 0)
     private double value;
 
     // name of transaction

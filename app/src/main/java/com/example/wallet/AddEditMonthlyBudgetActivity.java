@@ -12,9 +12,10 @@ import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.time.Month;
 
@@ -35,6 +36,8 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
     private TextView textViewMonth;
     private EditText editTextBudget;
 
+    private TextInputLayout textInputLayoutBudget;
+
     private static int month;
 
     // cannot add or delete, only can save
@@ -43,7 +46,7 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_monthly_budget);
 
-        textViewYear = findViewById(R.id.textView_month);
+        textViewYear = findViewById(R.id.textView_year);
         textViewMonth = findViewById(R.id.textView_month);
         editTextBudget = findViewById(R.id.edit_text_budget);
 
@@ -65,6 +68,11 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
             }
         });
 
+        // remove grey background on edit text
+        editTextBudget.setBackground(null);
+
+        textInputLayoutBudget = findViewById(R.id.edit_text_budget_input_layout);
+
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
 
         extractIntent();
@@ -81,7 +89,7 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
             Month tempMonth = Month.of(month + 1);
 
             // originally is all caps
-            String monthString = tempMonth.name().substring(0,1) + tempMonth.name().substring(1,3).toLowerCase();
+            String monthString = tempMonth.name().substring(0, 1) + tempMonth.name().substring(1, 3).toLowerCase();
 
             textViewMonth.setText(monthString);
             editTextBudget.setText(intent.getIntExtra(EXTRA_BUDGET, 0) + "");
@@ -102,9 +110,6 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
 
         if (!budgetString.isEmpty()) {
             budget = Integer.parseInt(budgetString);
-        } else {
-            Toast.makeText(this, "Please insert a value", Toast.LENGTH_SHORT).show();
-            return;
         }
 
         Intent newMonthlyBudget = createIntent(budget, year, month, operation);
@@ -131,9 +136,10 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
 
         if (!budgetString.isEmpty()) {
             budget = Integer.parseInt(budgetString);
-        } else {
-            Toast.makeText(this, "Please insert a value", Toast.LENGTH_SHORT).show();
-            return;
+        }
+
+        if (budget < 0) {
+            budget = 0;
         }
 
         Intent oldMonthlyBudget = createIntent(budget, year, month, "delete");
@@ -172,13 +178,36 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.save_item:
-                showAlertDialog();
+                checkForInputValidation();
                 return true;
             case R.id.delete_item:
                 deleteMonthlyBudget();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void checkForInputValidation() {
+
+        int budget = 0;
+        boolean violateInputValidation = false;
+
+        String budgetString = editTextBudget.getText().toString().trim();
+
+        if (!budgetString.isEmpty()) {
+            budget = Integer.parseInt(budgetString);
+        }
+
+        if (budget < 0) {
+            textInputLayoutBudget.setError("Please enter an amount.");
+            violateInputValidation = true;
+        } else {
+            textInputLayoutBudget.setError("");
+        }
+
+        if (!violateInputValidation) {
+            showAlertDialog();
         }
     }
 

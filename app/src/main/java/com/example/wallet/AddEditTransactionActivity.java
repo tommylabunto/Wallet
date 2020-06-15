@@ -18,7 +18,6 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,6 +29,7 @@ import com.example.wallet.db.entity.Type;
 import com.example.wallet.db.viewmodel.TypeViewModel;
 import com.example.wallet.helper.DateFormatter;
 import com.example.wallet.helper.DatePickerFragment;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -58,6 +58,9 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
     private EditText editTextValue;
     private EditText editTextDate;
 
+    private TextInputLayout textInputLayoutValue;
+    private TextInputLayout textInputLayoutName;
+
     // in the format of "02/12/2020"
     private static String formattedDate;
 
@@ -85,6 +88,13 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
         editTextName = findViewById(R.id.edit_text_name);
         editTextValue = findViewById(R.id.edit_text_value);
         editTextDate = findViewById(R.id.edit_text_dateTime);
+
+        // remove grey background on edit text
+        editTextValue.setBackground(null);
+        editTextName.setBackground(null);
+
+        textInputLayoutValue = findViewById(R.id.edit_text_num_value_input_layout);
+        textInputLayoutName = findViewById(R.id.edit_text_num_name_input_layout);
 
         spinner = findViewById(R.id.spinner_type);
 
@@ -239,12 +249,30 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
         String valueString = editTextValue.getText().toString().trim();
         double value = 0;
 
+        boolean violateInputValidation = false;
+
         if (!valueString.isEmpty()) {
             value = Double.parseDouble(valueString);
         }
 
-        if (name.isEmpty() || value == 0) {
-            Toast.makeText(this, "Please insert a name or typeName or value", Toast.LENGTH_SHORT).show();
+        if (name.isEmpty()) {
+            textInputLayoutName.setError("Please enter a name.");
+            violateInputValidation = true;
+        } else {
+            textInputLayoutName.setError("");
+        }
+
+        if (value == 0) {
+            textInputLayoutValue.setError("Please enter an amount.");
+            violateInputValidation = true;
+        } else if (value < 0) {
+            textInputLayoutValue.setError("Please enter an amount greater than 0.");
+            violateInputValidation = true;
+        } else {
+            textInputLayoutValue.setError("");
+        }
+
+        if (violateInputValidation) {
             return;
         }
 
@@ -262,6 +290,10 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
 
         if (!valueString.isEmpty()) {
             value = Double.parseDouble(valueString);
+        }
+
+        if (value < 0) {
+            value = 0;
         }
 
         Intent oldTransaction = createIntent(formattedDate, value, name, type, "delete");

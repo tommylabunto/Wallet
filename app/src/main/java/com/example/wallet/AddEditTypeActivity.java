@@ -12,9 +12,10 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.textfield.TextInputLayout;
 
 public class AddEditTypeActivity extends AppCompatActivity {
 
@@ -30,6 +31,8 @@ public class AddEditTypeActivity extends AppCompatActivity {
     private EditText editTextType;
     private RadioButton radioButtonExpense;
     private RadioButton radioButtonIncome;
+
+    private TextInputLayout textInputLayoutName;
 
     private boolean isExpenseType;
 
@@ -60,6 +63,10 @@ public class AddEditTypeActivity extends AppCompatActivity {
             }
         });
 
+        // remove grey background on edit text
+        editTextType.setBackground(null);
+
+        textInputLayoutName = findViewById(R.id.edit_text_type_input_layout);
 
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
 
@@ -89,8 +96,19 @@ public class AddEditTypeActivity extends AppCompatActivity {
 
         String name = editTextType.getText().toString().trim();
 
+        boolean violateInputValidation = false;
+
         if (name.isEmpty()) {
-            Toast.makeText(this, "Please insert a name", Toast.LENGTH_SHORT).show();
+            textInputLayoutName.setError("Please insert a name.");
+            violateInputValidation = true;
+        } else if (name.length() >= 100) {
+            textInputLayoutName.setError("Please insert a name less than 100 characters.");
+            violateInputValidation = true;
+        } else {
+            textInputLayoutName.setError("");
+        }
+
+        if (violateInputValidation) {
             return;
         }
 
@@ -107,6 +125,10 @@ public class AddEditTypeActivity extends AppCompatActivity {
     private void deleteType() {
 
         String name = editTextType.getText().toString().trim();
+
+        if (name.length() >= 100) {
+            name = "";
+        }
 
         Intent oldType = createIntent(name, "delete");
 
@@ -135,15 +157,15 @@ public class AddEditTypeActivity extends AppCompatActivity {
         boolean checked = ((RadioButton) view).isChecked();
 
         // Check which radio button was clicked
-        switch(view.getId()) {
+        switch (view.getId()) {
             case R.id.radio_expense:
                 if (checked)
                     isExpenseType = true;
-                    break;
+                break;
             case R.id.radio_income:
                 if (checked)
                     isExpenseType = false;
-                    break;
+                break;
         }
     }
 

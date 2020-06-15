@@ -45,12 +45,11 @@ TODO: (note): try to use flat view hierachy, instead of nested
 TODO: (note): change all input types to material design (except input text -> remove hint)
 
  */
-// TODO: use error text for input (textinputlayout) , remove toast for input (main, monthly budget, type), force value when out of range in delete (today)
-// TODO: refactor all recycler view item name to specific textview, change adapter also (today)
 // TODO: remove constraint layout in recyclerview item (today)
 // TODO: decide on app color, change app bar color (today)
 // TODO: improve UI for recycler view item (today)
-// TODO: add soft rounded border for edit text (today)
+// TODO: add soft rounded border for edit text or try use material edit text(today)
+// TODO: arrange main in DESC date, max int value??, arrange type by id
 // TODO: improve search UI (make history white, remove search icon when typing, provide suggestions while typing)
 // TODO: use simple dialog with choices for delete monthly budget (include from this month onwards)
 

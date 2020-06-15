@@ -39,7 +39,7 @@
             android:id="@+id/recyclerview_constraint_layout_inner">
 
             <TextView
-            android:id="@+id/textView"
+            android:id="@+id/textView_month"
             android:layout_width="126dp"
             android:layout_height="40dp"
             android:layout_marginStart="8dp"

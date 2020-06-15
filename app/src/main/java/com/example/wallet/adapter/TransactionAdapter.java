@@ -22,14 +22,14 @@ import java.util.List;
 public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdapter.TransactionViewHolder> {
 
     class TransactionViewHolder extends RecyclerView.ViewHolder {
-        private final TextView wordItemView;
+        private final TextView textViewMonth;
         private final TextView textViewValue;
         private final TextView textView_date;
         private final TextView textView_totalAmount;
 
         private TransactionViewHolder(View itemView) {
             super(itemView);
-            wordItemView = itemView.findViewById(R.id.textView);
+            textViewMonth = itemView.findViewById(R.id.textView_month);
             textViewValue = itemView.findViewById(R.id.textView_value);
             textView_date = itemView.findViewById(R.id.textView_date);
             textView_totalAmount = itemView.findViewById(R.id.textView_totalAmount);
@@ -110,7 +110,7 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
     @Override
     public void onBindViewHolder(TransactionViewHolder holder, int position) {
         Transaction transaction = getItem(position);
-        holder.wordItemView.setText(transaction.getName());
+        holder.textViewMonth.setText(transaction.getName());
         holder.textViewValue.setText(transaction.getValue() + "");
 
         updateHeader(transaction, holder);

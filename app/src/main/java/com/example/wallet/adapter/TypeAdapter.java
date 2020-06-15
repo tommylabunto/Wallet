@@ -16,11 +16,11 @@ import com.example.wallet.db.entity.Type;
 public class TypeAdapter extends ListAdapter<Type, TypeAdapter.TypeViewHolder> {
 
     class TypeViewHolder extends RecyclerView.ViewHolder {
-        private final TextView wordItemView;
+        private final TextView textViewType;
 
         private TypeViewHolder(View itemView) {
             super(itemView);
-            wordItemView = itemView.findViewById(R.id.textView);
+            textViewType = itemView.findViewById(R.id.textView_type);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -64,7 +64,7 @@ public class TypeAdapter extends ListAdapter<Type, TypeAdapter.TypeViewHolder> {
     @Override
     public void onBindViewHolder(TypeViewHolder holder, int position) {
         Type type = getItem(position);
-        holder.wordItemView.setText(type.getName());
+        holder.textViewType.setText(type.getName());
     }
 
     public interface OnItemClickListener {

@@ -289,7 +289,7 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
         String repeatString = editTextRepeat.getText().toString();
         int repeat = -1;
 
-        boolean emptyField = false;
+        boolean violateInputValidation = false;
 
         if (!valueString.isEmpty()) {
             value = Double.parseDouble(valueString);
@@ -301,26 +301,29 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
 
         if (name.isEmpty()) {
             textInputLayoutName.setError("Please enter a name.");
-            emptyField = true;
+            violateInputValidation = true;
         } else {
             textInputLayoutName.setError("");
         }
 
         if (value == 0) {
             textInputLayoutValue.setError("Please enter an amount.");
-            emptyField = true;
+            violateInputValidation = true;
+        } else if (value < 0) {
+            textInputLayoutValue.setError("Please enter an amount greater than 0.");
+            violateInputValidation = true;
         } else {
             textInputLayoutValue.setError("");
         }
 
         if (repeat < 0 || repeat > 30) {
             textInputLayoutRepeat.setError("Please enter a value between 0 and 30.");
-            emptyField = true;
+            violateInputValidation = true;
         } else {
             textInputLayoutRepeat.setError("");
         }
 
-        if (emptyField) {
+        if (violateInputValidation) {
             return;
         }
 
@@ -353,6 +356,11 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
         if (repeat < 0 || repeat > 30) {
             repeat = 0;
         }
+
+        if (value < 0) {
+            value = 0;
+        }
+
         Intent oldTransaction = createIntent(formattedDate, value, name, type, frequency, repeat, "delete");
 
         setResult(RESULT_OK, oldTransaction);

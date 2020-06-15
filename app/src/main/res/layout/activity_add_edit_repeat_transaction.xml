@@ -16,21 +16,32 @@
         android:fontFamily="@font/roboto_bold"
         android:text="date"
         android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/edit_text_dateTime"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/edit_text_dateTime"
-        android:layout_width="314dp"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/edit_text_date_input_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="70dp"
-        android:focusable="false"
-        android:fontFamily="@font/roboto"
-        android:inputType="text"
-        android:textSize="16sp"
+        android:layout_marginStart="70dp"
+        android:theme="@style/no_white_underline"
+        app:boxStrokeColor="@color/colorBlack"
+        app:errorEnabled="true"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_dateTime" />
+        app:layout_constraintTop_toBottomOf="@+id/textView_dateTime">
+
+        <EditText
+            android:id="@+id/edit_text_dateTime"
+            android:layout_width="314dp"
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:fontFamily="@font/roboto"
+            android:inputType="text"
+            android:textSize="16sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/edit_text_date_input_layout" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
         android:id="@+id/textView_Value"
@@ -41,23 +52,27 @@
         android:text="Value"
         android:textSize="16sp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_text_dateTime" />
+        app:layout_constraintTop_toBottomOf="@+id/edit_text_date_input_layout" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/edit_text_num_value_input_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="70dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:theme="@style/no_white_underline"
+        app:boxStrokeColor="@color/colorBlack"
         app:errorEnabled="true"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView_Value">
 
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_text_value"
             android:layout_width="314dp"
             android:layout_height="wrap_content"
             android:fontFamily="@font/roboto"
             android:inputType="numberDecimal"
+            android:textCursorDrawable="@drawable/cursor"
             android:textSize="16sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="@+id/edit_text_num_value_input_layout" />
@@ -79,6 +94,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="70dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:theme="@style/no_white_underline"
+        app:boxStrokeColor="@color/colorBlack"
         app:errorEnabled="true"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView_Name">
@@ -89,6 +107,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/roboto"
             android:inputType="text"
+            android:textCursorDrawable="@drawable/cursor"
             android:textSize="16sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="@+id/edit_text_num_name_input_layout" />
@@ -197,6 +216,9 @@
         android:id="@+id/edit_text_num_repeat_input_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:theme="@style/no_white_underline"
+        app:boxStrokeColor="@color/colorBlack"
         android:layout_marginLeft="70dp"
         app:errorEnabled="true"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -209,6 +231,7 @@
             android:fontFamily="@font/roboto"
             android:inputType="number"
             android:textSize="16sp"
+            android:textCursorDrawable="@drawable/cursor"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="@+id/edit_text_num_repeat_layout" />
     </com.google.android.material.textfield.TextInputLayout>

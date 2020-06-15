@@ -20,6 +20,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.Observer;
@@ -89,10 +90,6 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
         editTextValue = findViewById(R.id.edit_text_value);
         editTextDate = findViewById(R.id.edit_text_dateTime);
 
-        // remove grey background on edit text
-        editTextValue.setBackground(null);
-        editTextName.setBackground(null);
-
         textInputLayoutValue = findViewById(R.id.edit_text_num_value_input_layout);
         textInputLayoutName = findViewById(R.id.edit_text_num_name_input_layout);
 
@@ -121,7 +118,11 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
             }
         });
 
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_close);
+            actionBar.setDisplayShowTitleEnabled(false);
+        }
 
         editTextDate.setOnClickListener(new View.OnClickListener() {
             @Override

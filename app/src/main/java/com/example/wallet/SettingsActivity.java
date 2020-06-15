@@ -52,7 +52,6 @@ public class SettingsActivity extends AppCompatActivity {
     private CarryOverViewModel carryOverViewModel;
     private static CarryOver carryOver;
 
-
     protected static final int REQUEST_SQLITE_GET = 1;
 
     private static final int STORAGE_PERMISSION_CODE = 2;

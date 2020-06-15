@@ -27,7 +27,7 @@
         android:layout_marginTop="10dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView_expense"
-        tools:listitem="@layout/recyclerview_repeat_item"
+        tools:listitem="@layout/recyclerview_repeat_transaction"
         android:scrollbars="vertical"/>
 
     <TextView
@@ -51,6 +51,6 @@
         android:scrollbars="vertical"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView_income"
-        tools:listitem="@layout/recyclerview_repeat_item" />
+        tools:listitem="@layout/recyclerview_repeat_transaction" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -20,6 +20,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.Observer;
@@ -107,16 +108,14 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
         spinnerType = findViewById(R.id.spinner_repeat_type);
         editTextRepeat = findViewById(R.id.edit_text_num_repeat);
 
-        // remove grey background on edit text
-        editTextValue.setBackground(null);
-        editTextName.setBackground(null);
-        editTextRepeat.setBackground(null);
-
         textInputLayoutValue = findViewById(R.id.edit_text_num_value_input_layout);
         textInputLayoutName = findViewById(R.id.edit_text_num_name_input_layout);
         textInputLayoutRepeat = findViewById(R.id.edit_text_num_repeat_input_layout);
 
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_close);
+        }
 
         editTextDate.setOnClickListener(new View.OnClickListener() {
             @Override

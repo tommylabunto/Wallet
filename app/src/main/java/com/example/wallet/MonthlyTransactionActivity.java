@@ -16,6 +16,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -106,6 +107,11 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
         });
 
         handleIntent(getIntent());
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayShowTitleEnabled(false);
+        }
     }
 
     private void initStartEndCal() {
@@ -113,10 +119,14 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
         // first and last day of month
         startMonthCal = Calendar.getInstance();
         startMonthCal.set(Calendar.DAY_OF_MONTH, 1);
+        startMonthCal.set(Calendar.HOUR_OF_DAY, 0);
+        startMonthCal.set(Calendar.MINUTE, 0);
 
         endMonthCal = Calendar.getInstance();
         int lastDay = endMonthCal.getActualMaximum(Calendar.DAY_OF_MONTH);
         endMonthCal.set(Calendar.DAY_OF_MONTH, lastDay);
+        endMonthCal.set(Calendar.HOUR_OF_DAY, 23);
+        endMonthCal.set(Calendar.MINUTE, 59);
 
         int yearInt = startMonthCal.get(Calendar.YEAR);
         int monthInt = startMonthCal.get(Calendar.MONTH);

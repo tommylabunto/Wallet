@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -42,18 +43,17 @@ import java.util.List;
 /*
 TODO: (note): use sp for text and container for text -> it scales with phone size and font size preference on phone
 TODO: (note): try to use flat view hierachy, instead of nested
+TODO: (note): use these colors primarily (white, dark blue, green)
 TODO: (note): change all input types to material design (except input text -> remove hint)
 
  */
-// TODO: remove constraint layout in recyclerview item (today)
-// TODO: decide on app color, change app bar color (today)
+// TODO: improve search UI (make history white, remove search icon when typing, provide suggestions while typing) (today)
+// TODO: leave styling outside of java class (today)
 // TODO: improve UI for recycler view item (today)
-// TODO: add soft rounded border for edit text or try use material edit text(today)
-// TODO: arrange main in DESC date, max int value??, arrange type by id
-// TODO: improve search UI (make history white, remove search icon when typing, provide suggestions while typing)
-// TODO: use simple dialog with choices for delete monthly budget (include from this month onwards)
+// TODO: use material alert dialog boxes
 
 /* (end)
+// TODO: nielson norman when to use toast
 // TODO: make sure all constraints are done proper
 // TODO: change string to string resource
 // TODO: set up cards for user to see when first download
@@ -151,6 +151,11 @@ public class MainActivity extends AppCompatActivity {
         coordinatorLayout = findViewById(R.id.mainActivity);
 
         handleIntent(getIntent());
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayShowTitleEnabled(false);
+        }
     }
 
     private void initStartEndCal() {
@@ -158,10 +163,14 @@ public class MainActivity extends AppCompatActivity {
         // first and last day of month
         startMonthCal = Calendar.getInstance();
         startMonthCal.set(Calendar.DAY_OF_MONTH, 1);
+        startMonthCal.set(Calendar.HOUR_OF_DAY, 0);
+        startMonthCal.set(Calendar.MINUTE, 0);
 
         endMonthCal = Calendar.getInstance();
         int lastDay = endMonthCal.getActualMaximum(Calendar.DAY_OF_MONTH);
         endMonthCal.set(Calendar.DAY_OF_MONTH, lastDay);
+        endMonthCal.set(Calendar.HOUR_OF_DAY, 23);
+        endMonthCal.set(Calendar.MINUTE, 59);
 
         int yearInt = startMonthCal.get(Calendar.YEAR);
         int monthInt = startMonthCal.get(Calendar.MONTH);

@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputLayout;
@@ -63,12 +64,12 @@ public class AddEditTypeActivity extends AppCompatActivity {
             }
         });
 
-        // remove grey background on edit text
-        editTextType.setBackground(null);
-
         textInputLayoutName = findViewById(R.id.edit_text_type_input_layout);
 
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_close);
+        }
 
         extractIntent();
     }

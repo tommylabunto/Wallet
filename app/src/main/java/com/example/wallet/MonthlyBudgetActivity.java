@@ -158,7 +158,12 @@ public class MonthlyBudgetActivity extends AppCompatActivity {
                     monthlyBudgetViewModel.updateMonthlyBudget(monthlyBudget);
                     Toast.makeText(this, "Monthly Budget updated", Toast.LENGTH_SHORT).show();
 
-                    // update all Monthly Budget
+                    // update all future Monthly Budget
+                }  else if (data.getStringExtra(AddEditMonthlyBudgetActivity.EXTRA_OPERATION).equals("save next")) {
+                    monthlyBudgetViewModel.updateAllFutureMonthlyBudgets(monthlyBudget.getMonthlyBudgetId(), monthlyBudget.getBudget());
+                    Toast.makeText(this, "All Monthly Budget updated", Toast.LENGTH_SHORT).show();
+
+                    // update all
                 } else if (data.getStringExtra(AddEditMonthlyBudgetActivity.EXTRA_OPERATION).equals("save all")) {
                     monthlyBudgetViewModel.updateAllMonthlyBudgets(monthlyBudget.getBudget());
                     Toast.makeText(this, "All Monthly Budget updated", Toast.LENGTH_SHORT).show();

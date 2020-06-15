@@ -13,6 +13,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputLayout;
@@ -68,12 +69,12 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
             }
         });
 
-        // remove grey background on edit text
-        editTextBudget.setBackground(null);
-
         textInputLayoutBudget = findViewById(R.id.edit_text_budget_input_layout);
 
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_close);
+        }
 
         extractIntent();
     }
@@ -212,25 +213,37 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
     }
 
     private void showAlertDialog() {
+
+        String[] choices = new String[3];
+        choices[0] = "Set this for only this month";
+        choices[1] = "Set this for subsequent months";
+        choices[2] = "Set this for all months";
+
+        //new MaterialAlertDialogBuilder(this)
         new AlertDialog.Builder(this)
                 .setTitle("Update")
-                .setMessage("Do you want to set this amount as a default budget?")
+                .setSingleChoiceItems(choices, 0, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
                 .setPositiveButton("yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        createOrSaveMonthlyBudget("save all");
+                        int selectedPosition = ((AlertDialog)dialog).getListView().getCheckedItemPosition();
+
+                        if (selectedPosition == 0) {
+                            createOrSaveMonthlyBudget("save");
+                        } else if (selectedPosition == 1) {
+                            createOrSaveMonthlyBudget("save next");
+                        } else {
+                            createOrSaveMonthlyBudget("save all");
+                        }
                     }
                 })
                 .setNegativeButton("no", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        createOrSaveMonthlyBudget("save");
-                    }
-                })
-                .setNeutralButton("cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
                     }
                 })
                 .create().show();

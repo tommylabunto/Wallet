@@ -69,7 +69,7 @@ public class RepeatTransactionAdapter extends ListAdapter<Transaction, RepeatTra
 
     @Override
     public RepeatTransactionViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mInflater.inflate(R.layout.recyclerview_repeat_item, parent, false);
+        View itemView = mInflater.inflate(R.layout.recyclerview_repeat_transaction, parent, false);
         RepeatTransactionViewHolder holder = new RepeatTransactionViewHolder(itemView);
         return holder;
     }

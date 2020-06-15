@@ -102,7 +102,7 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
 
     @Override
     public TransactionViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mInflater.inflate(R.layout.recyclerview_item, parent, false);
+        View itemView = mInflater.inflate(R.layout.recyclerview_transaction, parent, false);
         TransactionViewHolder holder = new TransactionViewHolder(itemView);
         return holder;
     }

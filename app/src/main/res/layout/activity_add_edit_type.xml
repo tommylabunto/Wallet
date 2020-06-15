@@ -67,6 +67,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="70dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:theme="@style/no_white_underline"
+        app:boxStrokeColor="@color/colorBlack"
         app:errorEnabled="true"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView_type">
@@ -78,6 +81,7 @@
             android:fontFamily="@font/roboto"
             android:imeOptions="actionSend"
             android:inputType="textCapSentences"
+            android:textCursorDrawable="@drawable/cursor"
             android:textSize="16sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView_type" />

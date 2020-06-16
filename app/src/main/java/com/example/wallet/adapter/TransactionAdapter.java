@@ -25,13 +25,15 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
         private final TextView textViewMonth;
         private final TextView textViewValue;
         private final TextView textView_date;
+        private final TextView textView_dayOfdate;
         private final TextView textView_totalAmount;
 
         private TransactionViewHolder(View itemView) {
             super(itemView);
-            textViewMonth = itemView.findViewById(R.id.textView_month);
+            textViewMonth = itemView.findViewById(R.id.textView_name);
             textViewValue = itemView.findViewById(R.id.textView_value);
             textView_date = itemView.findViewById(R.id.textView_date);
+            textView_dayOfdate = itemView.findViewById(R.id.textView_day_of_date);
             textView_totalAmount = itemView.findViewById(R.id.textView_totalAmount);
 
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -45,7 +47,7 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
             });
         }
 
-        public void showHeader(String date, String totalAmount) {
+        public void showHeader(String date, String day, String totalAmount) {
 
             if (textView_date != null) {
                 textView_date.setText(date);
@@ -55,8 +57,13 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
                 textView_totalAmount.setText(totalAmount);
             }
 
+            if (textView_dayOfdate != null) {
+                textView_dayOfdate.setText(day);
+            }
+
             textView_date.setVisibility(View.VISIBLE);
             textView_totalAmount.setVisibility(View.VISIBLE);
+            textView_dayOfdate.setVisibility(View.VISIBLE);
         }
 
         /*
@@ -68,6 +75,8 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
             textView_date.setVisibility(View.GONE);
 
             textView_totalAmount.setVisibility(View.GONE);
+
+            textView_dayOfdate.setVisibility(View.GONE);
         }
     }
 
@@ -111,7 +120,7 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
     public void onBindViewHolder(TransactionViewHolder holder, int position) {
         Transaction transaction = getItem(position);
         holder.textViewMonth.setText(transaction.getName());
-        holder.textViewValue.setText(transaction.getValue() + "");
+        holder.textViewValue.setText( (int) transaction.getValue() + "");
 
         updateHeader(transaction, holder);
     }
@@ -133,8 +142,11 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(transaction.getDate());
 
-        SimpleDateFormat formatter = new SimpleDateFormat("dd MMM");
-        String formattedDate = formatter.format(calendar.getTime());
+        SimpleDateFormat formatterDate = new SimpleDateFormat("dd");
+        String formattedDate = formatterDate.format(calendar.getTime());
+
+        SimpleDateFormat formatterDay = new SimpleDateFormat("EEE");
+        String formattedDay = formatterDay.format(calendar.getTime());
 
         this.isFirst = false;
 
@@ -143,7 +155,7 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
             String totalAmount = calculateTotalAmountInADay(transaction);
 
             if (this.isFirst) {
-                holder.showHeader(formattedDate, totalAmount);
+                holder.showHeader(formattedDate, formattedDay, totalAmount);
             }
         }
 
@@ -187,7 +199,7 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
         // round up to 2.d.p
         BigDecimal totalValueBd= new BigDecimal(totalValue).setScale(2, RoundingMode.HALF_UP);
 
-        stringBuilder.append(totalValueBd);
+        stringBuilder.append(totalValueBd.toBigInteger());
 
         return stringBuilder.toString();
     }

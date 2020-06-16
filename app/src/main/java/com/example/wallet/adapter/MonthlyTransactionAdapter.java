@@ -76,7 +76,7 @@ public class MonthlyTransactionAdapter extends ListAdapter<Transaction, MonthlyT
     public void onBindViewHolder(MonthlyTransactionViewHolder holder, int position) {
         Transaction transaction = getItem(position);
         holder.textViewTypeName.setText(transaction.getTypeName());
-        holder.textViewTypeAmount.setText(transaction.getValue() + "");
+        holder.textViewTypeAmount.setText( (int) transaction.getValue() + "");
     }
 
     public interface OnItemClickListener {

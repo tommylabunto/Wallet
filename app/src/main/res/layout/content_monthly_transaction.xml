@@ -12,6 +12,7 @@
         android:id="@+id/left_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="?android:selectableItemBackground"
         android:contentDescription="next month"
         android:src="@drawable/ic_chevron_left"
         android:text="Button"
@@ -25,15 +26,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="previous month"
+        android:background="?android:selectableItemBackground"
         android:src="@drawable/ic_chevron_right"
         android:text="Button"
-        app:layout_constraintBottom_toBottomOf="@+id/textView_month"
+        app:layout_constraintBottom_toBottomOf="@+id/textView_name"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView_month"
-        app:layout_constraintTop_toTopOf="@+id/textView_month"/>
+        app:layout_constraintStart_toEndOf="@+id/textView_name"
+        app:layout_constraintTop_toTopOf="@+id/textView_name"/>
 
     <TextView
-        android:id="@+id/textView_month"
+        android:id="@+id/textView_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/roboto_bold"
@@ -55,7 +57,7 @@
         android:fontFamily="@font/roboto_bold"
         android:text="year"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/textView_month"
+        app:layout_constraintBottom_toTopOf="@+id/textView_name"
         app:layout_constraintLeft_toLeftOf="parent" />
 
     <TextView

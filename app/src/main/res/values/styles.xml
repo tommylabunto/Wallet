@@ -4,7 +4,7 @@
     <style name="AppTheme" parent="Theme.MaterialComponents.Light">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorWhite</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/colorBlack</item>
         <item name="colorAccent">@color/colorBlack</item>
         <item name="android:datePickerDialogTheme">@style/DatePickerDialogTheme</item>
         <item name="android:alertDialogTheme">@style/AlertDialogTheme</item>
@@ -16,7 +16,8 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="searchViewStyle">@style/SearchView</item>
     </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" >
@@ -48,6 +49,8 @@
     </style>
 
     <style name="DatePickerButtonStyle" parent="Base.Widget.AppCompat.Button.Borderless">
+        <item name="android:textSize">12sp</item>
+        <item name="android:fontFamily">@font/roboto_bold</item>
         <item name="android:textColor">@color/colorBlack</item>
     </style>
 
@@ -55,10 +58,33 @@
         <item name="android:buttonBarPositiveButtonStyle">@style/DatePickerButtonStyle</item>
         <item name="android:buttonBarNegativeButtonStyle">@style/DatePickerButtonStyle</item>
         <item name="android:buttonBarNeutralButtonStyle">@style/DatePickerButtonStyle</item>
+        <item name="android:windowTitleStyle">@style/headerTextAppearance</item>
+        <item name="android:textAppearanceMedium">@style/message</item>
+    </style>
+
+    <style name="headerTextAppearance">
+        <item name="android:textAppearance">@style/header</item>
+    </style>
+
+    <style name="header">
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">@font/roboto</item>
+        <item name="android:textStyle">normal|bold</item>
+    </style>
+
+    <style name="message">
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">@font/roboto</item>
+        <item name="android:textStyle">normal</item>
     </style>
 
     <style name="FloatingActionButton" parent="@style/Widget.MaterialComponents.FloatingActionButton">
         <item name="backgroundTint">@color/colorBlack</item>
         <item name="tint">@color/colorWhite</item>
+    </style>
+
+    <style name="SearchView" parent="Base.Widget.AppCompat.SearchView" >
+        <item name="searchIcon">@color/colorWhite</item>
+        <item name="suggestionRowLayout">@layout/suggestion_dropdown</item>
     </style>
 </resources>

@@ -7,6 +7,7 @@
     android:layout_marginTop="10dp"
     android:foreground="?android:attr/selectableItemBackground"
     android:orientation="vertical"
+    app:cardElevation="0dp"
     app:layout_constraintLeft_toLeftOf="parent"
     app:layout_constraintTop_toTopOf="parent">
 
@@ -16,10 +17,12 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/textView_month"
+            android:id="@+id/textView_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto"
             android:text="hoooo"
+            android:textSize="16sp"
             android:layout_marginTop="10dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="@+id/constraint_layout_monthly_budget" />
@@ -28,7 +31,9 @@
             android:id="@+id/textView_budget"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto"
             android:text="hoooo"
+            android:textSize="16sp"
             android:layout_marginTop="10dp"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="@+id/constraint_layout_monthly_budget" />

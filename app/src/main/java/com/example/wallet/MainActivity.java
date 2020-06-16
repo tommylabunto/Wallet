@@ -11,13 +11,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.lifecycle.Observer;
@@ -47,10 +47,11 @@ TODO: (note): use these colors primarily (white, dark blue, green)
 TODO: (note): change all input types to material design (except input text -> remove hint)
 
  */
-// TODO: improve search UI (make history white, remove search icon when typing, provide suggestions while typing) (today)
-// TODO: leave styling outside of java class (today)
-// TODO: improve UI for recycler view item (today)
-// TODO: use material alert dialog boxes
+// TODO: improve UI for changing months/year (main, month view, monthly budget) (today)
+// TODO: provide suggestions for type (today)
+// TODO: search icon on month view still visible (today)
+// TODO: different months get highlighted on monthly budget (today)
+// TODO: main activity differentiate between income and expense (today)
 
 /* (end)
 // TODO: nielson norman when to use toast
@@ -117,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         textViewYear = findViewById(R.id.textView_year);
-        textViewMonth = findViewById(R.id.textView_month);
+        textViewMonth = findViewById(R.id.textView_name);
 
         prevMonth = findViewById(R.id.left_button);
         prevMonth.setOnClickListener(new View.OnClickListener() {

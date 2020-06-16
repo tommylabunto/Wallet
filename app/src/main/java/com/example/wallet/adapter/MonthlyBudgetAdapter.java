@@ -2,6 +2,7 @@ package com.example.wallet.adapter;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +27,7 @@ public class MonthlyBudgetAdapter extends ListAdapter<MonthlyBudget, MonthlyBudg
 
         private MonthlyBudgetViewHolder(View itemView) {
             super(itemView);
-            textViewMonth = itemView.findViewById(R.id.textView_month);
+            textViewMonth = itemView.findViewById(R.id.textView_name);
             textViewBudget = itemView.findViewById(R.id.textView_budget);
 
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -80,13 +81,13 @@ public class MonthlyBudgetAdapter extends ListAdapter<MonthlyBudget, MonthlyBudg
         Month month = Month.of(monthlyBudget.getMonth() + 1);
         // originally is all caps
         String monthString = month.name().substring(0,1) + month.name().substring(1).toLowerCase();
-
         holder.textViewMonth.setText(monthString);
 
         int tempMonth = holder.calendar.get(Calendar.MONTH) + 1;
 
         // bold same month
         if (tempMonth == month.getValue()) {
+            Log.d("same month",tempMonth + "");
             holder.textViewMonth.setTypeface(holder.textViewMonth.getTypeface(), Typeface.BOLD);
             holder.textViewBudget.setTypeface(holder.textViewBudget.getTypeface(), Typeface.BOLD);
         }

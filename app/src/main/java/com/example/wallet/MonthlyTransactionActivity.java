@@ -12,12 +12,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -67,7 +67,7 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_monthly_transaction);
 
-        textViewMonth = findViewById(R.id.textView_month);
+        textViewMonth = findViewById(R.id.textView_name);
         textViewYear = findViewById(R.id.textView_year);
         textViewTotalAmount = findViewById(R.id.textView_totalAmount);
         textViewMonthlyBudget = findViewById(R.id.textView_monthly_budget);
@@ -182,7 +182,7 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
         totalIncome = monthlyBudget.getBudget() + totalIncome;
         BigDecimal totalBudgetBd = new BigDecimal(totalIncome).setScale(2, RoundingMode.HALF_UP);
 
-        textViewMonthlyBudget.setText(totalBudgetBd.toString());
+        textViewMonthlyBudget.setText(totalBudgetBd.toBigInteger() + "");
 
         calculateRemaining();
     }
@@ -202,7 +202,7 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
 
         remaining = Math.abs(totalRemainingBd.doubleValue());
 
-        textViewRemaining.setText(remaining + "");
+        textViewRemaining.setText( (int) remaining + "");
 
     }
 
@@ -250,7 +250,7 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
         // round up to 2.d.p
         BigDecimal totalAmountBd = new BigDecimal(totalExpenses).setScale(2, RoundingMode.HALF_UP);
 
-        textViewTotalAmount.setText(totalAmountBd.doubleValue() + "/");
+        textViewTotalAmount.setText( (int) (totalAmountBd.doubleValue()) + "/");
     }
 
     private void handleIntent(Intent intent) {

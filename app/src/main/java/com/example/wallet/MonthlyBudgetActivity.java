@@ -59,7 +59,7 @@ public class MonthlyBudgetActivity extends AppCompatActivity {
         recyclerView.setAdapter(monthlyBudgetAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        textViewYear = findViewById(R.id.textView_name);
+        textViewYear = findViewById(R.id.textView_year);
 
         initViewModels();
 

@@ -1,6 +1,7 @@
 package com.example.wallet.adapter;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,6 +78,14 @@ public class MonthlyTransactionAdapter extends ListAdapter<Transaction, MonthlyT
         Transaction transaction = getItem(position);
         holder.textViewTypeName.setText(transaction.getTypeName());
         holder.textViewTypeAmount.setText( (int) transaction.getValue() + "");
+
+        if (!transaction.isExpenseTransaction()) {
+            holder.textViewTypeName.setTypeface(holder.textViewTypeName.getTypeface(), Typeface.BOLD);
+            holder.textViewTypeAmount.setTypeface(holder.textViewTypeAmount.getTypeface(), Typeface.BOLD);
+        } else {
+            holder.textViewTypeName.setTypeface(holder.textViewTypeName.getTypeface(), Typeface.NORMAL);
+            holder.textViewTypeAmount.setTypeface(holder.textViewTypeAmount.getTypeface(), Typeface.NORMAL);
+        }
     }
 
     public interface OnItemClickListener {

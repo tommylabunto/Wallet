@@ -1,111 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_monthly_transaction_layout"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior" >
-
-    <ImageButton
-        android:id="@+id/left_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="?android:selectableItemBackground"
-        android:contentDescription="next month"
-        android:src="@drawable/ic_chevron_left"
-        android:text="Button"
-        android:layout_marginStart="70dp"
-        app:layout_constraintBottom_toTopOf="@+id/guideline"
-        app:layout_constraintHorizontal_chainStyle="spread"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <ImageButton
-        android:id="@+id/right_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="previous month"
-        android:background="?android:selectableItemBackground"
-        android:src="@drawable/ic_chevron_right"
-        android:text="Button"
-        app:layout_constraintBottom_toBottomOf="@+id/textView_name"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView_name"
-        app:layout_constraintTop_toTopOf="@+id/textView_name"/>
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <TextView
-        android:id="@+id/textView_name"
+        android:id="@+id/textView_month"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="10dp"
         android:fontFamily="@font/roboto_bold"
         android:text="month"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="@+id/left_button"
-        app:layout_constraintEnd_toStartOf="@+id/right_button"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="spread"
-        app:layout_constraintStart_toEndOf="@+id/left_button"
-        app:layout_constraintTop_toTopOf="@+id/left_button" />
+        android:textSize="28sp"
+        android:transitionName="changeTextViewMonth"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textView_year"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="176dp"
-        android:layout_marginBottom="8dp"
-        android:fontFamily="@font/roboto_bold"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="5dp"
+        android:fontFamily="@font/roboto_light"
         android:text="year"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/textView_name"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        android:textSize="12sp"
+        android:transitionName="changeTextViewYear"
+        app:layout_constraintLeft_toRightOf="@+id/textView_month"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerview_monthly_transaction"
+        android:layout_width="265dp"
+        android:layout_height="250dp"
+        android:layout_marginLeft="70dp"
+        android:scrollbars="vertical"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView_month"
+        tools:listitem="@layout/recyclerview_monthly_transaction_item" />
+
+    <View
+        android:id="@+id/divider"
+        style="@style/divider"
+        android:layout_width="245dp"
+        android:layout_marginLeft="95dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerview_monthly_transaction" />
 
     <TextView
-        android:id="@+id/textView_totalAmount"
+        android:id="@+id/textView_monthly_budget_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="136dp"
-        android:layout_marginBottom="8dp"
-        android:text="total amount"
-        app:layout_constraintBottom_toTopOf="@+id/textView_remaining"
-        app:layout_constraintRight_toLeftOf="@+id/textView_monthly_budget" />
+        android:layout_marginStart="95dp"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/roboto_bold"
+        android:text="Income and Budget"
+        android:textSize="16sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider" />
 
     <TextView
         android:id="@+id/textView_monthly_budget"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="4dp"
-        android:layout_marginBottom="8dp"
-        android:text="monthly budget"
-        app:layout_constraintBottom_toTopOf="@+id/textView_remaining"
-        app:layout_constraintRight_toRightOf="parent" />
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="100dp"
+        android:fontFamily="@font/roboto"
+        android:text="budget"
+        android:textSize="16sp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider" />
+
+
+    <TextView
+        android:id="@+id/textView_totalAmount_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="95dp"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/roboto_bold"
+        android:text="Expenses"
+        android:textSize="16sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_monthly_budget_label" />
+
+    <TextView
+        android:id="@+id/textView_totalAmount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="100dp"
+        android:fontFamily="@font/roboto"
+        android:text="Expenses"
+        android:textSize="16sp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_monthly_budget" />
+
+    <TextView
+        android:id="@+id/textView_remaining_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="95dp"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/roboto_bold"
+        android:text="Remaining"
+        android:textSize="16sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_totalAmount_label" />
 
     <TextView
         android:id="@+id/textView_remaining"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="72dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="100dp"
+        android:fontFamily="@font/roboto"
         android:text="remaining"
+        android:textSize="16sp"
         app:layout_constraintRight_toRightOf="parent"
-        tools:layout_editor_absoluteY="156dp"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerview_monthly_transaction"/>
+        app:layout_constraintTop_toBottomOf="@+id/textView_totalAmount" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerview_monthly_transaction"
-        android:layout_width="348dp"
-        android:layout_height="504dp"
-        android:layout_marginLeft="28dp"
-        android:layout_marginBottom="40dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        tools:listitem="@layout/recyclerview_monthly_transaction_item"
-        android:scrollbars="vertical"/>
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="84dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

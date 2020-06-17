@@ -23,7 +23,7 @@ public class RepeatTransactionAdapter extends ListAdapter<Transaction, RepeatTra
 
         private RepeatTransactionViewHolder(View itemView) {
             super(itemView);
-            wordItemView = itemView.findViewById(R.id.textView_name);
+            wordItemView = itemView.findViewById(R.id.textView_year);
             textViewValue = itemView.findViewById(R.id.textView_value);
 
             itemView.setOnClickListener(new View.OnClickListener() {

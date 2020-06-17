@@ -45,7 +45,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="70dp"
-                    android:text="Repeat transaction"
+                    android:text="Recurring transaction"
                     android:textSize="20sp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/constraint_layout_repeat" />
@@ -89,7 +89,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="70dp"
                     android:layout_marginTop="10dp"
-                    android:text="Type"
+                    android:text="Category"
                     android:textSize="20sp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/constraint_layout_type" />
@@ -101,7 +101,7 @@
                     android:layout_marginStart="70dp"
                     android:layout_marginEnd="10dp"
                     android:fontFamily="@font/roboto_light"
-                    android:text="Edit transaction types."
+                    android:text="Edit transaction categories."
                     android:textSize="16sp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView_type" />
@@ -145,7 +145,7 @@
                     android:layout_marginStart="70dp"
                     android:layout_marginEnd="10dp"
                     android:fontFamily="@font/roboto_light"
-                    android:text="Edit Monthly Budgets."
+                    android:text="Edit monthly budgets."
                     android:textSize="16sp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView_monthly_budget" />
@@ -314,7 +314,7 @@
                     android:layout_marginStart="70dp"
                     android:layout_marginEnd="10dp"
                     android:fontFamily="@font/roboto_light"
-                    android:text="Export database through one of your communication app."
+                    android:text="Export database through your messaging apps."
                     android:textSize="16sp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView_export" />

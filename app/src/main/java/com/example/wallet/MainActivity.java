@@ -1,11 +1,14 @@
 package com.example.wallet;
 
+import android.app.ActivityOptions;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
+import android.transition.Fade;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -47,11 +50,13 @@ TODO: (note): use these colors primarily (white, dark blue, green)
 TODO: (note): change all input types to material design (except input text -> remove hint)
 
  */
-// TODO: improve UI for changing months/year (main, month view, monthly budget) (today)
-// TODO: provide suggestions for type (today)
-// TODO: search icon on month view still visible (today)
-// TODO: different months get highlighted on monthly budget (today)
-// TODO: main activity differentiate between income and expense (today)
+// TODO: MUST FUCKING IMPORT DB (today)
+/*
+TODO: import database (try update INSTANCE in db, refresh viewmodel) (second)
+- can createfromassets successfully
+- works if change the name in wallet database (prepopulate db), it takes a while,
+ then need to change the name in getInstance to load it
+ */
 
 /* (end)
 // TODO: nielson norman when to use toast
@@ -60,12 +65,6 @@ TODO: (note): change all input types to material design (except input text -> re
 // TODO: set up cards for user to see when first download
 // TODO: comply with google's standards
 // TODO: learn to handle room migration
- */
-/*
-TODO: import database (try update INSTANCE in db, refresh viewmodel) (second)
-- can createfromassets successfully
-- works if change the name in wallet database (prepopulate db), it takes a while,
- then need to change the name in getInstance to load it
  */
 
 /*
@@ -118,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         textViewYear = findViewById(R.id.textView_year);
-        textViewMonth = findViewById(R.id.textView_name);
+        textViewMonth = findViewById(R.id.textView_month);
 
         prevMonth = findViewById(R.id.left_button);
         prevMonth.setOnClickListener(new View.OnClickListener() {
@@ -157,6 +156,15 @@ public class MainActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayShowTitleEnabled(false);
         }
+
+        // remove blinking effect from animating shared elements
+        Fade fade = new Fade();
+        View decor = getWindow().getDecorView();
+        fade.excludeTarget(decor.findViewById(R.id.action_bar_container), true);
+        fade.excludeTarget(android.R.id.statusBarBackground, true);
+        fade.excludeTarget(android.R.id.navigationBarBackground, true);
+        getWindow().setEnterTransition(fade);
+        getWindow().setExitTransition(fade);
     }
 
     private void initStartEndCal() {
@@ -388,12 +396,24 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_settings:
                 Intent goToSettingsActivity = new Intent(MainActivity.this, SettingsActivity.class);
+
+
                 startActivity(goToSettingsActivity);
                 return true;
 
             case R.id.action_month_view:
                 Intent goToMonthlyTransactionActivity = new Intent(MainActivity.this, MonthlyTransactionActivity.class);
-                startActivity(goToMonthlyTransactionActivity);
+
+
+                ActivityOptions options = ActivityOptions
+                        .makeSceneTransitionAnimation(MainActivity.this,
+                                Pair.create(prevMonth, "changePrevMonth"),
+                                Pair.create(nextMonth, "changeNextMonth"),
+                                Pair.create(textViewMonth, "changeTextViewMonth"),
+                                Pair.create(textViewYear, "changeTextViewYear")
+                        );
+
+                startActivity(goToMonthlyTransactionActivity, options.toBundle());
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

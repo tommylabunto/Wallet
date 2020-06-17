@@ -1,6 +1,7 @@
 package com.example.wallet.adapter;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +23,7 @@ import java.util.List;
 public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdapter.TransactionViewHolder> {
 
     class TransactionViewHolder extends RecyclerView.ViewHolder {
-        private final TextView textViewMonth;
+        private final TextView textViewName;
         private final TextView textViewValue;
         private final TextView textView_date;
         private final TextView textView_dayOfdate;
@@ -30,7 +31,7 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
 
         private TransactionViewHolder(View itemView) {
             super(itemView);
-            textViewMonth = itemView.findViewById(R.id.textView_name);
+            textViewName = itemView.findViewById(R.id.textView_name);
             textViewValue = itemView.findViewById(R.id.textView_value);
             textView_date = itemView.findViewById(R.id.textView_date);
             textView_dayOfdate = itemView.findViewById(R.id.textView_day_of_date);
@@ -119,8 +120,21 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
     @Override
     public void onBindViewHolder(TransactionViewHolder holder, int position) {
         Transaction transaction = getItem(position);
-        holder.textViewMonth.setText(transaction.getName());
-        holder.textViewValue.setText( (int) transaction.getValue() + "");
+        holder.textViewName.setText(transaction.getName());
+        holder.textViewValue.setText((int) transaction.getValue() + "");
+
+//        if (!transaction.isExpenseTransaction()) {
+//            holder.textViewName.setTextColor(Color.parseColor("#00ff9b"));
+//            holder.textViewValue.setTextColor(Color.parseColor("#00ff9b"));
+//        }
+
+        if (!transaction.isExpenseTransaction()) {
+            holder.textViewName.setTypeface(holder.textViewName.getTypeface(), Typeface.BOLD);
+            holder.textViewValue.setTypeface(holder.textViewValue.getTypeface(), Typeface.BOLD);
+        } else {
+            holder.textViewName.setTypeface(holder.textViewName.getTypeface(), Typeface.NORMAL);
+            holder.textViewValue.setTypeface(holder.textViewValue.getTypeface(), Typeface.NORMAL);
+        }
 
         updateHeader(transaction, holder);
     }
@@ -181,23 +195,26 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
         BigDecimal totalValue1 = new BigDecimal(0);
 
         for (int i = 0; i < transactions.size(); i++) {
-            if (formatter.format(transactions.get(i).getDate()).equals(formattedDate)) {
+            // only count expenses, don't minus income from expenses
+            if (transactions.get(i).isExpenseTransaction()) {
+                if (formatter.format(transactions.get(i).getDate()).equals(formattedDate)) {
 
-                totalValue += transactions.get(i).getValue();
+                    totalValue += transactions.get(i).getValue();
 
-                if (count == 0 && transactions.get(i).getTransactionId() == transaction.getTransactionId()) {
-                    this.isFirst = true;
-                }
-                count++;
+                    if (count == 0 && transactions.get(i).getTransactionId() == transaction.getTransactionId()) {
+                        this.isFirst = true;
+                    }
+                    count++;
 
-                if (i + 1 == transactions.size() || (i + 1 < transactions.size() && !formatter.format(transactions.get(i + 1).getDate()).equals(formattedDate))) {
-                    break;
+                    if (i + 1 == transactions.size() || (i + 1 < transactions.size() && !formatter.format(transactions.get(i + 1).getDate()).equals(formattedDate))) {
+                        break;
+                    }
                 }
             }
         }
 
         // round up to 2.d.p
-        BigDecimal totalValueBd= new BigDecimal(totalValue).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal totalValueBd = new BigDecimal(totalValue).setScale(2, RoundingMode.HALF_UP);
 
         stringBuilder.append(totalValueBd.toBigInteger());
 

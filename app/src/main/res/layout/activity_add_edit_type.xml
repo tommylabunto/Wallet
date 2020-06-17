@@ -13,7 +13,7 @@
         android:layout_marginLeft="70dp"
         android:layout_marginTop="10dp"
         android:fontFamily="@font/roboto_bold"
-        android:text="Type"
+        android:text="type"
         android:textSize="16sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -57,7 +57,7 @@
         android:layout_marginStart="70dp"
         android:layout_marginTop="10dp"
         android:fontFamily="@font/roboto_bold"
-        android:text="Type"
+        android:text="category"
         android:textSize="16sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/radio_group" />
@@ -74,7 +74,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView_type">
 
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_text_type"
             android:layout_width="314dp"
             android:layout_height="wrap_content"

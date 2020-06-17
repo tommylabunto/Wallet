@@ -13,6 +13,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -27,6 +28,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.wallet.db.entity.Type;
+import com.example.wallet.db.viewmodel.TransactionViewModel;
 import com.example.wallet.db.viewmodel.TypeViewModel;
 import com.example.wallet.helper.DateFormatter;
 import com.example.wallet.helper.DatePickerFragment;
@@ -55,7 +57,7 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
     protected static final String EXTRA_OPERATION =
             "com.example.wallet.EXTRA_OPERATION";
 
-    private EditText editTextName;
+    private AutoCompleteTextView editTextName;
     private EditText editTextValue;
     private EditText editTextDate;
 
@@ -73,10 +75,13 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
     private static List<String> incomeTypeList;
 
     private TypeViewModel typeViewModel;
+    private TransactionViewModel transactionViewModel;
 
     private RadioButton radioButtonExpense;
     private RadioButton radioButtonIncome;
     private static boolean isExpenseType;
+
+    public static String[] nameSuggestions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +91,8 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
         radioButtonExpense = findViewById(R.id.radio_expense);
         radioButtonIncome = findViewById(R.id.radio_income);
 
-        editTextName = findViewById(R.id.edit_text_name);
+        editTextName = (AutoCompleteTextView) findViewById(R.id.edit_text_name);
+        editTextName.setThreshold(1);
         editTextValue = findViewById(R.id.edit_text_value);
         editTextDate = findViewById(R.id.edit_text_dateTime);
 
@@ -98,12 +104,25 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
         isExpenseType = true;
         expenseTypeList = new ArrayList<>();
         incomeTypeList = new ArrayList<>();
-        initTypes();
+        initViewModel();
 
         // bring focus to edit text and show keybaord
         if (editTextValue.requestFocus()) {
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         }
+
+        // submit form when clicked 'enter' on soft keyboard
+        editTextName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_SEND) {
+                    createOrSaveTransaction();
+                    handled = true;
+                }
+                return handled;
+            }
+        });
 
         // submit form when clicked 'enter' on soft keyboard
         editTextValue.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -171,7 +190,18 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
         }
     }
 
-    private void initTypes() {
+    private void initViewModel() {
+
+        transactionViewModel = ViewModelProviders.of(this).get(TransactionViewModel.class);
+
+        transactionViewModel.getAllTransactionNameString().observe(this, new Observer<List<String>>() {
+            @Override
+            public void onChanged(@Nullable final List<String> nameSuggestions) {
+
+                deepCopySuggestions(nameSuggestions);
+                Log.d("onchanged", "onchanged");
+            }
+        });
 
         typeViewModel = ViewModelProviders.of(this).get(TypeViewModel.class);
 
@@ -183,6 +213,19 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
                 Log.d("onchanged", "onchanged");
             }
         });
+    }
+
+    private void deepCopySuggestions(List<String> tempNameSuggestions) {
+
+        nameSuggestions = new String[tempNameSuggestions.size()];
+
+        for (int i = 0; i < tempNameSuggestions.size(); i++) {
+            nameSuggestions[i] = tempNameSuggestions.get(i);
+        }
+
+        ArrayAdapter<String> nameSuggestionsAdapter =
+                new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, nameSuggestions);
+        editTextName.setAdapter(nameSuggestionsAdapter);
     }
 
     private void deepCopyList(List<Type> types) {

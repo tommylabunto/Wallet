@@ -48,7 +48,7 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_edit_monthly_budget);
 
         textViewYear = findViewById(R.id.textView_year);
-        textViewMonth = findViewById(R.id.textView_name);
+        textViewMonth = findViewById(R.id.textView_month);
         editTextBudget = findViewById(R.id.edit_text_budget);
 
         // bring focus to edit text and show keybaord

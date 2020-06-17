@@ -7,14 +7,14 @@
     tools:context=".AddEditMonthlyBudgetActivity">
 
     <TextView
-        android:id="@+id/textView_name"
+        android:id="@+id/textView_month"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="70dp"
         android:layout_marginTop="10dp"
-        android:fontFamily="@font/roboto"
+        android:fontFamily="@font/roboto_bold"
         android:text="Month"
-        android:textSize="16sp"
+        android:textSize="28sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -22,13 +22,13 @@
         android:id="@+id/textView_year"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:fontFamily="@font/roboto"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="25dp"
+        android:fontFamily="@font/roboto_light"
         android:text="Year"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.02"
-        app:layout_constraintStart_toEndOf="@+id/textView_name"
+        android:textSize="12sp"
+        app:layout_constraintLeft_toRightOf="@+id/textView_month"
+        app:layout_constraintStart_toEndOf="@+id/textView_month"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -38,11 +38,11 @@
         android:layout_marginStart="70dp"
         android:layout_marginTop="10dp"
         android:fontFamily="@font/roboto_bold"
-        android:text="Budget"
+        android:text="budget"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/edit_text_budget_input_layout"
-        app:layout_constraintTop_toBottomOf="@+id/textView_name" />
+        app:layout_constraintTop_toBottomOf="@+id/textView_year" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/edit_text_budget_input_layout"
@@ -56,7 +56,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView_budget">
 
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_text_budget"
             android:layout_width="314dp"
             android:layout_height="wrap_content"

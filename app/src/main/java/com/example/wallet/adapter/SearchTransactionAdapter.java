@@ -71,8 +71,8 @@ public class SearchTransactionAdapter extends ListAdapter<Transaction, SearchTra
     @Override
     public void onBindViewHolder(SearchTransactionViewHolder holder, int position) {
         Transaction transaction = getItem(position);
-        holder.textViewTypeName.setText(transaction.getTypeName());
-        holder.textViewTypeAmount.setText(transaction.getValue() + "");
+        holder.textViewTypeName.setText(transaction.getName());
+        holder.textViewTypeAmount.setText( (int) transaction.getValue() + "");
     }
 
     public interface OnItemClickListener {

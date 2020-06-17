@@ -9,6 +9,8 @@
         <item name="android:datePickerDialogTheme">@style/DatePickerDialogTheme</item>
         <item name="android:alertDialogTheme">@style/AlertDialogTheme</item>
         <item name="floatingActionButtonStyle">@style/FloatingActionButton</item>
+        <item name="actionBarWidgetTheme">@style/AppTheme.AppBarOverlay</item>
+        <item name="android:windowActivityTransitions">true</item>
     </style>
 
     <style name="AppTheme.NoActionBar">

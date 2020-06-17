@@ -27,7 +27,7 @@ public class MonthlyBudgetAdapter extends ListAdapter<MonthlyBudget, MonthlyBudg
 
         private MonthlyBudgetViewHolder(View itemView) {
             super(itemView);
-            textViewMonth = itemView.findViewById(R.id.textView_name);
+            textViewMonth = itemView.findViewById(R.id.textView_month);
             textViewBudget = itemView.findViewById(R.id.textView_budget);
 
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -79,17 +79,22 @@ public class MonthlyBudgetAdapter extends ListAdapter<MonthlyBudget, MonthlyBudg
 
         // month uses 1 (jan) to 12 (dec)
         Month month = Month.of(monthlyBudget.getMonth() + 1);
+        Log.d("month",month.getValue() + "");
         // originally is all caps
         String monthString = month.name().substring(0,1) + month.name().substring(1).toLowerCase();
         holder.textViewMonth.setText(monthString);
 
         int tempMonth = holder.calendar.get(Calendar.MONTH) + 1;
+        Log.d("tempMonth",tempMonth + "");
 
         // bold same month
         if (tempMonth == month.getValue()) {
             Log.d("same month",tempMonth + "");
             holder.textViewMonth.setTypeface(holder.textViewMonth.getTypeface(), Typeface.BOLD);
             holder.textViewBudget.setTypeface(holder.textViewBudget.getTypeface(), Typeface.BOLD);
+        } else {
+            holder.textViewMonth.setTypeface(holder.textViewMonth.getTypeface(), Typeface.ITALIC);
+            holder.textViewBudget.setTypeface(holder.textViewBudget.getTypeface(), Typeface.ITALIC);
         }
     }
 

@@ -87,4 +87,8 @@ public class TransactionViewModel extends AndroidViewModel {
     public LiveData<Integer> checkpoint(SupportSQLiteQuery supportSQLiteQuery) {
         return transactionRepository.checkpoint(supportSQLiteQuery);
     }
+
+    public LiveData<List<String>> getAllTransactionNameString() {
+        return transactionRepository.getAllTransactionNameString();
+    }
 }

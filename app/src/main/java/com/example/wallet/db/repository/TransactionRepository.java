@@ -101,4 +101,8 @@ public class TransactionRepository {
     public LiveData<Integer> checkpoint(SupportSQLiteQuery supportSQLiteQuery) {
         return transactionDao.checkpoint(supportSQLiteQuery);
     }
+
+    public LiveData<List<String>> getAllTransactionNameString() {
+        return transactionDao.getAllTransactionNameString();
+    }
 }

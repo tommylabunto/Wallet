@@ -13,6 +13,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -27,6 +28,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.wallet.db.entity.Type;
+import com.example.wallet.db.viewmodel.TransactionViewModel;
 import com.example.wallet.db.viewmodel.TypeViewModel;
 import com.example.wallet.helper.DateFormatter;
 import com.example.wallet.helper.DatePickerFragment;
@@ -61,7 +63,7 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
     protected static final String EXTRA_OPERATION =
             "com.example.wallet.EXTRA_OPERATION";
 
-    private EditText editTextName;
+    private AutoCompleteTextView editTextName;
     private EditText editTextValue;
     private EditText editTextDate;
     private EditText editTextRepeat;
@@ -80,6 +82,7 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
     private ArrayAdapter<String> adapterType;
 
     private TypeViewModel typeViewModel;
+    private TransactionViewModel transactionViewModel;
 
     private RadioButton radioButtonExpense;
     private RadioButton radioButtonIncome;
@@ -93,6 +96,8 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
 
     private static boolean isExpenseType;
 
+    public static String[] nameSuggestions;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,7 +106,8 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
         radioButtonExpense = findViewById(R.id.radio_expense);
         radioButtonIncome = findViewById(R.id.radio_income);
 
-        editTextName = findViewById(R.id.edit_text_name);
+        editTextName = (AutoCompleteTextView) findViewById(R.id.edit_text_name);
+        editTextName.setThreshold(1);
         editTextValue = findViewById(R.id.edit_text_value);
         editTextDate = findViewById(R.id.edit_text_dateTime);
         spinnerFrequency = findViewById(R.id.spinner);
@@ -153,7 +159,7 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
         }
 
         // submit form when clicked 'enter' on soft keyboard
-        editTextValue.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        editTextRepeat.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 boolean handled = false;
@@ -170,6 +176,17 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
 
     private void initViewModel() {
 
+        transactionViewModel = ViewModelProviders.of(this).get(TransactionViewModel.class);
+
+        transactionViewModel.getAllTransactionNameString().observe(this, new Observer<List<String>>() {
+            @Override
+            public void onChanged(@Nullable final List<String> nameSuggestions) {
+
+                deepCopySuggestions(nameSuggestions);
+                Log.d("onchanged", "onchanged");
+            }
+        });
+
         typeViewModel = ViewModelProviders.of(this).get(TypeViewModel.class);
 
         typeViewModel.getAllTypes().observe(this, new Observer<List<Type>>() {
@@ -180,6 +197,19 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
                 Log.d("onchanged", "onchanged");
             }
         });
+    }
+
+    private void deepCopySuggestions(List<String> tempNameSuggestions) {
+
+        nameSuggestions = new String[tempNameSuggestions.size()];
+
+        for (int i = 0; i < tempNameSuggestions.size(); i++) {
+            nameSuggestions[i] = tempNameSuggestions.get(i);
+        }
+
+        ArrayAdapter<String> nameSuggestionsAdapter =
+                new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, nameSuggestions);
+        editTextName.setAdapter(nameSuggestionsAdapter);
     }
 
     private void deepCopyList(List<Type> types) {

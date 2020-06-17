@@ -69,4 +69,7 @@ public interface TransactionDao {
     // sync DB data
     @RawQuery(observedEntities = Transaction.class)
     public LiveData<Integer> checkpoint(SupportSQLiteQuery supportSQLiteQuery);
+
+    @Query("SELECT DISTINCT name FROM `transaction` ORDER BY name ASC")
+    public LiveData<List<String>> getAllTransactionNameString();
 }

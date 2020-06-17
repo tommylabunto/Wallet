@@ -1,12 +1,15 @@
 package com.example.wallet;
 
+import android.app.ActivityOptions;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
+import android.transition.Fade;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -56,6 +59,7 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
     private TextView textViewTotalAmount;
     private TextView textViewMonthlyBudget;
     private TextView textViewRemaining;
+    private TextView textViewRemainingLabel;
 
     private static double totalExpenses;
     private static double totalIncome;
@@ -67,11 +71,12 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_monthly_transaction);
 
-        textViewMonth = findViewById(R.id.textView_name);
+        textViewMonth = findViewById(R.id.textView_month);
         textViewYear = findViewById(R.id.textView_year);
         textViewTotalAmount = findViewById(R.id.textView_totalAmount);
         textViewMonthlyBudget = findViewById(R.id.textView_monthly_budget);
         textViewRemaining = findViewById(R.id.textView_remaining);
+        textViewRemainingLabel = findViewById(R.id.textView_remaining_label);
 
         // show transaction in recycler view
         RecyclerView recyclerView = findViewById(R.id.recyclerview_monthly_transaction);
@@ -112,6 +117,15 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayShowTitleEnabled(false);
         }
+
+        // remove blinking effect from animating shared elements
+        Fade fade = new Fade();
+        View decor = getWindow().getDecorView();
+        fade.excludeTarget(decor.findViewById(R.id.action_bar_container), true);
+        fade.excludeTarget(android.R.id.statusBarBackground, true);
+        fade.excludeTarget(android.R.id.navigationBarBackground, true);
+        getWindow().setEnterTransition(fade);
+        getWindow().setExitTransition(fade);
     }
 
     private void initStartEndCal() {
@@ -196,8 +210,10 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
 
         if (remaining < 0) {
             textViewRemaining.setTextColor(Color.parseColor("#FF0000"));
+            textViewRemainingLabel.setText("Deficit");
         } else {
             textViewRemaining.setTextColor(Color.parseColor("#00ff9b"));
+            textViewRemainingLabel.setText("Surplus");
         }
 
         remaining = Math.abs(totalRemainingBd.doubleValue());
@@ -250,7 +266,7 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
         // round up to 2.d.p
         BigDecimal totalAmountBd = new BigDecimal(totalExpenses).setScale(2, RoundingMode.HALF_UP);
 
-        textViewTotalAmount.setText( (int) (totalAmountBd.doubleValue()) + "/");
+        textViewTotalAmount.setText( (int) (totalAmountBd.doubleValue()) + "");
     }
 
     private void handleIntent(Intent intent) {
@@ -304,7 +320,16 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
                 return true;
             case R.id.action_normal_view:
                 Intent goToMainActivity = new Intent(MonthlyTransactionActivity.this, MainActivity.class);
-                startActivity(goToMainActivity);
+
+                ActivityOptions options = ActivityOptions
+                        .makeSceneTransitionAnimation(MonthlyTransactionActivity.this,
+                                Pair.create(prevMonth, "changePrevMonth"),
+                                Pair.create(nextMonth, "changeNextMonth"),
+                                Pair.create(textViewMonth, "changeTextViewMonth"),
+                                Pair.create(textViewYear, "changeTextViewYear")
+                        );
+
+                startActivity(goToMainActivity, options.toBundle());
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -1,185 +1,195 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/linearLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".AddEditTransactionActivity">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/textView_dateTime"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="70dp"
-        android:layout_marginTop="10dp"
-        android:fontFamily="@font/roboto_bold"
-        android:text="date"
-        android:textSize="16sp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="match_parent"
+        tools:context=".AddEditTransactionActivity">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/edit_text_date_input_layout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="70dp"
-        android:theme="@style/no_white_underline"
-        app:boxStrokeColor="@color/colorBlack"
-        app:errorEnabled="true"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_dateTime">
-
-        <EditText
-            android:id="@+id/edit_text_dateTime"
-            android:layout_width="314dp"
+        <TextView
+            android:id="@+id/textView_dateTime"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:focusable="false"
-            android:fontFamily="@font/roboto"
-            android:inputType="text"
+            android:layout_marginLeft="70dp"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/roboto_bold"
+            android:text="date"
             android:textSize="16sp"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/edit_text_date_input_layout" />
-    </com.google.android.material.textfield.TextInputLayout>
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/textView_Value"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="70dp"
-        android:layout_marginTop="10dp"
-        android:fontFamily="@font/roboto_bold"
-        android:text="Value"
-        android:textSize="16sp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_text_date_input_layout" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/edit_text_num_value_input_layout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="70dp"
-        android:theme="@style/no_white_underline"
-        app:boxStrokeColor="@color/colorBlack"
-        app:errorEnabled="true"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_Value">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edit_text_value"
-            android:layout_width="314dp"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/edit_text_date_input_layout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto"
-            android:inputType="numberDecimal"
-            android:textCursorDrawable="@drawable/cursor"
-            android:textSize="16sp"
+            android:layout_marginStart="70dp"
+            android:theme="@style/no_white_underline"
+            app:startIconDrawable="@drawable/ic_month"
+            app:boxStrokeColor="@color/colorBlack"
+            app:errorEnabled="true"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/edit_text_num_value_input_layout" />
-    </com.google.android.material.textfield.TextInputLayout>
+            app:layout_constraintTop_toBottomOf="@+id/textView_dateTime">
 
-    <TextView
-        android:id="@+id/textView_Name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="70dp"
-        android:layout_marginTop="10dp"
-        android:fontFamily="@font/roboto_bold"
-        android:text="Name"
-        android:textSize="16sp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_text_num_value_input_layout" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_text_dateTime"
+                android:layout_width="314dp"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:fontFamily="@font/roboto"
+                android:inputType="text"
+                android:textSize="16sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/edit_text_date_input_layout" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/edit_text_num_name_input_layout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="70dp"
-        android:theme="@style/no_white_underline"
-        app:boxStrokeColor="@color/colorBlack"
-        app:errorEnabled="true"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_Name">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edit_text_name"
-            android:layout_width="314dp"
+        <TextView
+            android:id="@+id/textView_typeOfType"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto"
-            android:inputType="text"
-            android:textCursorDrawable="@drawable/cursor"
+            android:layout_marginLeft="70dp"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/roboto_bold"
+            android:text="type"
             android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/edit_text_date_input_layout" />
+
+        <RadioGroup
+            android:id="@+id/radio_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/edit_text_num_name_input_layout" />
-    </com.google.android.material.textfield.TextInputLayout>
+            app:layout_constraintTop_toBottomOf="@+id/textView_typeOfType">
 
-    <TextView
-        android:id="@+id/textView_typeOfType"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="70dp"
-        android:layout_marginTop="10dp"
-        android:fontFamily="@font/roboto_bold"
-        android:text="Type"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_text_num_name_input_layout" />
+            <RadioButton
+                android:id="@+id/radio_expense"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="70dp"
+                android:fontFamily="@font/roboto"
+                android:onClick="onRadioButtonClicked"
+                android:text="Expense"
+                android:textSize="16sp"
+                app:layout_constraintBaseline_toBaselineOf="@+id/radio_income"
+                app:layout_constraintStart_toStartOf="parent" />
 
-    <RadioGroup
-        android:id="@+id/radio_group"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_typeOfType">
+            <RadioButton
+                android:id="@+id/radio_income"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto"
+                android:onClick="onRadioButtonClicked"
+                android:text="Income"
+                android:textSize="16sp"
+                app:layout_constraintStart_toEndOf="@+id/radio_expense"
+                app:layout_constraintTop_toBottomOf="@+id/textView_typeOfType" />
+        </RadioGroup>
 
-        <RadioButton
-            android:id="@+id/radio_expense"
+        <TextView
+            android:id="@+id/textView_typeName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="70dp"
-            android:fontFamily="@font/roboto"
-            android:onClick="onRadioButtonClicked"
-            android:text="Expense"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/roboto_bold"
+            android:text="category"
             android:textSize="16sp"
-            app:layout_constraintBaseline_toBaselineOf="@+id/radio_income"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/radio_group" />
 
-        <RadioButton
-            android:id="@+id/radio_income"
+        <Spinner
+            android:id="@+id/spinner_type"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto"
-            android:onClick="onRadioButtonClicked"
-            android:text="Income"
+            android:layout_marginLeft="70dp"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/roboto_bold"
             android:textSize="16sp"
-            app:layout_constraintStart_toEndOf="@+id/radio_expense"
-            app:layout_constraintTop_toBottomOf="@+id/textView_typeOfType" />
-    </RadioGroup>
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView_typeName" />
 
-    <TextView
-        android:id="@+id/textView_typeName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="70dp"
-        android:layout_marginTop="10dp"
-        android:fontFamily="@font/roboto_bold"
-        android:text="Type Name"
-        android:textSize="16sp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radio_group" />
 
-    <Spinner
-        android:id="@+id/spinner_type"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="70dp"
-        android:layout_marginTop="10dp"
-        android:fontFamily="@font/roboto_bold"
-        android:textSize="16sp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_typeName" />
+        <TextView
+            android:id="@+id/textView_Value"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="70dp"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/roboto_bold"
+            android:text="amount"
+            android:textSize="16sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/spinner_type" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/edit_text_num_value_input_layout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="70dp"
+            android:theme="@style/no_white_underline"
+            app:boxStrokeColor="@color/colorBlack"
+            app:errorEnabled="true"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView_Value">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_text_value"
+                android:layout_width="314dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto"
+                android:inputType="numberDecimal"
+                android:textCursorDrawable="@drawable/cursor"
+                android:textSize="16sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/edit_text_num_value_input_layout" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/textView_Name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="70dp"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/roboto_bold"
+            android:text="note"
+            android:textSize="16sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/edit_text_num_value_input_layout" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/edit_text_num_name_input_layout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="70dp"
+            android:theme="@style/no_white_underline"
+            app:boxStrokeColor="@color/colorBlack"
+            app:errorEnabled="true"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView_Name">
+
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                android:id="@+id/edit_text_name"
+                android:layout_width="314dp"
+                android:layout_height="50dp"
+                android:fontFamily="@font/roboto"
+                android:imeOptions="actionSend"
+                android:inputType="text"
+                android:paddingLeft="12dp"
+                android:textCursorDrawable="@drawable/cursor"
+                android:textSize="16sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/edit_text_num_name_input_layout" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

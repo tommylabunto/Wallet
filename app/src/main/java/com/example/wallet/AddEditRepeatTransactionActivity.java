@@ -33,6 +33,7 @@ import com.example.wallet.db.viewmodel.TypeViewModel;
 import com.example.wallet.helper.DateFormatter;
 import com.example.wallet.helper.DatePickerFragment;
 import com.example.wallet.helper.FrequencyStringConverter;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
@@ -64,9 +65,9 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
             "com.example.wallet.EXTRA_OPERATION";
 
     private AutoCompleteTextView editTextName;
-    private EditText editTextValue;
-    private EditText editTextDate;
-    private EditText editTextRepeat;
+    private TextInputEditText editTextValue;
+    private TextInputEditText editTextDate;
+    private TextInputEditText editTextRepeat;
 
     private TextInputLayout textInputLayoutValue;
     private TextInputLayout textInputLayoutName;

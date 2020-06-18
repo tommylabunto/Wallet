@@ -32,6 +32,7 @@ import com.example.wallet.db.viewmodel.TransactionViewModel;
 import com.example.wallet.db.viewmodel.TypeViewModel;
 import com.example.wallet.helper.DateFormatter;
 import com.example.wallet.helper.DatePickerFragment;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
@@ -58,8 +59,8 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
             "com.example.wallet.EXTRA_OPERATION";
 
     private AutoCompleteTextView editTextName;
-    private EditText editTextValue;
-    private EditText editTextDate;
+    private TextInputEditText editTextValue;
+    private TextInputEditText editTextDate;
 
     private TextInputLayout textInputLayoutValue;
     private TextInputLayout textInputLayoutName;

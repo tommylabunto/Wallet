@@ -14,10 +14,10 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
@@ -27,10 +27,10 @@ import androidx.sqlite.db.SimpleSQLiteQuery;
 
 import com.example.wallet.db.WalletDatabase;
 import com.example.wallet.db.entity.CarryOver;
-import com.example.wallet.db.entity.Transaction;
 import com.example.wallet.db.viewmodel.CarryOverViewModel;
 import com.example.wallet.db.viewmodel.TransactionViewModel;
 import com.example.wallet.helper.SearchSuggestionProvider;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,12 +38,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.List;
 
 public class SettingsActivity extends AppCompatActivity {
-//public class SettingsActivity extends AppCompatActivity implements PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
-
-    private static final String TITLE_TAG = "settingsActivityTitle";
 
     protected static final int REPEAT_ACTIVITY_REQUEST_CODE = 3;
 
@@ -68,37 +64,19 @@ public class SettingsActivity extends AppCompatActivity {
     private CardView cardViewExport;
     private CardView cardViewImport;
 
+    private CoordinatorLayout coordinatorLayout;
 
     private static final String DATABASE_NAME = "WalletDatabase";
-    //    private static final String DirectoryName = "data/user/0/com.example.wallet/databases/WalletDatabase";
-//    private static final String directoryName = "data/user/0/com.example.wallet/files/WalletDatabase";
-    // TODO: dont hardcode path
-    private static final String directoryName = "data/user/0/com.example.wallet/files";
+    private static String directoryName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_activity);
 
-//        if (savedInstanceState == null) {
-//            getSupportFragmentManager()
-//                    .beginTransaction()
-//                    .replace(R.id.settings, new HeaderFragment())
-//                    .commit();
-//        } else {
-//            setTitle(savedInstanceState.getCharSequence(TITLE_TAG));
-//        }
-//        getSupportFragmentManager().addOnBackStackChangedListener(
-//                new FragmentManager.OnBackStackChangedListener() {
-//                    @Override
-//                    public void onBackStackChanged() {
-//                        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
-//                            setTitle(R.string.title_activity_settings);
-//                        }
-//                    }
-//                });
+        //initCarryOver();
 
-        initCarryOver();
+        coordinatorLayout = findViewById(R.id.setting_coordinatorLayout);
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -118,7 +96,7 @@ public class SettingsActivity extends AppCompatActivity {
         cardViewType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent goToTypeActivity= new Intent(SettingsActivity.this, TypeActivity.class);
+                Intent goToTypeActivity = new Intent(SettingsActivity.this, TypeActivity.class);
                 startActivity(goToTypeActivity);
             }
         });
@@ -127,7 +105,7 @@ public class SettingsActivity extends AppCompatActivity {
         cardViewMonthlyBudget.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent goToMonthlyBudgetActivity= new Intent(SettingsActivity.this, MonthlyBudgetActivity.class);
+                Intent goToMonthlyBudgetActivity = new Intent(SettingsActivity.this, MonthlyBudgetActivity.class);
                 startActivity(goToMonthlyBudgetActivity);
             }
         });
@@ -146,6 +124,7 @@ public class SettingsActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 suggestions.clearHistory();
+                                showSnackbar("search history cleared");
                             }
                         })
                         .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
@@ -171,9 +150,15 @@ public class SettingsActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 WalletDatabase.deleteAllData();
 
+                                SearchRecentSuggestions suggestions = new SearchRecentSuggestions(SettingsActivity.this,
+                                        SearchSuggestionProvider.AUTHORITY, SearchSuggestionProvider.MODE);
+                                suggestions.clearHistory();
+
                                 // go home page
-                                Intent goToAddMainActivity = new Intent(SettingsActivity.this, MainActivity.class);
-                                startActivity(goToAddMainActivity);
+//                                Intent goToAddMainActivity = new Intent(SettingsActivity.this, MainActivity.class);
+//                                startActivity(goToAddMainActivity);
+
+                                showSnackbar("database erased");
                             }
                         })
                         .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
@@ -186,12 +171,15 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+        File files = new File(this.getApplicationInfo().dataDir + "/files");
+        directoryName = files.getAbsolutePath();
+
         cardViewExport = findViewById(R.id.cardview_export);
         cardViewExport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 syncDB();
-                copyToFiles();
+                copyToFilesExport();
                 exportDB();
             }
         });
@@ -201,10 +189,6 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 checkPermissionToReadExternalFiles();
-
-                syncDB();
-
-                selectDBFile();
             }
         });
 
@@ -227,6 +211,13 @@ public class SettingsActivity extends AppCompatActivity {
 //                }
 //            }
 //        });
+    }
+
+    private void showSnackbar(String message) {
+
+        Snackbar snackbar = Snackbar.make(coordinatorLayout, message, Snackbar.LENGTH_LONG);
+
+        snackbar.show();
     }
 
     private void initCarryOver() {
@@ -253,6 +244,8 @@ public class SettingsActivity extends AppCompatActivity {
                 Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(this, "You have already granted this permission!",
                     Toast.LENGTH_SHORT).show();
+            syncDB();
+            selectDBFile();
         } else {
             requestStoragePermission();
         }
@@ -269,7 +262,7 @@ public class SettingsActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             ActivityCompat.requestPermissions(SettingsActivity.this,
-                                    new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+                                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
                         }
                     })
                     .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
@@ -281,15 +274,17 @@ public class SettingsActivity extends AppCompatActivity {
                     .create().show();
         } else {
             ActivityCompat.requestPermissions(this,
-                    new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == STORAGE_PERMISSION_CODE)  {
+        if (requestCode == STORAGE_PERMISSION_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Permission GRANTED", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Permission GRANTED onrequest", Toast.LENGTH_SHORT).show();
+                syncDB();
+                selectDBFile();
             } else {
                 Toast.makeText(this, "Permission DENIED", Toast.LENGTH_SHORT).show();
             }
@@ -310,44 +305,52 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     /*
-    - there's no api to export databases directly at the moment
-        - also, cannot open files from <databases> folder
+- there's no api to export databases directly at the moment
+    - also, cannot open files from <databases> folder since it exposes the file
 
-    -> so the workaround, is to copy a duplicate to <files> folder in com.example.wallet, then export it out
-     */
-    private void copyToFiles() {
+-> so the workaround, is to copy a duplicate to <files> folder in com.example.wallet, then export it out
+ */
+    private void copyToFilesExport() {
         try {
             File dbFile = new File(this.getDatabasePath("WalletDatabase.db").getAbsolutePath());
-            Log.d("dbfile path", dbFile.getAbsolutePath());
             FileInputStream fis = new FileInputStream(dbFile);
 
             String outFileName = directoryName + File.separator +
-                    DATABASE_NAME + ".db";
+                    DATABASE_NAME + "Export" + ".db";
 
-            Log.d("fis", "here");
+            File outputFile = new File(outFileName);
 
             // Open the empty db as the output stream
-            OutputStream output = new FileOutputStream(outFileName);
+            OutputStream output = new FileOutputStream(outputFile);
 
-            Log.d("output", "here");
+            copyFile(fis, outputFile);
+        } catch (IOException e) {
+            Log.e("dbBackup:", e.getMessage());
+        }
+    }
+
+    private File copyFile(InputStream fis, File outputFile) {
+        try {
+            // Open the empty db as the output stream
+            OutputStream output = new FileOutputStream(outputFile);
 
             // Transfer bytes from the inputfile to the outputfile
             byte[] buffer = new byte[1024];
             int length;
             while ((length = fis.read(buffer)) > 0) {
                 output.write(buffer, 0, length);
-                Log.d("output write", "here");
             }
             // Close the streams
             output.flush();
-            Log.d("output flush", "here");
             output.close();
-            Log.d("output close", "here");
             fis.close();
-            Log.d("fis close", "here");
+
+            return outputFile;
         } catch (IOException e) {
             Log.e("dbBackup:", e.getMessage());
         }
+
+        return null;
     }
 
     private void exportDB() {
@@ -356,7 +359,7 @@ public class SettingsActivity extends AppCompatActivity {
         Uri path = FileProvider.getUriForFile(
                 this,
                 "com.example.wallet.fileprovider",
-                new File(directoryName + File.separator + DATABASE_NAME + ".db"));
+                new File(directoryName + File.separator + DATABASE_NAME + "Export" + ".db"));
 
         composeEmail("Wallet Database", path);
     }
@@ -388,57 +391,27 @@ public class SettingsActivity extends AppCompatActivity {
 
             Uri path = data.getData();
             // copy to files folder
-            File file = copyFiles2(path);
+            File file = copyToFilesImport(path);
 
-            Log.d("file absolute path", file.getAbsolutePath());
-            try {
-                Log.d("file canonical path", file.getCanonicalPath());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Log.d("file path", file.getPath());
-            Log.d("file name", file.getName());
-            // prepopulate with db from files folder
+            deleteWalletDatabase();
+
+//          prepopulate with db from files folder
             WalletDatabase.prepopulateDB(this, file);
 
-            transactionViewModel = ViewModelProviders.of(this).get(TransactionViewModel.class);
-
-            transactionViewModel.getAllNonRecurringTransactions().observe(this, new Observer<List<Transaction>>() {
-                @Override
-                public void onChanged(@Nullable final List<Transaction> transactions) {
-                    // Update the cached copy of the words in the transactionAdapter.
-                    Log.d("size after populate",transactions.size() + "");
-                }
-            });
+            showSnackbar("database imported");
         }
     }
 
-    // save to files directory
-    private File copyFiles2(Uri path) {
+    private File copyToFilesImport(Uri path) {
         try {
-            //File dbFile = new File(this.getDatabasePath("WalletDatabase").getAbsolutePath());
-            InputStream fis = getContentResolver().openInputStream(path);;
+            InputStream fis = getContentResolver().openInputStream(path);
 
             String outFileName = directoryName + File.separator +
                     DATABASE_NAME + "Import" + ".db";
 
             File outputFile = new File(outFileName);
 
-            // Open the empty db as the output stream
-            OutputStream output = new FileOutputStream(outputFile);
-
-            // Transfer bytes from the inputfile to the outputfile
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = fis.read(buffer)) > 0) {
-                output.write(buffer, 0, length);
-            }
-            // Close the streams
-            output.flush();
-            output.close();
-            fis.close();
-
-            return outputFile;
+            return copyFile(fis, outputFile);
         } catch (IOException e) {
             Log.e("dbBackup:", e.getMessage());
         }
@@ -446,60 +419,24 @@ public class SettingsActivity extends AppCompatActivity {
         return null;
     }
 
-//    @Override
-//    public void onSaveInstanceState(Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//        // Save current activity title so we can set it again after a configuration change
-//        outState.putCharSequence(TITLE_TAG, getTitle());
-//    }
-//
-//    @Override
-//    public boolean onSupportNavigateUp() {
-//        if (getSupportFragmentManager().popBackStackImmediate()) {
-//            return true;
-//        }
-//        return super.onSupportNavigateUp();
-//    }
-//
-//    @Override
-//    public boolean onPreferenceStartFragment(PreferenceFragmentCompat caller, Preference pref) {
-//        // Instantiate the new Fragment
-//        final Bundle args = pref.getExtras();
-//        final Fragment fragment = getSupportFragmentManager().getFragmentFactory().instantiate(
-//                getClassLoader(),
-//                pref.getFragment());
-//        fragment.setArguments(args);
-//        fragment.setTargetFragment(caller, 0);
-//        // Replace the existing Fragment with the new Fragment
-//        getSupportFragmentManager().beginTransaction()
-//                .replace(R.id.settings, fragment)
-//                .addToBackStack(null)
-//                .commit();
-//        setTitle(pref.getTitle());
-//        return true;
-//    }
-//
-//    public static class HeaderFragment extends PreferenceFragmentCompat {
-//
-//        @Override
-//        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-//            //setPreferencesFromResource(R.xml.header_preferences, rootKey);
-//        }
-//    }
-//
-//    public static class MessagesFragment extends PreferenceFragmentCompat {
-//
-//        @Override
-//        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-//            //setPreferencesFromResource(R.xml.messages_preferences, rootKey);
-//        }
-//    }
-//
-//    public static class SyncFragment extends PreferenceFragmentCompat {
-//
-//        @Override
-//        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-//            //setPreferencesFromResource(R.xml.sync_preferences, rootKey);
-//        }
-//    }
+    private void deleteWalletDatabase() {
+
+        WalletDatabase.INSTANCE.close();
+
+        File databases = new File(this.getApplicationInfo().dataDir + "/databases");
+        File db = new File(databases, "WalletDatabase.db");
+        if (db.exists()) {
+            db.delete();
+        }
+
+        File dbShm = new File(databases, "WalletDatabase.db-shm");
+        if (dbShm.exists()) {
+            dbShm.delete();
+        }
+
+        File dbWal = new File(databases, "WalletDatabase.db-wal");
+        if (dbWal.exists()) {
+            dbWal.delete();
+        }
+    }
 }

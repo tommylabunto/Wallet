@@ -10,12 +10,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.time.Month;
@@ -35,7 +35,7 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
 
     private TextView textViewYear;
     private TextView textViewMonth;
-    private EditText editTextBudget;
+    private TextInputEditText editTextBudget;
 
     private TextInputLayout textInputLayoutBudget;
 

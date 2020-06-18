@@ -15,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -45,32 +44,25 @@ import java.util.List;
 
 /*
 TODO: (note): use sp for text and container for text -> it scales with phone size and font size preference on phone
-TODO: (note): try to use flat view hierachy, instead of nested
 TODO: (note): use these colors primarily (white, dark blue, green)
 TODO: (note): change all input types to material design (except input text -> remove hint)
 
  */
-// TODO: MUST FUCKING IMPORT DB (today)
-/*
-TODO: import database (try update INSTANCE in db, refresh viewmodel) (second)
-- can createfromassets successfully
-- works if change the name in wallet database (prepopulate db), it takes a while,
- then need to change the name in getInstance to load it
- */
+// TODO: remove all log d (today)
+// TODO: dont allow for no input for spinner (transaction and repeat)
+// TODO: make sure all constraints are done proper (today)
+// TODO: change string to string resource (today)
+// TODO: set up cards for user to see when first download (today)
+// TODO: improve permissions (today)
+// TODO: comply with google's standards (today)
+// TODO: learn to handle room migration (today)
 
-/* (end)
-// TODO: nielson norman when to use toast
-// TODO: make sure all constraints are done proper
-// TODO: change string to string resource
-// TODO: set up cards for user to see when first download
-// TODO: comply with google's standards
-// TODO: learn to handle room migration
+/* (end finish by 20th)
  */
 
 /*
 FUTURE updates:
 // TODO: try using fts3 to search, instead of using LIKE %keyword%, which takes up more time when there are more transactions
-// TODO: implement widgets
 // TODO: send crash reports
 // TODO: drag and hold in recyclerview to update and delete
  */
@@ -264,13 +256,12 @@ public class MainActivity extends AppCompatActivity {
                     Transaction transaction = extractDataToTransaction(data, 0L);
                     transactionViewModel.insertTransaction(transaction);
                     reload();
-                    Toast.makeText(this, "Transaction saved", Toast.LENGTH_LONG).show();
                 }
             } else {
 
                 Long id = data.getLongExtra(AddEditTransactionActivity.EXTRA_ID, -1);
                 if (id == -1) {
-                    Toast.makeText(this, "Transaction can't be updated", Toast.LENGTH_SHORT).show();
+                    showSnackbar("transaction cannot be updated");
                 }
 
                 Transaction transaction = extractDataToTransaction(data, id);
@@ -280,12 +271,10 @@ public class MainActivity extends AppCompatActivity {
 
                     transactionViewModel.updateTransaction(transaction);
                     reload();
-                    Toast.makeText(this, "Transaction updated", Toast.LENGTH_SHORT).show();
 
                     // delete transaction
                 } else {
                     transactionViewModel.deleteTransaction(transaction);
-                    //showSnackbar(transaction);
                     reload();
                 }
             }
@@ -299,37 +288,10 @@ public class MainActivity extends AppCompatActivity {
         overridePendingTransition(0, 0);
     }
 
-    private void showSnackbar(Transaction transaction) {
+    private void showSnackbar(String message) {
 
-        final int isClicked = 0;
-
-        Snackbar snackbar = Snackbar.make(coordinatorLayout, "Transaction deleted", Snackbar.LENGTH_LONG)
-                .setAction("UNDO", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // insert back
-                        transactionViewModel.insertTransaction(transaction);
-                        reload();
-
-                        Snackbar snackbar1 = Snackbar.make(coordinatorLayout, "Undo successful", Snackbar.LENGTH_SHORT);
-                        snackbar1.show();
-                    }
-                })
-                .addCallback(new Snackbar.Callback() {
-
-                    @Override
-                    public void onDismissed(Snackbar snackbar, int event) {
-                        //see Snackbar.Callback docs for event details
-                        showToast();
-                        reload();
-                    }
-                });
-
+        Snackbar snackbar = Snackbar.make(coordinatorLayout, message, Snackbar.LENGTH_LONG);
         snackbar.show();
-    }
-
-    private void showToast() {
-        Toast.makeText(this, "Reloading", Toast.LENGTH_SHORT).show();
     }
 
     private Transaction extractDataToTransaction(Intent data, Long id) {

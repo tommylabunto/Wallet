@@ -3,7 +3,6 @@ package com.example.wallet;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -15,12 +14,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.wallet.adapter.RepeatTransactionAdapter;
+import com.example.wallet.db.WalletDatabase;
 import com.example.wallet.db.entity.Transaction;
 import com.example.wallet.db.viewmodel.TransactionViewModel;
 import com.example.wallet.db.viewmodel.TypeViewModel;
-import com.example.wallet.db.WalletDatabase;
 import com.example.wallet.helper.DateFormatter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -219,7 +219,7 @@ public class RepeatTransactionActivity extends AppCompatActivity {
 
                 Long id = data.getLongExtra(AddEditRepeatTransactionActivity.EXTRA_ID, -1);
                 if (id == -1) {
-                    Toast.makeText(this, "Transaction can't be updated", Toast.LENGTH_SHORT).show();
+                    showSnackbar("transaction cannot be updated");
                 }
 
                 Transaction transaction = extractDataToTransaction(data, id);
@@ -235,6 +235,12 @@ public class RepeatTransactionActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    private void showSnackbar(String message) {
+
+        Snackbar snackbar = Snackbar.make(coordinatorLayout, message, Snackbar.LENGTH_LONG);
+        snackbar.show();
     }
 
     private void addRecurringTransactions(Transaction transaction) {
@@ -291,8 +297,6 @@ public class RepeatTransactionActivity extends AppCompatActivity {
                 repeat = remainingRepeat;
             }
         }
-
-        Toast.makeText(this, "Transaction saved", Toast.LENGTH_LONG).show();
     }
 
     // doesn't update the list of recurring transactions, but delete and create a new list
@@ -301,8 +305,6 @@ public class RepeatTransactionActivity extends AppCompatActivity {
         deleteRecurringTransactions(transaction);
 
         addRecurringTransactions(transaction);
-
-        Toast.makeText(this, "Transaction updated", Toast.LENGTH_SHORT).show();
     }
 
     private void deleteRecurringTransactions(Transaction transaction) {

@@ -47,9 +47,6 @@
             android:parentActivityName=".SettingsActivity"
             android:label="Category"/>
         <activity
-            android:name=".ExportImportActivity"
-            android:parentActivityName=".SettingsActivity"/>
-        <activity
             android:name=".AddEditRepeatTransactionActivity"
             android:parentActivityName=".RepeatTransactionActivity"
             android:label="" />

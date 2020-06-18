@@ -9,13 +9,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 public class AddEditTypeActivity extends AppCompatActivity {
@@ -26,16 +26,19 @@ public class AddEditTypeActivity extends AppCompatActivity {
             "com.example.wallet.EXTRA_NAME";
     protected static final String EXTRA_IS_EXPENSE_TYPE =
             "com.example.wallet.EXTRA_IS_EXPENSE_TYPE";
+    protected static final String EXTRA_ORIGINAL_IS_EXPENSE_TYPE =
+            "com.example.wallet.EXTRA_ORIGINAL_IS_EXPENSE_TYPE";
     protected static final String EXTRA_OPERATION =
             "com.example.wallet.EXTRA_OPERATION";
 
-    private EditText editTextType;
+    private TextInputEditText editTextType;
     private RadioButton radioButtonExpense;
     private RadioButton radioButtonIncome;
 
     private TextInputLayout textInputLayoutName;
 
     private boolean isExpenseType;
+    private boolean originalIsExpenseType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,14 +85,17 @@ public class AddEditTypeActivity extends AppCompatActivity {
             if (intent.getBooleanExtra(EXTRA_IS_EXPENSE_TYPE, true)) {
                 radioButtonExpense.setChecked(true);
                 isExpenseType = true;
+                originalIsExpenseType = true;
             } else {
                 radioButtonIncome.setChecked(true);
                 isExpenseType = false;
+                originalIsExpenseType = false;
             }
             // set as default option
         } else {
             radioButtonExpense.setChecked(true);
             isExpenseType = true;
+            originalIsExpenseType = true;
         }
     }
 
@@ -144,6 +150,7 @@ public class AddEditTypeActivity extends AppCompatActivity {
         type.putExtra(EXTRA_OPERATION, operation);
 
         type.putExtra(EXTRA_IS_EXPENSE_TYPE, isExpenseType);
+        type.putExtra(EXTRA_ORIGINAL_IS_EXPENSE_TYPE, originalIsExpenseType);
 
         Long id = getIntent().getLongExtra(EXTRA_ID, -1);
         if (id != -1) {

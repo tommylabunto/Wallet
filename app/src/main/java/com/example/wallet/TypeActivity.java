@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -157,13 +156,12 @@ public class TypeActivity extends AppCompatActivity {
 
                     Type type = extractDataToType(data, 0L);
                     typeViewModel.insertType(type);
-                    Toast.makeText(this, "Type saved", Toast.LENGTH_LONG).show();
                 }
             } else {
 
                 Long id = data.getLongExtra(AddEditTypeActivity.EXTRA_ID, -1);
                 if (id == -1) {
-                    Toast.makeText(this, "Type can't be updated", Toast.LENGTH_SHORT).show();
+                    showSnackbar("category cannot be updated");
                 }
 
                 Type type = extractDataToType(data, id);
@@ -171,29 +169,43 @@ public class TypeActivity extends AppCompatActivity {
                 // update type
                 // must have at least one of each type
                 if (data.getStringExtra(AddEditTypeActivity.EXTRA_OPERATION).equals("save")) {
-                    if (numOfExpenseTypes >= 1 && numOfIncomeTypes >= 1) {
-                        typeViewModel.updateType(type);
-                        Toast.makeText(this, "Type updated", Toast.LENGTH_SHORT).show();
+
+                    boolean originalIsExpenseType = data.getBooleanExtra(AddEditTypeActivity.EXTRA_ORIGINAL_IS_EXPENSE_TYPE, true);
+
+                    // must have at least one type to create a transaction
+                    // switch types (is the problem)
+                    if (originalIsExpenseType != type.isExpenseType()) {
+                        if (originalIsExpenseType) {
+                            if (numOfExpenseTypes > 1) {
+                                typeViewModel.updateType(type);
+                            } else {
+                                showSnackbar("at least 1 expense category is required");
+                            }
+                        } else {
+                            if (numOfIncomeTypes > 1) {
+                                typeViewModel.updateType(type);
+                            } else {
+                                showSnackbar("at least 1 income category is required");
+                            }
+                        }
+                        // stay on same type (not a problem)
                     } else {
-                        Toast.makeText(this, "number of income or expense types must be greater than or equal to 1", Toast.LENGTH_SHORT).show();
+                        typeViewModel.updateType(type);
                     }
 
                     // delete type
                 } else {
-                    // must have at least one type to create a transaction
                     if (type.isExpenseType()) {
                         if (numOfExpenseTypes > 1) {
                             typeViewModel.deleteType(type);
-                            showSnackbar(type);
                         } else {
-                            Toast.makeText(this, "number of expense types must be greater than 1", Toast.LENGTH_SHORT).show();
+                            showSnackbar("at least 1 expense category is required");
                         }
                     } else {
                         if (numOfIncomeTypes > 1) {
                             typeViewModel.deleteType(type);
-                            showSnackbar(type);
                         } else {
-                            Toast.makeText(this, "number of income types must be greater than 1", Toast.LENGTH_SHORT).show();
+                            showSnackbar("at least 1 income category is required");
                         }
                     }
                 }
@@ -201,19 +213,9 @@ public class TypeActivity extends AppCompatActivity {
         }
     }
 
-    private void showSnackbar(Type type) {
+    private void showSnackbar(String message) {
 
-        Snackbar snackbar = Snackbar.make(coordinatorLayout, "Type deleted", Snackbar.LENGTH_LONG)
-                .setAction("UNDO", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // insert back
-                        typeViewModel.insertType(type);
-
-                        Snackbar snackbar1 = Snackbar.make(coordinatorLayout, "Undo successful", Snackbar.LENGTH_SHORT);
-                        snackbar1.show();
-                    }
-                });
+        Snackbar snackbar = Snackbar.make(coordinatorLayout, message, Snackbar.LENGTH_LONG);
 
         snackbar.show();
     }

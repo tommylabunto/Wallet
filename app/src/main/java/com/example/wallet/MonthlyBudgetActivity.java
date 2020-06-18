@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -142,13 +141,12 @@ public class MonthlyBudgetActivity extends AppCompatActivity {
 
                     MonthlyBudget monthlyBudget = extractDataToMonthlyBudget(data, 0L);
                     monthlyBudgetViewModel.insertMonthlyBudget(monthlyBudget);
-                    Toast.makeText(this, "Monthly Budget saved", Toast.LENGTH_LONG).show();
                 }
             } else {
 
                 Long id = data.getLongExtra(AddEditMonthlyBudgetActivity.EXTRA_ID, -1);
                 if (id == -1) {
-                    Toast.makeText(this, "Monthly Budget can't be updated", Toast.LENGTH_SHORT).show();
+                    showSnackbar("budget cannot be updated");
                 }
 
                 MonthlyBudget monthlyBudget = extractDataToMonthlyBudget(data, id);
@@ -156,17 +154,14 @@ public class MonthlyBudgetActivity extends AppCompatActivity {
                 // update Monthly Budget
                 if (data.getStringExtra(AddEditMonthlyBudgetActivity.EXTRA_OPERATION).equals("save")) {
                     monthlyBudgetViewModel.updateMonthlyBudget(monthlyBudget);
-                    Toast.makeText(this, "Monthly Budget updated", Toast.LENGTH_SHORT).show();
 
                     // update all future Monthly Budget
                 }  else if (data.getStringExtra(AddEditMonthlyBudgetActivity.EXTRA_OPERATION).equals("save next")) {
                     monthlyBudgetViewModel.updateAllFutureMonthlyBudgets(monthlyBudget.getMonthlyBudgetId(), monthlyBudget.getBudget());
-                    Toast.makeText(this, "All Monthly Budget updated", Toast.LENGTH_SHORT).show();
 
                     // update all
                 } else if (data.getStringExtra(AddEditMonthlyBudgetActivity.EXTRA_OPERATION).equals("save all")) {
                     monthlyBudgetViewModel.updateAllMonthlyBudgets(monthlyBudget.getBudget());
-                    Toast.makeText(this, "All Monthly Budget updated", Toast.LENGTH_SHORT).show();
                 }
                 // delete Monthly Budget
                 else {
@@ -175,6 +170,13 @@ public class MonthlyBudgetActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    private void showSnackbar(String message) {
+
+        Snackbar snackbar = Snackbar.make(coordinatorLayout, message, Snackbar.LENGTH_LONG);
+
+        snackbar.show();
     }
 
     private MonthlyBudget extractDataToMonthlyBudget(Intent data, Long id) {

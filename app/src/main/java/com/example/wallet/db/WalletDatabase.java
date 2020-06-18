@@ -46,6 +46,7 @@ public abstract class WalletDatabase extends RoomDatabase {
         if (INSTANCE == null) {
             synchronized (WalletDatabase.class) {
                 if (INSTANCE == null) {
+
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             WalletDatabase.class, "WalletDatabase.db")
                             .addCallback(sRoomDatabaseCallback)
@@ -128,13 +129,22 @@ public abstract class WalletDatabase extends RoomDatabase {
         });
     }
 
+    // only prepopulates when there is no existing database
     public static WalletDatabase prepopulateDB(final Context context, File file) {
 
         // takes some time to copy the table
-        INSTANCE = Room.databaseBuilder(context.getApplicationContext(), WalletDatabase.class, "WalletDatabase.db")
-                .createFromFile(file)
-                .fallbackToDestructiveMigration()
-                .build();
+        if (INSTANCE != null) {
+            synchronized (WalletDatabase.class) {
+                if (INSTANCE != null) {
+                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
+                            WalletDatabase.class, "WalletDatabase.db")
+                            .createFromFile(file)
+                            .addCallback(sRoomDatabaseCallback)
+                            .fallbackToDestructiveMigration()
+                            .build();
+                }
+            }
+        }
 //        INSTANCE.close();
 
         return INSTANCE;

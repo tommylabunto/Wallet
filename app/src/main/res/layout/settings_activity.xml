@@ -21,11 +21,12 @@
             <TextView
                 android:id="@+id/textView_data_header"
                 android:layout_width="match_parent"
+                android:textColor="@color/colorNotSoBlack"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="70dp"
                 android:layout_marginTop="10dp"
                 android:fontFamily="@font/roboto_bold"
-                android:text="Data"
+                android:text="@string/data"
                 android:textSize="20sp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -52,7 +53,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="70dp"
-                        android:text="Recurring transaction"
+                        android:text="@string/recurring_transaction"
                         android:textSize="20sp"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/constraint_layout_repeat" />
@@ -64,7 +65,7 @@
                         android:layout_marginStart="70dp"
                         android:layout_marginEnd="10dp"
                         android:fontFamily="@font/roboto_light"
-                        android:text="Edit recurring transactions."
+                        android:text="@string/edit_recurring_transactions"
                         android:textSize="16sp"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/textView_repeat" />
@@ -96,7 +97,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="70dp"
                         android:layout_marginTop="10dp"
-                        android:text="Category"
+                        android:text="@string/category_label"
                         android:textSize="20sp"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/constraint_layout_type" />
@@ -108,7 +109,7 @@
                         android:layout_marginStart="70dp"
                         android:layout_marginEnd="10dp"
                         android:fontFamily="@font/roboto_light"
-                        android:text="Edit transaction categories."
+                        android:text="@string/edit_transaction_categories"
                         android:textSize="16sp"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/textView_type" />
@@ -140,7 +141,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="70dp"
                         android:layout_marginTop="10dp"
-                        android:text="Monthly Budget"
+                        android:text="@string/monthly_budget"
                         android:textSize="20sp"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/constraint_layout_monthly_budget" />
@@ -152,7 +153,7 @@
                         android:layout_marginStart="70dp"
                         android:layout_marginEnd="10dp"
                         android:fontFamily="@font/roboto_light"
-                        android:text="Edit monthly budgets."
+                        android:text="@string/edit_monthly_budgets"
                         android:textSize="16sp"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/textView_monthly_budget" />
@@ -173,8 +174,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="70dp"
                 android:layout_marginTop="15dp"
+                android:textColor="@color/colorNotSoBlack"
                 android:fontFamily="@font/roboto_bold"
-                android:text="Reset"
+                android:text="@string/reset"
                 android:textSize="20sp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/divider_one" />
@@ -202,7 +204,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="70dp"
                         android:layout_marginTop="10dp"
-                        android:text="Clear search history"
+                        android:text="@string/clear_search"
                         android:textSize="20sp"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/constraint_layout_clear_search" />
@@ -214,7 +216,7 @@
                         android:layout_marginStart="70dp"
                         android:layout_marginEnd="10dp"
                         android:fontFamily="@font/roboto_light"
-                        android:text="Remove all keywords from search history."
+                        android:text="@string/clear_search_description"
                         android:textSize="16sp"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/textView_clear_search" />
@@ -246,7 +248,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="70dp"
                         android:layout_marginTop="10dp"
-                        android:text="Erase all data"
+                        android:text="@string/erase_all_data"
                         android:textSize="20sp"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/constraint_layout_erase_all_data" />
@@ -258,7 +260,7 @@
                         android:layout_marginStart="70dp"
                         android:layout_marginEnd="10dp"
                         android:fontFamily="@font/roboto_light"
-                        android:text="Erases all data in database and deleted data cannot be restored."
+                        android:text="@string/erase_data_description"
                         android:textSize="16sp"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/textView_erase_all_data" />
@@ -281,7 +283,8 @@
                 android:layout_marginTop="15dp"
                 android:clickable="true"
                 android:fontFamily="@font/roboto_bold"
-                android:text="Backup"
+                android:text="@string/backup"
+                android:textColor="@color/colorNotSoBlack"
                 android:textSize="20sp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/divider_two" />
@@ -309,7 +312,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="70dp"
                         android:layout_marginTop="10dp"
-                        android:text="Export"
+                        android:text="@string/export"
                         android:textSize="20sp"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/constraint_layout_export" />
@@ -321,7 +324,7 @@
                         android:layout_marginStart="70dp"
                         android:layout_marginEnd="10dp"
                         android:fontFamily="@font/roboto_light"
-                        android:text="Export database through your messaging apps."
+                        android:text="@string/export_description"
                         android:textSize="16sp"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/textView_export" />
@@ -354,7 +357,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="70dp"
                         android:layout_marginTop="10dp"
-                        android:text="Import"
+                        android:text="@string/import_label"
                         android:textSize="20sp"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/constraint_layout_import" />
@@ -367,7 +370,7 @@
                         android:layout_marginEnd="10dp"
                         android:layout_marginBottom="30dp"
                         android:fontFamily="@font/roboto_light"
-                        android:text="Import database by selecting a document in your local storage. Data in the existing database wil be removed."
+                        android:text="@string/import_description"
                         android:textSize="16sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintLeft_toLeftOf="parent"

@@ -5,7 +5,7 @@ android {
     buildToolsVersion "29.0.3"
 
     defaultConfig {
-        applicationId "com.example.wallet"
+        applicationId "com.xingtingkai.wallet"
         minSdkVersion 26
         targetSdkVersion 29
         versionCode 1
@@ -14,7 +14,7 @@ android {
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = ["room.schemaLocation":
-                                     "com.example.wallet".toString()]
+                                     "com.xingtingkai.wallet".toString()]
             }
         }
 
@@ -30,12 +30,12 @@ android {
     sourceSets {
         main {
             java {
-                srcDirs 'src/main/java', 'src/main/java/com/example/wallet/entity', 'src/main/java/com/example/wallet/db2'
+                srcDirs 'src/main/java', 'src/main/java/com/xingtingkai/wallet/entity', 'src/main/java/com/xingtingkai/wallet/db2'
             }
         }
 
         androidTest.assets.srcDirs +=
-                files("com.example.wallet/schemas".toString())
+                files("com.xingtingkai.wallet/schemas".toString())
     }
     compileOptions {
         targetCompatibility = 1.8

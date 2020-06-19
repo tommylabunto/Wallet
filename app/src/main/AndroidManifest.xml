@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.wallet">
+    package="com.xingtingkai.wallet">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
@@ -12,8 +12,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".SearchTransactionActivity"
-            android:parentActivityName=".MainActivity" >
+            android:name="com.xingtingkai.wallet.SearchTransactionActivity"
+            android:parentActivityName="com.xingtingkai.wallet.MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
@@ -23,7 +23,7 @@
         </activity>
 
         <activity
-            android:name=".MonthlyTransactionActivity">
+            android:name="com.xingtingkai.wallet.MonthlyTransactionActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
@@ -31,39 +31,39 @@
                 android:resource="@xml/searchable"/>
         </activity>
         <activity
-            android:name=".AddEditMonthlyBudgetActivity"
-            android:parentActivityName=".MonthlyBudgetActivity"
+            android:name="com.xingtingkai.wallet.AddEditMonthlyBudgetActivity"
+            android:parentActivityName="com.xingtingkai.wallet.MonthlyBudgetActivity"
             android:label=""/>
         <activity
-            android:name=".MonthlyBudgetActivity"
-            android:parentActivityName=".SettingsActivity"
+            android:name="com.xingtingkai.wallet.MonthlyBudgetActivity"
+            android:parentActivityName="com.xingtingkai.wallet.SettingsActivity"
             android:label="Monthly Budget"/>
         <activity
-            android:name=".AddEditTypeActivity"
-            android:parentActivityName=".TypeActivity"
+            android:name="com.xingtingkai.wallet.AddEditTypeActivity"
+            android:parentActivityName="com.xingtingkai.wallet.TypeActivity"
             android:label=""/>
         <activity
-            android:name=".TypeActivity"
-            android:parentActivityName=".SettingsActivity"
+            android:name="com.xingtingkai.wallet.TypeActivity"
+            android:parentActivityName="com.xingtingkai.wallet.SettingsActivity"
             android:label="Category"/>
         <activity
-            android:name=".AddEditRepeatTransactionActivity"
-            android:parentActivityName=".RepeatTransactionActivity"
+            android:name="com.xingtingkai.wallet.AddEditRepeatTransactionActivity"
+            android:parentActivityName="com.xingtingkai.wallet.RepeatTransactionActivity"
             android:label="" />
         <activity
-            android:name=".RepeatTransactionActivity"
-            android:parentActivityName=".SettingsActivity"
+            android:name="com.xingtingkai.wallet.RepeatTransactionActivity"
+            android:parentActivityName="com.xingtingkai.wallet.SettingsActivity"
             android:label="Recurring Transaction"/>
         <activity
-            android:name=".SettingsActivity"
+            android:name="com.xingtingkai.wallet.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName="com.xingtingkai.wallet.MainActivity" />
         <activity
-            android:name=".AddEditTransactionActivity"
-            android:parentActivityName=".MainActivity"
+            android:name="com.xingtingkai.wallet.AddEditTransactionActivity"
+            android:parentActivityName="com.xingtingkai.wallet.MainActivity"
             android:label=""/>
         <activity
-            android:name=".MainActivity"
+            android:name="com.xingtingkai.wallet.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -79,7 +79,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.example.wallet.fileprovider"
+            android:authorities="com.xingtingkai.wallet.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -88,8 +88,8 @@
         </provider>
 
         <provider
-            android:name=".helper.SearchSuggestionProvider"
-            android:authorities="com.example.wallet.SearchSuggestionProvider" />
+            android:name="com.xingtingkai.wallet.helper.SearchSuggestionProvider"
+            android:authorities="com.xingtingkai.wallet.SearchSuggestionProvider" />
 
         <meta-data
             android:name="preloaded_fonts"

@@ -26,6 +26,49 @@
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
 
+    <!--  view -->
+    <string name="month">Month</string>
+    <string name="year">Year</string>
+    <string name="budget">budget</string>
+    <string name="previous_month">previous month</string>
+    <string name="next_month">next month</string>
+    <string name="next_year">next year</string>
+    <string name="previous_year">previous year</string>
+    <string name="income_and_budget">Income and Budget</string>
+    <string name="expenses">Expenses</string>
+    <string name="remaining">Remaining</string>
+
+    <!--  add edit -->
+    <string name="expense">Expense</string>
+    <string name="income">Income</string>
+    <string name="category">category</string>
+    <string name="amount">amount</string>
+    <string name="note">note</string>
+    <string name="frequency">frequency</string>
+    <string name="repeat_number_of_years">repeat number of years</string>
+    <string name="date">date</string>
+    <string name="type">type</string>
+
+    <!--  settings -->
+    <string name="data">Data</string>
+    <string name="recurring_transaction">Recurring transaction</string>
+    <string name="edit_recurring_transactions">Edit recurring transactions.</string>
+    <string name="category_label">Category</string>
+    <string name="edit_transaction_categories">Edit transaction categories.</string>
+    <string name="monthly_budget">Monthly Budget</string>
+    <string name="edit_monthly_budgets">Edit monthly budgets.</string>
+    <string name="reset">Reset</string>
+    <string name="clear_search">Clear search history</string>
+    <string name="clear_search_description">Remove all keywords from search history.</string>
+    <string name="erase_all_data">Erase all data</string>
+    <string name="erase_data_description">Erases all data in database and deleted data cannot be restored.</string>
+    <string name="backup">Backup</string>
+    <string name="export">Export</string>
+    <string name="export_description">Export database through your messaging apps.</string>
+    <string name="import_label">Import</string>
+    <string name="import_description">Import database by selecting a document in your local storage. Data in the existing database wil be removed.</string>
+
+    <!--  add edit repeat transaction -->
     <string-array name="frequency_array">
         <item>Monthly</item>
         <item>Quarterly</item>

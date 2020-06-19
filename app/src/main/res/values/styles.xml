@@ -42,24 +42,25 @@
         <item name="android:textColor">@color/colorBlack</item>
         <item name="android:colorPrimary">@color/colorBlack</item>
         <item name="android:headerMonthTextAppearance">@color/colorBlack</item>
-        <item name="android:buttonBarPositiveButtonStyle">@style/DatePickerButtonStyle</item>
-        <item name="android:buttonBarNegativeButtonStyle">@style/DatePickerButtonStyle</item>
+        <item name="android:buttonBarPositiveButtonStyle">@style/ButtonStyle</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/ButtonStyle</item>
+        <item name="android:buttonBarNeutralButtonStyle">@style/ButtonStyle</item>
     </style>
 
     <style name="DatePickerStyle" parent="@android:style/Widget.Material.Light.DatePicker">
         <item name="android:headerBackground">@color/colorWhite</item>
     </style>
 
-    <style name="DatePickerButtonStyle" parent="Base.Widget.AppCompat.Button.Borderless">
+    <style name="ButtonStyle" parent="Base.Widget.AppCompat.Button.Borderless">
         <item name="android:textSize">12sp</item>
         <item name="android:fontFamily">@font/roboto_bold</item>
         <item name="android:textColor">@color/colorBlack</item>
     </style>
 
     <style name="AlertDialogTheme" parent="ThemeOverlay.AppCompat.Dialog.Alert">
-        <item name="android:buttonBarPositiveButtonStyle">@style/DatePickerButtonStyle</item>
-        <item name="android:buttonBarNegativeButtonStyle">@style/DatePickerButtonStyle</item>
-        <item name="android:buttonBarNeutralButtonStyle">@style/DatePickerButtonStyle</item>
+        <item name="android:buttonBarPositiveButtonStyle">@style/ButtonStyle</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/ButtonStyle</item>
+        <item name="android:buttonBarNeutralButtonStyle">@style/ButtonStyle</item>
         <item name="android:windowTitleStyle">@style/headerTextAppearance</item>
         <item name="android:textAppearanceMedium">@style/message</item>
     </style>

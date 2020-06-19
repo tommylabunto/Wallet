@@ -2,6 +2,10 @@
 <resources>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorBlack">#000000</color>
+    <color name="colorNotSoBlack">#656565</color>
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
+    <color name="colorSurplus">#43a047</color>
+    <color name="colorDeficit">#e53935</color>
+    <color name="colorYellow">#ffeb3b</color>
 </resources>

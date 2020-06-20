@@ -225,9 +225,11 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
 
     private void deepCopySuggestions(List<String> tempNameSuggestions) {
 
-        nameSuggestions = new String[tempNameSuggestions.size()];
+        int arraySize = tempNameSuggestions.size();
 
-        for (int i = 0; i < tempNameSuggestions.size(); i++) {
+        nameSuggestions = new String[arraySize];
+
+        for (int i = 0; i < arraySize; i++) {
             nameSuggestions[i] = tempNameSuggestions.get(i);
         }
 

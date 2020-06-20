@@ -249,7 +249,9 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
         double tempTotalExpenses = 0;
         double tempTotalIncome = 0;
 
-        for (int i = 0; i < transactions.size(); i++) {
+        int arraySize = transactions.size();
+
+        for (int i = 0; i < arraySize; i++) {
 
             Transaction transaction = transactions.get(i);
 

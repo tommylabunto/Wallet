@@ -13,14 +13,14 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.xingtingkai.wallet.adapter.RepeatTransactionAdapter;
 import com.xingtingkai.wallet.db.WalletDatabase;
 import com.xingtingkai.wallet.db.entity.Transaction;
 import com.xingtingkai.wallet.db.viewmodel.TransactionViewModel;
 import com.xingtingkai.wallet.db.viewmodel.TypeViewModel;
 import com.xingtingkai.wallet.helper.DateFormatter;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -181,22 +181,23 @@ public class RepeatTransactionActivity extends AppCompatActivity {
 
         String recurringId = "";
 
-        if (transactions != null) {
-            for (int i = 0; i < transactions.size(); i++) {
+        int arraySize = transactions.size();
 
-                Transaction transaction = transactions.get(i);
+        for (int i = 0; i < arraySize; i++) {
 
-                if (recurringId.isEmpty()) {
-                    recurringId = transaction.getTransactionRecurringId();
-                    distinctTransactions.add(transaction);
-                }
+            Transaction transaction = transactions.get(i);
 
-                if (!recurringId.equals(transaction.getTransactionRecurringId())) {
-                    recurringId = transaction.getTransactionRecurringId();
-                    distinctTransactions.add(transaction);
-                }
+            if (recurringId.isEmpty()) {
+                recurringId = transaction.getTransactionRecurringId();
+                distinctTransactions.add(transaction);
+            }
+
+            if (!recurringId.equals(transaction.getTransactionRecurringId())) {
+                recurringId = transaction.getTransactionRecurringId();
+                distinctTransactions.add(transaction);
             }
         }
+
         return distinctTransactions;
     }
 

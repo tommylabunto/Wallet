@@ -221,9 +221,9 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
     private void showAlertDialog() {
 
         String[] choices = new String[3];
-        choices[0] = "Set this for only this month";
-        choices[1] = "Set this for subsequent months";
-        choices[2] = "Set this for all months";
+        choices[0] = "Update this month only";
+        choices[1] = "Update subsequent months";
+        choices[2] = "Update all months";
 
         //new MaterialAlertDialogBuilder(this)
         new AlertDialog.Builder(this)

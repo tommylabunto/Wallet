@@ -41,12 +41,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-/* (end finish by 20th)
-// TODO: comply with google's standards (today)
-// TODO: learn to handle room migration (today)
-// TODO: publish app (create new google account)
- */
-
 /*
 FUTURE updates:
 // TODO: try using fts3 to search, instead of using LIKE %keyword%, which takes up more time when there are more transactions

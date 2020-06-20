@@ -26,14 +26,14 @@ import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.xingtingkai.wallet.db.entity.Type;
 import com.xingtingkai.wallet.db.viewmodel.TransactionViewModel;
 import com.xingtingkai.wallet.db.viewmodel.TypeViewModel;
 import com.xingtingkai.wallet.helper.DateFormatter;
 import com.xingtingkai.wallet.helper.DatePickerFragment;
 import com.xingtingkai.wallet.helper.FrequencyStringConverter;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -199,9 +199,11 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
 
     private void deepCopySuggestions(List<String> tempNameSuggestions) {
 
-        nameSuggestions = new String[tempNameSuggestions.size()];
+        int arraySize = tempNameSuggestions.size();
 
-        for (int i = 0; i < tempNameSuggestions.size(); i++) {
+        nameSuggestions = new String[arraySize];
+
+        for (int i = 0; i < arraySize; i++) {
             nameSuggestions[i] = tempNameSuggestions.get(i);
         }
 

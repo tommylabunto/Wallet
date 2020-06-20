@@ -41,13 +41,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-/*
-FUTURE updates:
-// TODO: try using fts3 to search, instead of using LIKE %keyword%, which takes up more time when there are more transactions
-// TODO: send crash reports
-// TODO: drag and hold in recyclerview to update and delete
- */
-
 public class MainActivity extends AppCompatActivity {
 
     // add

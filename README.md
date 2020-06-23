@@ -1,5 +1,5 @@
 Wallet is a personal finance tracker.
 
-<img src="images/home.png" height="50" width="50">
+<img src="images/home.png" height="400" width="200">
 
 

@@ -253,7 +253,7 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
         }
 
         showSpinner();
-        //extractIntent();
+        extractIntent();
     }
 
     private void showSpinner() {

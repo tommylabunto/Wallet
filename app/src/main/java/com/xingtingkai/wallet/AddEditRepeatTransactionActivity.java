@@ -227,7 +227,7 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
         }
 
         showSpinnerType();
-        //extractIntent();
+        extractIntent();
     }
 
     private void showSpinnerType() {
@@ -284,6 +284,7 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
 
             type = intent.getStringExtra(EXTRA_TYPENAME);
             int selectionPositionType = adapterType.getPosition(type);
+
             spinnerType.setSelection(selectionPositionType);
         } else {
             setTodayDate(editTextDate);

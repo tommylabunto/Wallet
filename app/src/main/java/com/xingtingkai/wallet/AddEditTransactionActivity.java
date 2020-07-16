@@ -3,7 +3,6 @@ package com.xingtingkai.wallet;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,13 +26,13 @@ import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.xingtingkai.wallet.db.entity.Type;
 import com.xingtingkai.wallet.db.viewmodel.TransactionViewModel;
 import com.xingtingkai.wallet.db.viewmodel.TypeViewModel;
 import com.xingtingkai.wallet.helper.DateFormatter;
 import com.xingtingkai.wallet.helper.DatePickerFragment;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -176,23 +175,6 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
             if (editTextValue.getText().length() > 0 ) {
                 editTextValue.setSelection(editTextValue.getText().length());
             }
-
-            type = intent.getStringExtra(EXTRA_TYPENAME);
-
-            if (intent.getBooleanExtra(EXTRA_IS_EXPENSE_TYPE, true)) {
-                radioButtonExpense.setChecked(true);
-                isExpenseType = true;
-            } else {
-                radioButtonIncome.setChecked(true);
-                isExpenseType = false;
-            }
-
-            if (adapter == null) {
-                initAdapterType();
-            }
-
-            int selectionPosition = adapter.getPosition(type);
-            spinner.setSelection(selectionPosition);
         } else {
             setTodayDate(editTextDate);
             radioButtonExpense.setChecked(true);
@@ -253,12 +235,12 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
         }
 
         showSpinner();
-        extractIntent();
+        extractIntentToSpinner();
+        //extractIntent();
     }
 
     private void showSpinner() {
         initAdapterType();
-        spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -269,6 +251,31 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+    }
+
+    private void extractIntentToSpinner(){
+
+        Intent intent = getIntent();
+
+        if (intent.hasExtra(EXTRA_ID)) {
+
+            type = intent.getStringExtra(EXTRA_TYPENAME);
+
+            if (intent.getBooleanExtra(EXTRA_IS_EXPENSE_TYPE, true)) {
+                radioButtonExpense.setChecked(true);
+                isExpenseType = true;
+            } else {
+                radioButtonIncome.setChecked(true);
+                isExpenseType = false;
+            }
+
+            if (adapter == null) {
+                initAdapterType();
+            }
+
+            int selectionPosition = adapter.getPosition(type);
+            spinner.setSelection(selectionPosition);
+        }
     }
 
     // it takes a while to copy types, so the list might be null
@@ -282,6 +289,7 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
                     android.R.layout.simple_spinner_item, incomeTypeList);
         }
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
     }
 
     private Calendar formatSelectedDate() {
@@ -328,8 +336,6 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
         if (violateInputValidation) {
             return;
         }
-
-        Log.d("in create type", type);
 
         Intent newTransaction = createIntent(formattedDate, value, name, type, "save");
 

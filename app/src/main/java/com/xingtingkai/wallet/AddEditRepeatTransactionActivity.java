@@ -227,13 +227,13 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
         }
 
         showSpinnerType();
-        extractIntent();
+        extractIntentToSpinner();
+        //extractIntent();
     }
 
     private void showSpinnerType() {
 
         initAdapterType();
-        spinnerType.setAdapter(adapterType);
         spinnerType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -244,6 +244,31 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+    }
+
+    private void extractIntentToSpinner(){
+
+        Intent intent = getIntent();
+
+        if (intent.hasExtra(EXTRA_ID)) {
+
+            type = intent.getStringExtra(EXTRA_TYPENAME);
+
+            if (intent.getBooleanExtra(EXTRA_IS_EXPENSE_TYPE, true)) {
+                radioButtonExpense.setChecked(true);
+                isExpenseType = true;
+            } else {
+                radioButtonIncome.setChecked(true);
+                isExpenseType = false;
+            }
+
+            if (adapterType == null) {
+                initAdapterType();
+            }
+
+            int selectionPositionType = adapterType.getPosition(type);
+            spinnerType.setSelection(selectionPositionType);
+        }
     }
 
     private void extractIntent() {
@@ -269,23 +294,6 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
             String frequencyString = FrequencyStringConverter.convertFrequencyIntToString(frequency);
             int selectionPosition = adapterFrequency.getPosition(frequencyString);
             spinnerFrequency.setSelection(selectionPosition);
-
-            if (intent.getBooleanExtra(EXTRA_IS_EXPENSE_TYPE, true)) {
-                radioButtonExpense.setChecked(true);
-                isExpenseType = true;
-            } else {
-                radioButtonIncome.setChecked(true);
-                isExpenseType = false;
-            }
-
-            if (adapterType == null) {
-                initAdapterType();
-            }
-
-            type = intent.getStringExtra(EXTRA_TYPENAME);
-            int selectionPositionType = adapterType.getPosition(type);
-
-            spinnerType.setSelection(selectionPositionType);
         } else {
             setTodayDate(editTextDate);
             radioButtonExpense.setChecked(true);
@@ -304,6 +312,7 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
                     android.R.layout.simple_spinner_item, incomeTypeList);
         }
         adapterType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerType.setAdapter(adapterType);
     }
 
     private Calendar formatSelectedDate() {

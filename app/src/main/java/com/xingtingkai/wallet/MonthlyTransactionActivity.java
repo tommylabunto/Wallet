@@ -53,13 +53,13 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
 
     private TextView textViewMonth;
     private TextView textViewYear;
-    private TextView textViewTotalAmount;
+    private TextView textViewTotalExpenses;
     private TextView textViewMonthlyBudget;
     private TextView textViewRemaining;
     private TextView textViewRemainingLabel;
 
     private static double totalExpenses;
-    private static double totalIncome;
+    private static double budget;
 
     private static MonthlyBudget monthlyBudget;
 
@@ -70,7 +70,7 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
 
         textViewMonth = findViewById(R.id.textView_month);
         textViewYear = findViewById(R.id.textView_year);
-        textViewTotalAmount = findViewById(R.id.textView_totalAmount);
+        textViewTotalExpenses = findViewById(R.id.textView_totalAmount);
         textViewMonthlyBudget = findViewById(R.id.textView_monthly_budget);
         textViewRemaining = findViewById(R.id.textView_remaining);
         textViewRemainingLabel = findViewById(R.id.textView_remaining_label);
@@ -190,8 +190,8 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
             monthlyBudget.setBudget(0);
         }
 
-        totalIncome = monthlyBudget.getBudget() + totalIncome;
-        BigDecimal totalBudgetBd = new BigDecimal(totalIncome).setScale(2, RoundingMode.HALF_UP);
+        budget = monthlyBudget.getBudget();
+        BigDecimal totalBudgetBd = new BigDecimal(budget).setScale(2, RoundingMode.HALF_UP);
 
         textViewMonthlyBudget.setText(totalBudgetBd.toBigInteger() + "");
 
@@ -202,7 +202,7 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
 
         double remaining;
 
-        remaining = totalIncome - totalExpenses;
+        remaining = budget - totalExpenses;
         BigDecimal totalRemainingBd = new BigDecimal(remaining).setScale(2, RoundingMode.HALF_UP);
 
         if (remaining < 0) {
@@ -247,7 +247,6 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
     private void analyzeTransactions(List<Transaction> transactions) {
 
         double tempTotalExpenses = 0;
-        double tempTotalIncome = 0;
 
         int arraySize = transactions.size();
 
@@ -257,18 +256,15 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
 
             if (transaction.isExpenseTransaction()) {
                 tempTotalExpenses += transaction.getValue();
-            } else {
-                tempTotalIncome += transaction.getValue();
             }
         }
 
         totalExpenses = tempTotalExpenses;
-        totalIncome = tempTotalIncome;
 
         // round up to 2.d.p
         BigDecimal totalAmountBd = new BigDecimal(totalExpenses).setScale(2, RoundingMode.HALF_UP);
 
-        textViewTotalAmount.setText( (int) (totalAmountBd.doubleValue()) + "");
+        textViewTotalExpenses.setText( (int) (totalAmountBd.doubleValue()) + "");
     }
 
     private void handleIntent(Intent intent) {

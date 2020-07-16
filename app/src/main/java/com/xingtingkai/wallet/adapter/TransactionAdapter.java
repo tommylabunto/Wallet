@@ -192,24 +192,24 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
 
         StringBuilder stringBuilder = new StringBuilder();
 
-        BigDecimal totalValue1 = new BigDecimal(0);
-
         for (int i = 0; i < transactions.size(); i++) {
-            // only count expenses, don't minus income from expenses
-            if (transactions.get(i).isExpenseTransaction()) {
+
                 if (formatter.format(transactions.get(i).getDate()).equals(formattedDate)) {
 
-                    totalValue += transactions.get(i).getValue();
+                    // only count expenses, don't minus income from expenses
+                    if (transactions.get(i).isExpenseTransaction()) {
+                        totalValue += transactions.get(i).getValue();
+                    }
 
                     if (count == 0 && transactions.get(i).getTransactionId() == transaction.getTransactionId()) {
                         this.isFirst = true;
                     }
                     count++;
 
+                    // refactor this part
                     if (i + 1 == transactions.size() || (i + 1 < transactions.size() && !formatter.format(transactions.get(i + 1).getDate()).equals(formattedDate))) {
                         break;
                     }
-                }
             }
         }
 

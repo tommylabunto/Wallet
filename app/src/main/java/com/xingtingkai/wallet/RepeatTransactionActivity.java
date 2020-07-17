@@ -218,7 +218,7 @@ public class RepeatTransactionActivity extends AppCompatActivity {
                 }
             } else {
 
-                Long id = data.getLongExtra(AddEditRepeatTransactionActivity.EXTRA_ID, -1);
+                long id = data.getLongExtra(AddEditRepeatTransactionActivity.EXTRA_ID, -1);
                 if (id == -1) {
                     showSnackbar("transaction cannot be updated");
                 }
@@ -254,11 +254,13 @@ public class RepeatTransactionActivity extends AppCompatActivity {
         int count = 0;
         int repeat = transaction.getNumOfRepeat();
         int frequency = transaction.getFrequency();
+        int remainingRepeat = repeat;
 
         final String recurringId = UUID.randomUUID().toString();
-        transaction.setTransactionRecurringId(recurringId);
+        //transaction.setTransactionRecurringId(recurringId);
 
-        Transaction newTransaction = new Transaction();
+        Transaction newTransaction;
+        //Transaction newTransaction = new Transaction();
 
         /*
         e.g. frequency = 2 (biannually), numOfRepeat = 2;
@@ -275,16 +277,16 @@ public class RepeatTransactionActivity extends AppCompatActivity {
         for (int i = 0; i <= numOfTransactions; i++) {
 
             // deep copy so that it wont reference the same object and change date for all transactions
-            newTransaction = deepCopyTransaction(transaction);
+            newTransaction = deepCopyTransaction(transaction, recurringId, calendar.getTime(), remainingRepeat);
             transactionViewModel.insertTransaction(newTransaction);
 
             // change date for next transaction
             calendar.add(Calendar.MONTH, 12 / transaction.getFrequency());
-            transaction.setDate(calendar.getTime());
+            //transaction.setDate(calendar.getTime());
 
             // update repeat for current transaction
             count++;
-            int remainingRepeat = countRemainingRepeat(count, repeat, frequency);
+            remainingRepeat = countRemainingRepeat(count, repeat, frequency);
 
             // ignore first count for all frequencies except annually
             // so that remainingRepeat won't reduce 1 after first occurrence (since anything % 1 == 0)
@@ -294,7 +296,7 @@ public class RepeatTransactionActivity extends AppCompatActivity {
 
             // after every 1 year, update number of repeat left
             if (remainingRepeat != -1) {
-                transaction.setNumOfRepeat(remainingRepeat);
+                //transaction.setNumOfRepeat(remainingRepeat);
                 repeat = remainingRepeat;
             }
         }
@@ -327,23 +329,32 @@ public class RepeatTransactionActivity extends AppCompatActivity {
         }
     }
 
-    private Transaction deepCopyTransaction(Transaction transaction) {
+    private Transaction deepCopyTransaction(Transaction transaction, String transactionRecurringId, Date date, int numOfRepeat) {
 
-        Transaction newTransaction = new Transaction();
-        newTransaction.setDate(transaction.getDate());
-        newTransaction.setValue(transaction.getValue());
-        newTransaction.setName(transaction.getName());
-        newTransaction.setTypeName(transaction.getTypeName());
-        newTransaction.setRepeat(transaction.isRepeat());
-        newTransaction.setFrequency(transaction.getFrequency());
-        newTransaction.setNumOfRepeat(transaction.getNumOfRepeat());
-        newTransaction.setExpenseTransaction(transaction.isExpenseTransaction());
-        newTransaction.setTransactionRecurringId(transaction.getTransactionRecurringId());
+//        Transaction newTransaction = new Transaction();
+//        newTransaction.setDate(transaction.getDate());
+//        newTransaction.setValue(transaction.getValue());
+//        newTransaction.setName(transaction.getName());
+//        newTransaction.setTypeName(transaction.getTypeName());
+//        newTransaction.setRepeat(transaction.isRepeat());
+//        newTransaction.setFrequency(transaction.getFrequency());
+//        newTransaction.setNumOfRepeat(transaction.getNumOfRepeat());
+//        newTransaction.setExpenseTransaction(transaction.isExpenseTransaction());
+//        newTransaction.setTransactionRecurringId(transaction.getTransactionRecurringId());
 
-        return newTransaction;
+        return Transaction.createRecurringTransaction(
+                0L,
+                transactionRecurringId,
+                date,
+                transaction.getValue(),
+                transaction.getName(),
+                transaction.getTypeName(),
+                transaction.getFrequency(),
+                numOfRepeat,
+                transaction.isExpenseTransaction());
     }
 
-    private Transaction extractDataToTransaction(Intent data, Long id) {
+    private Transaction extractDataToTransaction(Intent data, long id) {
 
         String name = data.getStringExtra(AddEditRepeatTransactionActivity.EXTRA_NAME);
         String typeName = data.getStringExtra(AddEditRepeatTransactionActivity.EXTRA_TYPENAME);
@@ -353,20 +364,18 @@ public class RepeatTransactionActivity extends AppCompatActivity {
         Date date = DateFormatter.formatStringToDate(dateString);
 
         int frequency = data.getIntExtra(AddEditRepeatTransactionActivity.EXTRA_FREQUENCY, 12);
-        int repeat = data.getIntExtra(AddEditRepeatTransactionActivity.EXTRA_REPEAT, 1);
+        int numOfRepeat = data.getIntExtra(AddEditRepeatTransactionActivity.EXTRA_REPEAT, 1);
 
         String recurringId = data.getStringExtra(AddEditRepeatTransactionActivity.EXTRA_RECURRING_ID);
 
         boolean isExpenseType = data.getBooleanExtra(AddEditTransactionActivity.EXTRA_IS_EXPENSE_TYPE, true);
 
-        Transaction transaction = new Transaction(date, value, name, typeName, frequency, repeat, isExpenseType);
+//        if (id != 0) {
+//            transaction.setTransactionId(id);
+//        }
 
-        if (id != 0) {
-            transaction.setTransactionId(id);
-        }
+        //transaction.setTransactionRecurringId(recurringId);
 
-        transaction.setTransactionRecurringId(recurringId);
-
-        return transaction;
+        return Transaction.createRecurringTransaction(id, recurringId, date, value, name, typeName, frequency, numOfRepeat, isExpenseType);
     }
 }

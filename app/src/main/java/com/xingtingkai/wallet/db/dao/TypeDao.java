@@ -29,12 +29,12 @@ public interface TypeDao {
     @Query("SELECT name FROM type ORDER BY typeId ASC")
     public LiveData<List<String>> getAllTypesString();
 
-    @Query("SELECT typeId, name, isExpenseType FROM type ORDER BY typeId ASC")
+    @Query("SELECT typeId, name, expenseType FROM type ORDER BY typeId ASC")
     public LiveData<List<Type>> getAllTypes();
 
-    @Query("SELECT typeId, name, isExpenseType FROM type WHERE isExpenseType = 1 ORDER BY typeId ASC")
+    @Query("SELECT typeId, name, expenseType FROM type WHERE expenseType = 1 ORDER BY typeId ASC")
     public LiveData<List<Type>> getAllExpenseTypes();
 
-    @Query("SELECT typeId, name, isExpenseType FROM type WHERE isExpenseType = 0 ORDER BY typeId ASC")
+    @Query("SELECT typeId, name, expenseType FROM type WHERE expenseType = 0 ORDER BY typeId ASC")
     public LiveData<List<Type>> getAllIncomeTypes();
 }

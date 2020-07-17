@@ -13,11 +13,11 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.xingtingkai.wallet.adapter.TypeAdapter;
 import com.xingtingkai.wallet.db.entity.Type;
 import com.xingtingkai.wallet.db.viewmodel.TypeViewModel;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 
@@ -220,11 +220,11 @@ public class TypeActivity extends AppCompatActivity {
         String name = data.getStringExtra(AddEditTypeActivity.EXTRA_NAME);
         boolean isExpenseType = data.getBooleanExtra(AddEditTypeActivity.EXTRA_IS_EXPENSE_TYPE, true);
 
-        Type type = new Type(name, isExpenseType);
+//        if (id != 0) {
+//            type.setTypeId(id);
+//        }
 
-        if (id != 0) {
-            type.setTypeId(id);
-        }
-        return type;
+        // if type is new -> id is 0, but sqlite auto generates an id at insertion
+        return Type.create(id, name, isExpenseType);
     }
 }

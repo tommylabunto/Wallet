@@ -337,9 +337,9 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
             return;
         }
 
-        Intent newTransaction = createIntent(formattedDate, value, name, type, "save");
+        Intent newIntent = createIntent(formattedDate, value, name, type, "save");
 
-        setResult(RESULT_OK, newTransaction);
+        setResult(RESULT_OK, newIntent);
         finish();
     }
 
@@ -357,29 +357,29 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
             value = 0;
         }
 
-        Intent oldTransaction = createIntent(formattedDate, value, name, type, "delete");
+        Intent oldIntent = createIntent(formattedDate, value, name, type, "delete");
 
-        setResult(RESULT_OK, oldTransaction);
+        setResult(RESULT_OK, oldIntent);
         finish();
     }
 
     private Intent createIntent(String dateString, double value, String name, String typeName, String operation) {
 
-        Intent transaction = new Intent();
-        transaction.putExtra(EXTRA_NAME, name);
-        transaction.putExtra(EXTRA_TYPENAME, typeName);
-        transaction.putExtra(EXTRA_DATE, dateString);
-        transaction.putExtra(EXTRA_VALUE, value);
-        transaction.putExtra(EXTRA_OPERATION, operation);
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_NAME, name);
+        intent.putExtra(EXTRA_TYPENAME, typeName);
+        intent.putExtra(EXTRA_DATE, dateString);
+        intent.putExtra(EXTRA_VALUE, value);
+        intent.putExtra(EXTRA_OPERATION, operation);
 
-        transaction.putExtra(EXTRA_IS_EXPENSE_TYPE, isExpenseType);
+        intent.putExtra(EXTRA_IS_EXPENSE_TYPE, isExpenseType);
 
         long id = getIntent().getLongExtra(EXTRA_ID, -1);
         if (id != -1) {
-            transaction.putExtra(EXTRA_ID, id);
+            intent.putExtra(EXTRA_ID, id);
         }
 
-        return transaction;
+        return intent;
     }
 
     public void onRadioButtonClicked(View view) {

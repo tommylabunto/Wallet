@@ -50,7 +50,6 @@ public abstract class WalletDatabase extends RoomDatabase {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             WalletDatabase.class, "WalletDatabase.db")
                             .addCallback(sRoomDatabaseCallback)
-                            //.createFromAsset("WalletDatabase.db")
                             .fallbackToDestructiveMigration()
                             .build();
                 }
@@ -104,7 +103,7 @@ public abstract class WalletDatabase extends RoomDatabase {
                         year = calendar.get(Calendar.YEAR);
                         month = calendar.get(Calendar.MONTH);
 
-                        MonthlyBudget monthlyBudget = new MonthlyBudget(budget, year, month);
+                        MonthlyBudget monthlyBudget = MonthlyBudget.create(0, budget, year, month);
                         monthlyBudgetDao.insertMonthlyBudget(monthlyBudget);
 
                         calendar.add(Calendar.MONTH, 1);
@@ -121,10 +120,11 @@ public abstract class WalletDatabase extends RoomDatabase {
             // If you want to start with more words, just add them.
             TypeDao typeDao = INSTANCE.getTypeDao();
 
-            typeDao.insertType(new Type("Food", true));
-            typeDao.insertType(new Type("Transport", true));
-            typeDao.insertType(new Type("Others", true));
-            typeDao.insertType(new Type("Allowance", false));
+            // id is 0, but sqlite auto generates an id at insertion
+            typeDao.insertType(Type.create(0, "Food", true));
+            typeDao.insertType(Type.create(0,"Transport", true));
+            typeDao.insertType(Type.create(0,"Others", true));
+            typeDao.insertType(Type.create(0,"Allowance", false));
         });
     }
 
@@ -144,8 +144,6 @@ public abstract class WalletDatabase extends RoomDatabase {
                 }
             }
         }
-//        INSTANCE.close();
-
         return INSTANCE;
     }
 

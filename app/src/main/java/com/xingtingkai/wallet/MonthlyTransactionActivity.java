@@ -61,8 +61,6 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
     private static double totalExpenses;
     private static double budget;
 
-    private static MonthlyBudget monthlyBudget;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -179,20 +177,13 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
 
     private void deepCopyMonthlyBudget(MonthlyBudget tempMonthlyBudget) {
 
-        monthlyBudget = new MonthlyBudget();
-
         if (tempMonthlyBudget != null) {
-            monthlyBudget.setMonthlyBudgetId(tempMonthlyBudget.getMonthlyBudgetId());
-            monthlyBudget.setBudget(tempMonthlyBudget.getBudget());
-            monthlyBudget.setYear(tempMonthlyBudget.getYear());
-            monthlyBudget.setMonth(tempMonthlyBudget.getMonth());
+            budget = tempMonthlyBudget.getBudget();
         } else {
-            monthlyBudget.setBudget(0);
+            budget = 0;
         }
 
-        budget = monthlyBudget.getBudget();
         BigDecimal totalBudgetBd = new BigDecimal(budget).setScale(2, RoundingMode.HALF_UP);
-
         textViewMonthlyBudget.setText(totalBudgetBd.toBigInteger() + "");
 
         calculateRemaining();

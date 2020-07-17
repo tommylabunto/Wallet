@@ -25,35 +25,35 @@ public interface TransactionDao {
     @Delete
     public void deleteTransaction(Transaction transaction);
 
-    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, isRepeat, frequency, numOfRepeat, isExpenseTransaction FROM `transaction` WHERE transactionId = :transactionId ORDER BY date ASC")
+    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE transactionId = :transactionId ORDER BY date ASC")
     public LiveData<Transaction> getTransaction(Long transactionId);
 
-    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, isRepeat, frequency, numOfRepeat, isExpenseTransaction FROM `transaction` WHERE date >= :millisecondsStart AND date <= :millisecondsEnd ORDER BY date DESC")
+    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE date >= :millisecondsStart AND date <= :millisecondsEnd ORDER BY date DESC")
     public LiveData<List<Transaction>> getAllTransactionsInAMonth(Long millisecondsStart, Long millisecondsEnd);
 
-    @Query("SELECT transactionId, transactionRecurringId, date, sum(value) value, name, typeName, isRepeat, frequency, numOfRepeat, isExpenseTransaction FROM `transaction` WHERE date >= :millisecondsStart AND date <= :millisecondsEnd GROUP BY typeName ORDER BY date ASC")
+    @Query("SELECT transactionId, transactionRecurringId, date, sum(value) value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE date >= :millisecondsStart AND date <= :millisecondsEnd GROUP BY typeName ORDER BY date ASC")
     public LiveData<List<Transaction>> getAllTransactionsInAMonthView(Long millisecondsStart, Long millisecondsEnd);
 
     /*
     cannot use distinct (all are distinct), group by (don't know which row sqlite selects)
     so list is sorted by recurring id when RepeatTransactionActivity receives it
      */
-    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, isRepeat, frequency, numOfRepeat, isExpenseTransaction FROM `transaction` WHERE isRepeat = 1 AND date >= :millisecondsToday ORDER BY transactionRecurringId ASC, date ASC")
+    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE repeat = 1 AND date >= :millisecondsToday ORDER BY transactionRecurringId ASC, date ASC")
     public LiveData<List<Transaction>> getAllRecurringTransactions(Long millisecondsToday);
 
-    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, isRepeat, frequency, numOfRepeat, isExpenseTransaction FROM `transaction` WHERE isRepeat = 1 AND date >= :millisecondsToday AND isExpenseTransaction = 1 ORDER BY transactionRecurringId ASC, date ASC")
+    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE repeat = 1 AND date >= :millisecondsToday AND expenseTransaction = 1 ORDER BY transactionRecurringId ASC, date ASC")
     public LiveData<List<Transaction>> getExpenseRecurringTransactions(Long millisecondsToday);
 
-    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, isRepeat, frequency, numOfRepeat, isExpenseTransaction FROM `transaction` WHERE isRepeat = 1 AND date >= :millisecondsToday AND isExpenseTransaction = 0 ORDER BY transactionRecurringId ASC, date ASC")
+    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE repeat = 1 AND date >= :millisecondsToday AND expenseTransaction = 0 ORDER BY transactionRecurringId ASC, date ASC")
     public LiveData<List<Transaction>> getIncomeRecurringTransactions(Long millisecondsToday);
 
-    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, isRepeat, frequency, numOfRepeat, isExpenseTransaction FROM `transaction` WHERE isRepeat = 0 ORDER BY date ASC")
+    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE repeat = 0 ORDER BY date ASC")
     public LiveData<List<Transaction>> getAllNonRecurringTransactions();
 
-    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, isRepeat, frequency, numOfRepeat, isExpenseTransaction FROM `transaction` ORDER BY date ASC")
+    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` ORDER BY date ASC")
     public LiveData<List<Transaction>> getAllTransactions();
 
-    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, isRepeat, frequency, numOfRepeat, isExpenseTransaction FROM `transaction` WHERE name LIKE :searchName ORDER BY date ASC")
+    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE name LIKE :searchName ORDER BY date ASC")
     public LiveData<List<Transaction>> searchAllTransactions(String searchName);
 
     @Query("DELETE FROM `transaction`")

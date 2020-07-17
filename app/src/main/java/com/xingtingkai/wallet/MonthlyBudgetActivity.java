@@ -144,7 +144,7 @@ public class MonthlyBudgetActivity extends AppCompatActivity {
                 }
             } else {
 
-                Long id = data.getLongExtra(AddEditMonthlyBudgetActivity.EXTRA_ID, -1);
+                long id = data.getLongExtra(AddEditMonthlyBudgetActivity.EXTRA_ID, -1);
                 if (id == -1) {
                     showSnackbar("budget cannot be updated");
                 }
@@ -185,12 +185,10 @@ public class MonthlyBudgetActivity extends AppCompatActivity {
         int year = data.getIntExtra(AddEditMonthlyBudgetActivity.EXTRA_YEAR, 0);
         int month = data.getIntExtra(AddEditMonthlyBudgetActivity.EXTRA_MONTH, 0);
 
-        MonthlyBudget monthlyBudget = new MonthlyBudget(budget, year, month);
-
-        if (id != 0) {
-            monthlyBudget.setMonthlyBudgetId(id);
-        }
-        return monthlyBudget;
+ //        if (id != 0) {
+//            monthlyBudget.setMonthlyBudgetId(id);
+//        }
+        return MonthlyBudget.create(id, budget, year, month);
     }
 
     private void showSnackbar(MonthlyBudget monthlyBudget) {

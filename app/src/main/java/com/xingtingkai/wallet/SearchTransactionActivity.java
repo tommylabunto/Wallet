@@ -136,7 +136,7 @@ public class SearchTransactionActivity extends AppCompatActivity {
 
             if (requestCode == EDIT_TRANSACTION_ACTIVITY_REQUEST_CODE) {
 
-                Long id = data.getLongExtra(AddEditTransactionActivity.EXTRA_ID, -1);
+                long id = data.getLongExtra(AddEditTransactionActivity.EXTRA_ID, -1);
                 if (id == -1) {
                     Toast.makeText(this, "Transaction can't be updated", Toast.LENGTH_SHORT).show();
                 }
@@ -210,12 +210,12 @@ public class SearchTransactionActivity extends AppCompatActivity {
 
         boolean isExpenseType = data.getBooleanExtra(AddEditTransactionActivity.EXTRA_IS_EXPENSE_TYPE, true);
 
-        Transaction transaction = new Transaction(date, value, name, typeName, isExpenseType);
+//        Transaction transaction = new Transaction(date, value, name, typeName, isExpenseType);
 
-        if (id != 0) {
-            transaction.setTransactionId(id);
-        }
-        return transaction;
+//        if (id != 0) {
+//            transaction.setTransactionId(id);
+//        }
+        return Transaction.createNonRecurringTransaction(id, date, value, name, typeName, isExpenseType);
     }
 
     @Override

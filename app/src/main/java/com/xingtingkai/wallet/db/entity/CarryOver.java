@@ -34,4 +34,11 @@ public class CarryOver {
     public void setCarryOverId(long carryOverId) {
         this.carryOverId = carryOverId;
     }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "CarryOver Id: " + getCarryOverId()
+                + ", " + "IsCarryOver: " + isCarryOver();
+    }
 }

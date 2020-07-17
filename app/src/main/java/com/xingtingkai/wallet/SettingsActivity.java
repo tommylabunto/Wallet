@@ -316,9 +316,6 @@ public class SettingsActivity extends AppCompatActivity {
 
             File outputFile = new File(outFileName);
 
-            // Open the empty db as the output stream
-            OutputStream output = new FileOutputStream(outputFile);
-
             copyFile(fis, outputFile);
         } catch (IOException e) {
             Log.e("dbBackup:", e.getMessage());

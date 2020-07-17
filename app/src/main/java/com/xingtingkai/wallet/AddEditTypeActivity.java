@@ -125,9 +125,9 @@ public class AddEditTypeActivity extends AppCompatActivity {
             return;
         }
 
-        Intent newType = createIntent(name, "save");
+        Intent newIntent = createIntent(name, "save");
 
-        setResult(RESULT_OK, newType);
+        setResult(RESULT_OK, newIntent);
         finish();
     }
 
@@ -143,27 +143,27 @@ public class AddEditTypeActivity extends AppCompatActivity {
             name = "";
         }
 
-        Intent oldType = createIntent(name, "delete");
+        Intent oldIntent = createIntent(name, "delete");
 
-        setResult(RESULT_OK, oldType);
+        setResult(RESULT_OK, oldIntent);
         finish();
     }
 
     private Intent createIntent(String name, String operation) {
 
-        Intent type = new Intent();
-        type.putExtra(EXTRA_NAME, name);
-        type.putExtra(EXTRA_OPERATION, operation);
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_NAME, name);
+        intent.putExtra(EXTRA_OPERATION, operation);
 
-        type.putExtra(EXTRA_IS_EXPENSE_TYPE, isExpenseType);
-        type.putExtra(EXTRA_ORIGINAL_IS_EXPENSE_TYPE, originalIsExpenseType);
+        intent.putExtra(EXTRA_IS_EXPENSE_TYPE, isExpenseType);
+        intent.putExtra(EXTRA_ORIGINAL_IS_EXPENSE_TYPE, originalIsExpenseType);
 
         long id = getIntent().getLongExtra(EXTRA_ID, -1);
         if (id != -1) {
-            type.putExtra(EXTRA_ID, id);
+            intent.putExtra(EXTRA_ID, id);
         }
 
-        return type;
+        return intent;
     }
 
     public void onRadioButtonClicked(View view) {

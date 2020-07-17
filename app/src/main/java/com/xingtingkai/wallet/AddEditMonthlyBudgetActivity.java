@@ -119,9 +119,9 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
             budget = Integer.parseInt(budgetString);
         }
 
-        Intent newMonthlyBudget = createIntent(budget, year, month, operation);
+        Intent newIntent = createIntent(budget, year, month, operation);
 
-        setResult(RESULT_OK, newMonthlyBudget);
+        setResult(RESULT_OK, newIntent);
         finish();
     }
 
@@ -149,26 +149,26 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
             budget = 0;
         }
 
-        Intent oldMonthlyBudget = createIntent(budget, year, month, "delete");
+        Intent oldIntent = createIntent(budget, year, month, "delete");
 
-        setResult(RESULT_OK, oldMonthlyBudget);
+        setResult(RESULT_OK, oldIntent);
         finish();
     }
 
     private Intent createIntent(int budget, int year, int month, String operation) {
 
-        Intent monthlyBudget = new Intent();
-        monthlyBudget.putExtra(EXTRA_BUDGET, budget);
-        monthlyBudget.putExtra(EXTRA_YEAR, year);
-        monthlyBudget.putExtra(EXTRA_MONTH, month);
-        monthlyBudget.putExtra(EXTRA_OPERATION, operation);
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_BUDGET, budget);
+        intent.putExtra(EXTRA_YEAR, year);
+        intent.putExtra(EXTRA_MONTH, month);
+        intent.putExtra(EXTRA_OPERATION, operation);
 
-        Long id = getIntent().getLongExtra(EXTRA_ID, -1);
+        long id = getIntent().getLongExtra(EXTRA_ID, -1);
         if (id != -1) {
-            monthlyBudget.putExtra(EXTRA_ID, id);
+            intent.putExtra(EXTRA_ID, id);
         }
 
-        return monthlyBudget;
+        return intent;
     }
 
     @Override

@@ -40,7 +40,7 @@ import java.time.Month;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
+// TODO: replace long with Long
 public class MainActivity extends AppCompatActivity {
 
     // add
@@ -233,7 +233,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             } else {
 
-                Long id = data.getLongExtra(AddEditTransactionActivity.EXTRA_ID, -1);
+                long id = data.getLongExtra(AddEditTransactionActivity.EXTRA_ID, -1);
                 if (id == -1) {
                     showSnackbar("transaction cannot be updated");
                 }
@@ -279,12 +279,10 @@ public class MainActivity extends AppCompatActivity {
 
         boolean isExpenseType = data.getBooleanExtra(AddEditTransactionActivity.EXTRA_IS_EXPENSE_TYPE, true);
 
-        Transaction transaction = new Transaction(date, value, name, typeName, isExpenseType);
-
-        if (id != 0) {
-            transaction.setTransactionId(id);
-        }
-        return transaction;
+//        if (id != 0) {
+//            transaction.setTransactionId(id);
+//        }
+        return Transaction.createNonRecurringTransaction(id, date, value, name, typeName, isExpenseType);
     }
 
     private void handleIntent(Intent intent) {

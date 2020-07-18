@@ -254,13 +254,10 @@ public class RepeatTransactionActivity extends AppCompatActivity {
         int count = 0;
         int repeat = transaction.getNumOfRepeat();
         int frequency = transaction.getFrequency();
-        int remainingRepeat = repeat;
 
         final String recurringId = UUID.randomUUID().toString();
-        //transaction.setTransactionRecurringId(recurringId);
 
         Transaction newTransaction;
-        //Transaction newTransaction = new Transaction();
 
         /*
         e.g. frequency = 2 (biannually), numOfRepeat = 2;
@@ -277,28 +274,16 @@ public class RepeatTransactionActivity extends AppCompatActivity {
         for (int i = 0; i <= numOfTransactions; i++) {
 
             // deep copy so that it wont reference the same object and change date for all transactions
-            newTransaction = deepCopyTransaction(transaction, recurringId, calendar.getTime(), remainingRepeat);
+            newTransaction = deepCopyTransaction(transaction, recurringId, calendar.getTime(), repeat);
             transactionViewModel.insertTransaction(newTransaction);
 
             // change date for next transaction
             calendar.add(Calendar.MONTH, 12 / transaction.getFrequency());
-            //transaction.setDate(calendar.getTime());
 
             // update repeat for current transaction
             count++;
-            remainingRepeat = countRemainingRepeat(count, repeat, frequency);
+            repeat = countRemainingRepeat(count, repeat, frequency);
 
-            // ignore first count for all frequencies except annually
-            // so that remainingRepeat won't reduce 1 after first occurrence (since anything % 1 == 0)
-            if (count == 1 && frequency != 1) {
-                remainingRepeat = repeat;
-            }
-
-            // after every 1 year, update number of repeat left
-            if (remainingRepeat != -1) {
-                //transaction.setNumOfRepeat(remainingRepeat);
-                repeat = remainingRepeat;
-            }
         }
     }
 
@@ -325,22 +310,11 @@ public class RepeatTransactionActivity extends AppCompatActivity {
         if (count % frequency == 0) {
             return repeat - 1;
         } else {
-            return -1;
+            return repeat;
         }
     }
 
     private Transaction deepCopyTransaction(Transaction transaction, String transactionRecurringId, Date date, int numOfRepeat) {
-
-//        Transaction newTransaction = new Transaction();
-//        newTransaction.setDate(transaction.getDate());
-//        newTransaction.setValue(transaction.getValue());
-//        newTransaction.setName(transaction.getName());
-//        newTransaction.setTypeName(transaction.getTypeName());
-//        newTransaction.setRepeat(transaction.isRepeat());
-//        newTransaction.setFrequency(transaction.getFrequency());
-//        newTransaction.setNumOfRepeat(transaction.getNumOfRepeat());
-//        newTransaction.setExpenseTransaction(transaction.isExpenseTransaction());
-//        newTransaction.setTransactionRecurringId(transaction.getTransactionRecurringId());
 
         return Transaction.createRecurringTransaction(
                 0L,

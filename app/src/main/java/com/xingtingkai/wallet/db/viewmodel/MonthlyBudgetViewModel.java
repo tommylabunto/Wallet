@@ -53,7 +53,7 @@ public class MonthlyBudgetViewModel extends AndroidViewModel {
         monthlyBudgetRepository.updateAllMonthlyBudgets(budget);
     }
 
-    public void updateAllFutureMonthlyBudgets(Long monthlyBudgetId, double budget) {
+    public void updateAllFutureMonthlyBudgets(long monthlyBudgetId, double budget) {
         monthlyBudgetRepository.updateAllFutureMonthlyBudgets(monthlyBudgetId, budget);
     }
 }

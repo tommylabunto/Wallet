@@ -26,26 +26,26 @@ public interface TransactionDao {
     public void deleteTransaction(Transaction transaction);
 
     @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE transactionId = :transactionId ORDER BY date ASC")
-    public LiveData<Transaction> getTransaction(Long transactionId);
+    public LiveData<Transaction> getTransaction(long transactionId);
 
     @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE date >= :millisecondsStart AND date <= :millisecondsEnd ORDER BY date DESC")
-    public LiveData<List<Transaction>> getAllTransactionsInAMonth(Long millisecondsStart, Long millisecondsEnd);
+    public LiveData<List<Transaction>> getAllTransactionsInAMonth(long millisecondsStart, long millisecondsEnd);
 
     @Query("SELECT transactionId, transactionRecurringId, date, sum(value) value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE date >= :millisecondsStart AND date <= :millisecondsEnd GROUP BY typeName ORDER BY date ASC")
-    public LiveData<List<Transaction>> getAllTransactionsInAMonthView(Long millisecondsStart, Long millisecondsEnd);
+    public LiveData<List<Transaction>> getAllTransactionsInAMonthView(long millisecondsStart, long millisecondsEnd);
 
     /*
     cannot use distinct (all are distinct), group by (don't know which row sqlite selects)
     so list is sorted by recurring id when RepeatTransactionActivity receives it
      */
     @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE repeat = 1 AND date >= :millisecondsToday ORDER BY transactionRecurringId ASC, date ASC")
-    public LiveData<List<Transaction>> getAllRecurringTransactions(Long millisecondsToday);
+    public LiveData<List<Transaction>> getAllRecurringTransactions(long millisecondsToday);
 
     @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE repeat = 1 AND date >= :millisecondsToday AND expenseTransaction = 1 ORDER BY transactionRecurringId ASC, date ASC")
-    public LiveData<List<Transaction>> getExpenseRecurringTransactions(Long millisecondsToday);
+    public LiveData<List<Transaction>> getExpenseRecurringTransactions(long millisecondsToday);
 
     @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE repeat = 1 AND date >= :millisecondsToday AND expenseTransaction = 0 ORDER BY transactionRecurringId ASC, date ASC")
-    public LiveData<List<Transaction>> getIncomeRecurringTransactions(Long millisecondsToday);
+    public LiveData<List<Transaction>> getIncomeRecurringTransactions(long millisecondsToday);
 
     @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE repeat = 0 ORDER BY date ASC")
     public LiveData<List<Transaction>> getAllNonRecurringTransactions();
@@ -62,9 +62,9 @@ public interface TransactionDao {
     @Query("DELETE FROM `transaction` WHERE value = :value AND name = :name AND typeName = :typeName AND frequency = :frequency")
     public void deleteAllRecurringTransactions(double value, String name, String typeName, int frequency);
 
-    // date is stored as Long in sqlite (seen in converters)
+    // date is stored as long in sqlite (seen in converters)
     @Query("DELETE FROM `transaction` WHERE transactionRecurringId = :transactionRecurringId AND date >= :milliseconds")
-    public void deleteFutureRecurringTransactions(String transactionRecurringId, Long milliseconds);
+    public void deleteFutureRecurringTransactions(String transactionRecurringId, long milliseconds);
 
     // sync DB data
     @RawQuery(observedEntities = Transaction.class)

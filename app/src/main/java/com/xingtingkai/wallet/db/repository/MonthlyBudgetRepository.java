@@ -60,7 +60,7 @@ public class MonthlyBudgetRepository {
         });
     }
 
-    public void updateAllFutureMonthlyBudgets(Long monthlyBudgetId, double budget) {
+    public void updateAllFutureMonthlyBudgets(long monthlyBudgetId, double budget) {
         WalletDatabase.databaseWriteExecutor.execute(() -> {
             monthlyBudgetDao.updateAllFutureMonthlyBudgets(monthlyBudgetId, budget);
         });

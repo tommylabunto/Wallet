@@ -22,6 +22,7 @@ public abstract class Transaction {
     @AutoValue.CopyAnnotations
     public abstract String getTransactionRecurringId();
 
+    // do not mutate this object
     @AutoValue.CopyAnnotations
     @NonNull
     public abstract Date getDate();
@@ -65,16 +66,16 @@ public abstract class Transaction {
     public abstract boolean isExpenseTransaction();
 
     @Ignore
-    public static Transaction createNonRecurringTransaction(Long transactionId, Date date, double value, String name, String typeName, boolean expenseTransaction) {
-        return createTransaction(transactionId, "", date, value, name, typeName, false, 1, 0, expenseTransaction);
+    public static Transaction createNonRecurringTransaction(long transactionId, Date date, double value, String name, String typeName, boolean expenseTransaction) {
+        return createTransaction(transactionId, "", new Date(date.getTime()), value, name, typeName, false, 1, 0, expenseTransaction);
     }
 
     @Ignore
-    public static Transaction createRecurringTransaction(Long transactionId, String transactionRecurringId, Date date, double value, String name, String typeName, int frequency, int numOfRepeat, boolean expenseTransaction) {
-        return createTransaction(transactionId, transactionRecurringId, date, value, name, typeName, true, frequency, numOfRepeat, expenseTransaction);
+    public static Transaction createRecurringTransaction(long transactionId, String transactionRecurringId, Date date, double value, String name, String typeName, int frequency, int numOfRepeat, boolean expenseTransaction) {
+        return createTransaction(transactionId, transactionRecurringId, new Date(date.getTime()), value, name, typeName, true, frequency, numOfRepeat, expenseTransaction);
     }
 
-    public static Transaction createTransaction(Long transactionId, String transactionRecurringId, Date date, double value, String name, String typeName, boolean repeat, int frequency, int numOfRepeat, boolean expenseTransaction) {
+    public static Transaction createTransaction(long transactionId, String transactionRecurringId, Date date, double value, String name, String typeName, boolean repeat, int frequency, int numOfRepeat, boolean expenseTransaction) {
         return new AutoValue_Transaction(transactionId, transactionRecurringId, date, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction);
     }
 

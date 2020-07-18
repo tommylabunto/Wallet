@@ -226,9 +226,23 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
             }
         }
 
+        updateRadioButton();
         showSpinnerType();
         extractIntentToSpinner();
         //extractIntent();
+    }
+
+    private void updateRadioButton() {
+
+        Intent intent = getIntent();
+
+        if (intent.getBooleanExtra(EXTRA_IS_EXPENSE_TYPE, true)) {
+            radioButtonExpense.setChecked(true);
+            isExpenseType = true;
+        } else {
+            radioButtonIncome.setChecked(true);
+            isExpenseType = false;
+        }
     }
 
     private void showSpinnerType() {
@@ -253,14 +267,6 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
         if (intent.hasExtra(EXTRA_ID)) {
 
             type = intent.getStringExtra(EXTRA_TYPENAME);
-
-            if (intent.getBooleanExtra(EXTRA_IS_EXPENSE_TYPE, true)) {
-                radioButtonExpense.setChecked(true);
-                isExpenseType = true;
-            } else {
-                radioButtonIncome.setChecked(true);
-                isExpenseType = false;
-            }
 
             if (adapterType == null) {
                 initAdapterType();

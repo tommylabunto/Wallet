@@ -30,15 +30,15 @@ public class TransactionRepository {
         return allTransactions;
     }
 
-    public LiveData<List<Transaction>> getAllRecurringTransactions(Long millisecondsToday) {
+    public LiveData<List<Transaction>> getAllRecurringTransactions(long millisecondsToday) {
         return transactionDao.getAllRecurringTransactions(millisecondsToday);
     }
 
-    public LiveData<List<Transaction>> getExpenseRecurringTransactions(Long millisecondsToday) {
+    public LiveData<List<Transaction>> getExpenseRecurringTransactions(long millisecondsToday) {
         return transactionDao.getExpenseRecurringTransactions(millisecondsToday);
     }
 
-    public LiveData<List<Transaction>> getIncomeRecurringTransactions(Long millisecondsToday) {
+    public LiveData<List<Transaction>> getIncomeRecurringTransactions(long millisecondsToday) {
         return transactionDao.getIncomeRecurringTransactions(millisecondsToday);
     }
 
@@ -46,11 +46,11 @@ public class TransactionRepository {
         return allNonRecurringTransactions;
     }
 
-    public LiveData<List<Transaction>> getAllTransactionsInAMonth(Long millisecondsStart, Long millisecondsEnd) {
+    public LiveData<List<Transaction>> getAllTransactionsInAMonth(long millisecondsStart, long millisecondsEnd) {
         return transactionDao.getAllTransactionsInAMonth(millisecondsStart, millisecondsEnd);
     }
 
-    public LiveData<List<Transaction>> getAllTransactionsInAMonthView(Long millisecondsStart, Long millisecondsEnd) {
+    public LiveData<List<Transaction>> getAllTransactionsInAMonthView(long millisecondsStart, long millisecondsEnd) {
         return transactionDao.getAllTransactionsInAMonthView(millisecondsStart, millisecondsEnd);
     }
 
@@ -77,7 +77,7 @@ public class TransactionRepository {
         });
     }
 
-    public LiveData<Transaction> getTransaction(Long transactionId) {
+    public LiveData<Transaction> getTransaction(long transactionId) {
 
         return transactionDao.getTransaction(transactionId);
 
@@ -92,7 +92,7 @@ public class TransactionRepository {
         });
     }
 
-    public void deleteFutureRecurringTransactions(String transactionRecurringId, Long milliseconds) {
+    public void deleteFutureRecurringTransactions(String transactionRecurringId, long milliseconds) {
         WalletDatabase.databaseWriteExecutor.execute(() -> {
             transactionDao.deleteFutureRecurringTransactions(transactionRecurringId, milliseconds);
         });

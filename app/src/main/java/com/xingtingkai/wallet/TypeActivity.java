@@ -215,7 +215,7 @@ public class TypeActivity extends AppCompatActivity {
         snackbar.show();
     }
 
-    private Type extractDataToType(Intent data, Long id) {
+    private Type extractDataToType(Intent data, long id) {
 
         String name = data.getStringExtra(AddEditTypeActivity.EXTRA_NAME);
         boolean isExpenseType = data.getBooleanExtra(AddEditTypeActivity.EXTRA_IS_EXPENSE_TYPE, true);

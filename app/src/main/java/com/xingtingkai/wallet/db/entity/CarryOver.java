@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+// obsolete, not longer in implementation
 @Entity
 public class CarryOver {
 

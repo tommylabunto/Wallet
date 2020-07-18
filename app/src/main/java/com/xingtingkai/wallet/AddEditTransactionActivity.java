@@ -234,9 +234,23 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
             }
         }
 
+        updateRadioButton();
         showSpinner();
         extractIntentToSpinner();
         //extractIntent();
+    }
+
+    private void updateRadioButton() {
+
+        Intent intent = getIntent();
+
+        if (intent.getBooleanExtra(EXTRA_IS_EXPENSE_TYPE, true)) {
+            radioButtonExpense.setChecked(true);
+            isExpenseType = true;
+        } else {
+            radioButtonIncome.setChecked(true);
+            isExpenseType = false;
+        }
     }
 
     private void showSpinner() {
@@ -260,14 +274,6 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
         if (intent.hasExtra(EXTRA_ID)) {
 
             type = intent.getStringExtra(EXTRA_TYPENAME);
-
-            if (intent.getBooleanExtra(EXTRA_IS_EXPENSE_TYPE, true)) {
-                radioButtonExpense.setChecked(true);
-                isExpenseType = true;
-            } else {
-                radioButtonIncome.setChecked(true);
-                isExpenseType = false;
-            }
 
             if (adapter == null) {
                 initAdapterType();

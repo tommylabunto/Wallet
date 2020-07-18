@@ -199,7 +199,7 @@ public class SearchTransactionActivity extends AppCompatActivity {
         Toast.makeText(this, "Reloading", Toast.LENGTH_SHORT).show();
     }
 
-    private Transaction extractDataToTransaction(Intent data, Long id) {
+    private Transaction extractDataToTransaction(Intent data, long id) {
 
         String name = data.getStringExtra(AddEditTransactionActivity.EXTRA_NAME);
         String typeName = data.getStringExtra(AddEditTransactionActivity.EXTRA_TYPENAME);

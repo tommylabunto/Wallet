@@ -41,6 +41,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 // TODO: replace long with Long
+// TODO: spinner transaction type not reflected correctly
 public class MainActivity extends AppCompatActivity {
 
     // add
@@ -268,7 +269,7 @@ public class MainActivity extends AppCompatActivity {
         snackbar.show();
     }
 
-    private Transaction extractDataToTransaction(Intent data, Long id) {
+    private Transaction extractDataToTransaction(Intent data, long id) {
 
         String name = data.getStringExtra(AddEditTransactionActivity.EXTRA_NAME);
         String typeName = data.getStringExtra(AddEditTransactionActivity.EXTRA_TYPENAME);

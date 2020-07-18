@@ -26,6 +26,23 @@ public abstract class Type {
         return new AutoValue_Type(typeId, name, expenseType);
     }
 
+    /*
+    cannot use the builder method because it sets AutoValue_Type constructor to private
+    Room requires the constructor to be package private or public
+     */
+//    public static Builder builder() {
+//        return new AutoValue_Type.Builder();
+//    }
+//
+//    @AutoValue.CopyAnnotations
+//    @AutoValue.Builder
+//    public abstract static class Builder {
+//        public abstract Builder setTypeId(long value);
+//        public abstract Builder setName(String value);
+//        public abstract Builder setExpenseType(boolean value);
+//        public abstract Type build();
+//    }
+
 //    @PrimaryKey(autoGenerate = true)
 //    @NonNull
 //    private long typeId;

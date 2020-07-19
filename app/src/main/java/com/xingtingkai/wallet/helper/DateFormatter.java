@@ -4,7 +4,7 @@ import java.time.Month;
 import java.util.Calendar;
 import java.util.Date;
 
-public class DateFormatter {
+public final class DateFormatter {
 
     /*
     java Calendar and Date store month starting from 0 (January)
@@ -46,12 +46,10 @@ public class DateFormatter {
         String monthString = String.format(format, calendar.get(Calendar.MONTH) + 1);
         String yearString = String.valueOf(calendar.get(Calendar.YEAR));
 
-        return appendDateString(yearString, monthString, dayString);
+        return appendDateString(yearString, monthString, dayString, "/");
     }
 
     public static String beautifyDateString(String dateString) {
-
-        StringBuilder stringBuilder = new StringBuilder();
 
         String dayString = dateString.substring(0,2);
         String tempMonthString = dateString.substring(3,5);
@@ -64,23 +62,17 @@ public class DateFormatter {
         // originally is all caps
         String monthString = tempMonth.name().substring(0,1) + tempMonth.name().substring(1,3).toLowerCase();
 
-        stringBuilder.append(dayString);
-        stringBuilder.append(" ");
-        stringBuilder.append(monthString);
-        stringBuilder.append(" ");
-        stringBuilder.append(yearString);
-
-        return stringBuilder.toString();
+        return appendDateString(yearString, monthString, dayString, " ");
     }
 
-    public static String appendDateString(String year, String month, String day) {
+    public static String appendDateString(String year, String month, String day, String delimiter) {
 
         StringBuilder stringBuilder = new StringBuilder();
 
         stringBuilder.append(day);
-        stringBuilder.append("/");
+        stringBuilder.append(delimiter);
         stringBuilder.append(month);
-        stringBuilder.append("/");
+        stringBuilder.append(delimiter);
         stringBuilder.append(year);
 
         return stringBuilder.toString();

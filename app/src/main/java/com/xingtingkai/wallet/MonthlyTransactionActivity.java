@@ -20,7 +20,6 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -58,9 +57,6 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
     private TextView textViewRemaining;
     private TextView textViewRemainingLabel;
 
-    private static double totalExpenses;
-    private static double budget;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,27 +79,23 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
         initViewModels();
 
         prevMonth = findViewById(R.id.left_button);
-        prevMonth.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startMonthCal.add(Calendar.MONTH, -1);
-                endMonthCal.add(Calendar.MONTH, -1);
-                updateTransactionsInAMonth();
-                updateMonthlyBudget();
-                calculateRemaining();
-            }
+        // on click
+        prevMonth.setOnClickListener((View view) -> {
+            startMonthCal.add(Calendar.MONTH, -1);
+            endMonthCal.add(Calendar.MONTH, -1);
+            updateTransactionsInAMonth();
+            updateMonthlyBudget();
+            calculateRemaining();
         });
 
         nextMonth = findViewById(R.id.right_button);
-        nextMonth.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                endMonthCal.add(Calendar.MONTH, 1);
-                startMonthCal.add(Calendar.MONTH, 1);
-                updateTransactionsInAMonth();
-                updateMonthlyBudget();
-                calculateRemaining();
-            }
+        // on click
+        nextMonth.setOnClickListener((View view) -> {
+            endMonthCal.add(Calendar.MONTH, 1);
+            startMonthCal.add(Calendar.MONTH, 1);
+            updateTransactionsInAMonth();
+            updateMonthlyBudget();
+            calculateRemaining();
         });
 
         handleIntent(getIntent());
@@ -113,7 +105,11 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
             actionBar.setDisplayShowTitleEnabled(false);
         }
 
-        // remove blinking effect from animating shared elements
+        removeBlinking();
+    }
+
+    // remove blinking effect from animating shared elements
+    private void removeBlinking() {
         Fade fade = new Fade();
         View decor = getWindow().getDecorView();
         fade.excludeTarget(decor.findViewById(R.id.action_bar_container), true);
@@ -144,7 +140,8 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
         // originally is all caps
         String monthString = month.name().substring(0,1) + month.name().substring(1,3).toLowerCase();
 
-        textViewYear.setText(yearInt + "");
+        String year = getString(R.string.single_string_param, yearInt + "");
+        textViewYear.setText(year);
         textViewMonth.setText(monthString);
     }
 
@@ -166,62 +163,69 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
         int year = startMonthCal.get(Calendar.YEAR);
         int month = startMonthCal.get(Calendar.MONTH);
 
-        monthlyBudgetViewModel.getMonthlyBudget(year, month).observe(this, new Observer<MonthlyBudget>() {
-            @Override
-            public void onChanged(@Nullable final MonthlyBudget monthlyBudget) {
-
-                deepCopyMonthlyBudget(monthlyBudget);
-            }
-        });
+        // on changed
+        monthlyBudgetViewModel.getMonthlyBudget(year, month).observe(this, this::updateTextViewBudget);
     }
 
-    private void deepCopyMonthlyBudget(MonthlyBudget tempMonthlyBudget) {
+    private void updateTextViewBudget(MonthlyBudget tempMonthlyBudget) {
+
+        double budget = 0;
 
         if (tempMonthlyBudget != null) {
             budget = tempMonthlyBudget.getBudget();
-        } else {
-            budget = 0;
         }
 
         BigDecimal totalBudgetBd = new BigDecimal(budget).setScale(2, RoundingMode.HALF_UP);
-        textViewMonthlyBudget.setText(totalBudgetBd.toBigInteger() + "");
+        String totalBudget = getString(R.string.single_string_param, totalBudgetBd.intValue() + "");
+        textViewMonthlyBudget.setText(totalBudget);
 
         calculateRemaining();
     }
 
     private void calculateRemaining() {
 
-        double remaining;
+        String budgetString = textViewMonthlyBudget.getText().toString().trim();
+        int budget = 0;
 
-        remaining = budget - totalExpenses;
+        String totalExpensesString = textViewTotalExpenses.getText().toString().trim();
+        int totalExpenses = 0;
+
+        if (!budgetString.isEmpty()) {
+            budget = Integer.parseInt(budgetString);
+        }
+
+        if (!totalExpensesString.isEmpty()) {
+            totalExpenses = Integer.parseInt(totalExpensesString);
+        }
+
+        int remaining = budget - totalExpenses;
         BigDecimal totalRemainingBd = new BigDecimal(remaining).setScale(2, RoundingMode.HALF_UP);
 
         if (remaining < 0) {
             textViewRemaining.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorDeficit));
-            textViewRemainingLabel.setText("Deficit");
+            textViewRemainingLabel.setText(getString(R.string.deficit));
         } else if (remaining > 0) {
             textViewRemaining.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorSurplus));
-            textViewRemainingLabel.setText("Surplus");
+            textViewRemainingLabel.setText(getString(R.string.surplus));
         } else {
             textViewRemaining.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorNotSoBlack));
-            textViewRemainingLabel.setText("Balance");
+            textViewRemainingLabel.setText(getString(R.string.balance));
         }
 
-        remaining = Math.abs(totalRemainingBd.doubleValue());
+        remaining = Math.abs(totalRemainingBd.intValue());
 
-        textViewRemaining.setText( (int) remaining + "");
-
+        String remainingString = getString(R.string.single_string_param, remaining + "");
+        textViewRemaining.setText(remainingString);
     }
 
     private void updateTransactionsInAMonth() {
 
-        transactionViewModel.getAllTransactionsInAMonthView(startMonthCal.getTimeInMillis(), endMonthCal.getTimeInMillis()).observe(this, new Observer<List<Transaction>>() {
-            @Override
-            public void onChanged(@Nullable final List<Transaction> transactions) {
-                // Update the cached copy of the words in the transactionAdapter.
-                monthlyTransactionAdapter.submitList(transactions);
-                analyzeTransactions(transactions);
-            }
+        // on changed
+        transactionViewModel.getAllTransactionsInAMonthView(startMonthCal.getTimeInMillis(), endMonthCal.getTimeInMillis())
+                .observe(this, (@Nullable final List<Transaction> transactions) -> {
+            // Update the cached copy of the words in the transactionAdapter.
+            monthlyTransactionAdapter.submitList(transactions);
+            analyzeTransactions(transactions);
         });
 
         int yearInt = startMonthCal.get(Calendar.YEAR);
@@ -231,13 +235,14 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
         // originally is all caps
         String monthString = month.name().substring(0,1) + month.name().substring(1,3).toLowerCase();
 
-        textViewYear.setText(yearInt + "");
+        String year = getString(R.string.single_string_param, yearInt + "");
+        textViewYear.setText(year);
         textViewMonth.setText(monthString);
     }
 
     private void analyzeTransactions(List<Transaction> transactions) {
 
-        double tempTotalExpenses = 0;
+        double totalExpenses = 0;
 
         int arraySize = transactions.size();
 
@@ -246,16 +251,14 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
             Transaction transaction = transactions.get(i);
 
             if (transaction.isExpenseTransaction()) {
-                tempTotalExpenses += transaction.getValue();
+                totalExpenses += transaction.getValue();
             }
         }
 
-        totalExpenses = tempTotalExpenses;
-
         // round up to 2.d.p
         BigDecimal totalAmountBd = new BigDecimal(totalExpenses).setScale(2, RoundingMode.HALF_UP);
-
-        textViewTotalExpenses.setText( (int) (totalAmountBd.doubleValue()) + "");
+        String totalAmount = getString(R.string.single_string_param, totalAmountBd.intValue() + "");
+        textViewTotalExpenses.setText(totalAmount);
     }
 
     private void handleIntent(Intent intent) {
@@ -263,15 +266,15 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
         // Get the intent, verify the action and get the query
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-            Intent goToSearchTransactionActivity = new Intent(MonthlyTransactionActivity.this, SearchTransactionActivity.class);
-            goToSearchTransactionActivity.setAction(Intent.ACTION_SEARCH);
-            goToSearchTransactionActivity.putExtra(SearchTransactionActivity.EXTRA_SEARCH, query);
+            Intent goToSearchTransaction = new Intent(MonthlyTransactionActivity.this, SearchTransactionActivity.class);
+            goToSearchTransaction.setAction(Intent.ACTION_SEARCH);
+            goToSearchTransaction.putExtra(SearchTransactionActivity.EXTRA_SEARCH, query);
 
             SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
                     SearchSuggestionProvider.AUTHORITY, SearchSuggestionProvider.MODE);
             suggestions.saveRecentQuery(query, null);
 
-            startActivity(goToSearchTransactionActivity);
+            startActivity(goToSearchTransaction);
         }
     }
 
@@ -304,8 +307,8 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case R.id.action_settings:
-                Intent goToSettingsActivity = new Intent(MonthlyTransactionActivity.this, SettingsActivity.class);
-                startActivity(goToSettingsActivity);
+                Intent goToSettings = new Intent(MonthlyTransactionActivity.this, SettingsActivity.class);
+                startActivity(goToSettings);
                 return true;
             case R.id.action_normal_view:
                 Intent goToMainActivity = new Intent(MonthlyTransactionActivity.this, MainActivity.class);

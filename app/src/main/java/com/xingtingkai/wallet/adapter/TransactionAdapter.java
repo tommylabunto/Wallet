@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,7 +27,7 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
         private final TextView textViewName;
         private final TextView textViewValue;
         private final TextView textView_date;
-        private final TextView textView_dayOfdate;
+        private final TextView textView_dayOfDate;
         private final TextView textView_totalAmount;
 
         private TransactionViewHolder(View itemView) {
@@ -34,16 +35,14 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
             textViewName = itemView.findViewById(R.id.textView_name);
             textViewValue = itemView.findViewById(R.id.textView_value);
             textView_date = itemView.findViewById(R.id.textView_date);
-            textView_dayOfdate = itemView.findViewById(R.id.textView_day_of_date);
+            textView_dayOfDate = itemView.findViewById(R.id.textView_day_of_date);
             textView_totalAmount = itemView.findViewById(R.id.textView_totalAmount);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = getAdapterPosition();
-                    if (listener != null && position != RecyclerView.NO_POSITION) {
-                        listener.onItemClick(getItem(position));
-                    }
+            // on click
+            itemView.setOnClickListener((View v) -> {
+                int position = getAdapterPosition();
+                if (listener != null && position != RecyclerView.NO_POSITION) {
+                    listener.onItemClick(getItem(position));
                 }
             });
         }
@@ -52,19 +51,18 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
 
             if (textView_date != null) {
                 textView_date.setText(date);
+                textView_date.setVisibility(View.VISIBLE);
             }
 
             if (textView_totalAmount != null) {
                 textView_totalAmount.setText(totalAmount);
+                textView_totalAmount.setVisibility(View.VISIBLE);
             }
 
-            if (textView_dayOfdate != null) {
-                textView_dayOfdate.setText(day);
+            if (textView_dayOfDate != null) {
+                textView_dayOfDate.setText(day);
+                textView_dayOfDate.setVisibility(View.VISIBLE);
             }
-
-            textView_date.setVisibility(View.VISIBLE);
-            textView_totalAmount.setVisibility(View.VISIBLE);
-            textView_dayOfdate.setVisibility(View.VISIBLE);
         }
 
         /*
@@ -77,7 +75,7 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
 
             textView_totalAmount.setVisibility(View.GONE);
 
-            textView_dayOfdate.setVisibility(View.GONE);
+            textView_dayOfDate.setVisibility(View.GONE);
         }
     }
 
@@ -110,18 +108,19 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
         }
     };
 
+    @NonNull
     @Override
-    public TransactionViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public TransactionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = mInflater.inflate(R.layout.recyclerview_transaction, parent, false);
-        TransactionViewHolder holder = new TransactionViewHolder(itemView);
-        return holder;
+        return new TransactionViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(TransactionViewHolder holder, int position) {
         Transaction transaction = getItem(position);
         holder.textViewName.setText(transaction.getName());
-        holder.textViewValue.setText((int) transaction.getValue() + "");
+        String value = mInflater.getContext().getString(R.string.single_string_param, (int) transaction.getValue() + "");
+        holder.textViewValue.setText(value);
 
 //        if (!transaction.isExpenseTransaction()) {
 //            holder.textViewName.setTextColor(Color.parseColor("#00ff9b"));
@@ -164,7 +163,7 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
 
         this.isFirst = false;
 
-        if (transactions != null || !transactions.isEmpty()) {
+        if (transactions != null && !transactions.isEmpty()) {
 
             String totalAmount = calculateTotalAmountInADay(transaction);
 

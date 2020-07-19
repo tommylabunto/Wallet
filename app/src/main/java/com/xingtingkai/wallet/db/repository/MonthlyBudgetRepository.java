@@ -38,31 +38,26 @@ public class MonthlyBudgetRepository {
     // You must call this on a non-UI thread or your app will throw an exception. Room ensures
     // that you're not doing any long running operations on the main thread, blocking the UI.
     public void insertMonthlyBudget(MonthlyBudget monthlyBudget) {
-        WalletDatabase.databaseWriteExecutor.execute(() -> {
-            monthlyBudgetDao.insertMonthlyBudget(monthlyBudget);
-        });
+        WalletDatabase.databaseWriteExecutor.execute(() ->
+                monthlyBudgetDao.insertMonthlyBudget(monthlyBudget));
     }
     public void deleteMonthlyBudget(MonthlyBudget monthlyBudget) {
-        WalletDatabase.databaseWriteExecutor.execute(() -> {
-            monthlyBudgetDao.deleteMonthlyBudget(monthlyBudget);
-        });
+        WalletDatabase.databaseWriteExecutor.execute(() ->
+                monthlyBudgetDao.deleteMonthlyBudget(monthlyBudget));
     }
 
     public void updateMonthlyBudget(MonthlyBudget monthlyBudget) {
-        WalletDatabase.databaseWriteExecutor.execute(() -> {
-            monthlyBudgetDao.updateMonthlyBudget(monthlyBudget);
-        });
+        WalletDatabase.databaseWriteExecutor.execute(() ->
+                monthlyBudgetDao.updateMonthlyBudget(monthlyBudget));
     }
 
     public void updateAllMonthlyBudgets(double budget) {
-        WalletDatabase.databaseWriteExecutor.execute(() -> {
-            monthlyBudgetDao.updateAllMonthlyBudgets(budget);
-        });
+        WalletDatabase.databaseWriteExecutor.execute(() ->
+                monthlyBudgetDao.updateAllMonthlyBudgets(budget));
     }
 
     public void updateAllFutureMonthlyBudgets(long monthlyBudgetId, double budget) {
-        WalletDatabase.databaseWriteExecutor.execute(() -> {
-            monthlyBudgetDao.updateAllFutureMonthlyBudgets(monthlyBudgetId, budget);
-        });
+        WalletDatabase.databaseWriteExecutor.execute(() ->
+                monthlyBudgetDao.updateAllFutureMonthlyBudgets(monthlyBudgetId, budget));
     }
 }

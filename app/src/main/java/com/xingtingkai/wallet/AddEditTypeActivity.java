@@ -55,16 +55,19 @@ public class AddEditTypeActivity extends AppCompatActivity {
         }
 
         // submit form when clicked 'enter' on soft keyboard
-        editTextType.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                boolean handled = false;
-                if (actionId == EditorInfo.IME_ACTION_SEND) {
-                    createOrSaveType();
-                    handled = true;
+        // on editor action
+        editTextType.setOnEditorActionListener((TextView v, int actionId, KeyEvent event) -> {
+            boolean handled = false;
+            if (actionId == EditorInfo.IME_ACTION_SEND) {
+                if (!violateInputValidation()) {
+                    Intent intent = extractInputToIntent("save");
+
+                    setResult(RESULT_OK, intent);
+                    finish();
                 }
-                return handled;
+                handled = true;
             }
+            return handled;
         });
 
         textInputLayoutName = findViewById(R.id.edit_text_type_input_layout);
@@ -84,7 +87,7 @@ public class AddEditTypeActivity extends AppCompatActivity {
 
             // place cursor on the right side
             // only for the first edit text
-            if (editTextType.getText().length() > 0 ) {
+            if (editTextType.getText() != null && editTextType.getText().length() > 0 ) {
                 editTextType.setSelection(editTextType.getText().length());
             }
 
@@ -105,48 +108,39 @@ public class AddEditTypeActivity extends AppCompatActivity {
         }
     }
 
-    private void createOrSaveType() {
+    private boolean violateInputValidation() {
 
         String name = editTextType.getText().toString().trim();
 
-        boolean violateInputValidation = false;
+        boolean violate = false;
 
         if (name.isEmpty()) {
             textInputLayoutName.setError("Please insert a name.");
-            violateInputValidation = true;
+            violate = true;
         } else if (name.length() >= 100) {
             textInputLayoutName.setError("Please insert a name less than 100 characters.");
-            violateInputValidation = true;
+            violate = true;
         } else {
             textInputLayoutName.setError("");
         }
 
-        if (violateInputValidation) {
-            return;
-        }
-
-        Intent newIntent = createIntent(name, "save");
-
-        setResult(RESULT_OK, newIntent);
-        finish();
+        return violate;
     }
 
-    /*
-    if delete a type that a transaction uses, it won't crash.
-    the spinner will just set the type to the top option as default
-     */
-    private void deleteType() {
+    private Intent extractInputToIntent(String operation) {
 
         String name = editTextType.getText().toString().trim();
 
-        if (name.length() >= 100) {
+        /*
+        bypass check for delete
+        if delete a type that a transaction uses, it won't crash.
+        the spinner will just set the type to the top option as default
+        */
+        if (operation.equals("delete") && name.length() >= 100) {
             name = "";
         }
 
-        Intent oldIntent = createIntent(name, "delete");
-
-        setResult(RESULT_OK, oldIntent);
-        finish();
+        return createIntent(name, operation);
     }
 
     private Intent createIntent(String name, String operation) {
@@ -183,7 +177,6 @@ public class AddEditTypeActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
@@ -195,10 +188,18 @@ public class AddEditTypeActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.save_item:
-                createOrSaveType();
+                if (!violateInputValidation()) {
+                    Intent intent = extractInputToIntent("save");
+
+                    setResult(RESULT_OK, intent);
+                    finish();
+                }
                 return true;
             case R.id.delete_item:
-                deleteType();
+                Intent intent = extractInputToIntent("delete");
+
+                setResult(RESULT_OK, intent);
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.util.Log;
 import android.view.View;
-import android.widget.Switch;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -20,16 +19,13 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.sqlite.db.SimpleSQLiteQuery;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.xingtingkai.wallet.db.WalletDatabase;
-import com.xingtingkai.wallet.db.entity.CarryOver;
-import com.xingtingkai.wallet.db.viewmodel.CarryOverViewModel;
 import com.xingtingkai.wallet.db.viewmodel.TransactionViewModel;
 import com.xingtingkai.wallet.helper.SearchSuggestionProvider;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,10 +38,9 @@ public class SettingsActivity extends AppCompatActivity {
 
     protected static final int REPEAT_ACTIVITY_REQUEST_CODE = 3;
 
-    private Switch switchCarryOver;
-
-    private CarryOverViewModel carryOverViewModel;
-    private static CarryOver carryOver;
+//    private Switch switchCarryOver;
+//    private CarryOverViewModel carryOverViewModel;
+//    private static CarryOver carryOver;
 
     protected static final int REQUEST_SQLITE_GET = 1;
 
@@ -83,113 +78,82 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         cardViewRepeat = findViewById(R.id.cardview_transaction);
-        cardViewRepeat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent goToRepeatTransactionActivity = new Intent(SettingsActivity.this, RepeatTransactionActivity.class);
-                startActivityForResult(goToRepeatTransactionActivity, REPEAT_ACTIVITY_REQUEST_CODE);
-            }
+        // on click
+        cardViewRepeat.setOnClickListener((View view) -> {
+            Intent goToRepeatTransaction = new Intent(SettingsActivity.this, RepeatTransactionActivity.class);
+            startActivityForResult(goToRepeatTransaction, REPEAT_ACTIVITY_REQUEST_CODE);
         });
 
         cardViewType = findViewById(R.id.cardview_type);
-        cardViewType.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent goToTypeActivity = new Intent(SettingsActivity.this, TypeActivity.class);
-                startActivity(goToTypeActivity);
-            }
+        // on click
+        cardViewType.setOnClickListener((View view) -> {
+            Intent goToType = new Intent(SettingsActivity.this, TypeActivity.class);
+            startActivity(goToType);
         });
 
         cardViewMonthlyBudget = findViewById(R.id.cardview_monthly_budget);
-        cardViewMonthlyBudget.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent goToMonthlyBudgetActivity = new Intent(SettingsActivity.this, MonthlyBudgetActivity.class);
-                startActivity(goToMonthlyBudgetActivity);
-            }
+        // on click
+        cardViewMonthlyBudget.setOnClickListener((View view) -> {
+            Intent goToMonthlyBudget = new Intent(SettingsActivity.this, MonthlyBudgetActivity.class);
+            startActivity(goToMonthlyBudget);
         });
 
         cardViewClearSearch = findViewById(R.id.cardview_clear_search);
-        cardViewClearSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                SearchRecentSuggestions suggestions = new SearchRecentSuggestions(SettingsActivity.this,
-                        SearchSuggestionProvider.AUTHORITY, SearchSuggestionProvider.MODE);
+        // on click
+        cardViewClearSearch.setOnClickListener((View view) -> {
+            SearchRecentSuggestions suggestions = new SearchRecentSuggestions(SettingsActivity.this,
+                    SearchSuggestionProvider.AUTHORITY, SearchSuggestionProvider.MODE);
 
-                new AlertDialog.Builder(SettingsActivity.this)
-                        .setTitle("Clear search history")
-                        .setMessage("This action cannot be undone.")
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                suggestions.clearHistory();
-                                showSnackbar("search history cleared");
-                            }
-                        })
-                        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .create().show();
-            }
+            new AlertDialog.Builder(SettingsActivity.this)
+                    .setTitle("Clear search history")
+                    .setMessage("This action cannot be undone.")
+                    // on click
+                    .setPositiveButton("OK", (DialogInterface dialog, int which) -> {
+                        suggestions.clearHistory();
+                        showSnackbar("search history cleared");
+                    })
+                    // on click
+                    .setNegativeButton("CANCEL", (DialogInterface dialog, int which)
+                            -> dialog.dismiss())
+                    .create().show();
         });
 
         cardViewEraseAllData = findViewById(R.id.cardview_erase_all_data);
-        cardViewEraseAllData.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        // on click
+        cardViewEraseAllData.setOnClickListener((View view) -> new AlertDialog.Builder(SettingsActivity.this)
+                .setTitle("Erase all data")
+                .setMessage("This action cannot be undone.")
+                // on click
+                .setPositiveButton("OK", (DialogInterface dialog, int which) -> {
+                    WalletDatabase.deleteAllData();
 
-                new AlertDialog.Builder(SettingsActivity.this)
-                        .setTitle("Erase all data")
-                        .setMessage("This action cannot be undone.")
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                WalletDatabase.deleteAllData();
+                    SearchRecentSuggestions suggestions = new SearchRecentSuggestions(SettingsActivity.this,
+                            SearchSuggestionProvider.AUTHORITY, SearchSuggestionProvider.MODE);
+                    suggestions.clearHistory();
+                    // go home page
+//                  Intent goToAddMainActivity = new Intent(SettingsActivity.this, MainActivity.class);
+//                  startActivity(goToAddMainActivity);
 
-                                SearchRecentSuggestions suggestions = new SearchRecentSuggestions(SettingsActivity.this,
-                                        SearchSuggestionProvider.AUTHORITY, SearchSuggestionProvider.MODE);
-                                suggestions.clearHistory();
-
-                                // go home page
-//                                Intent goToAddMainActivity = new Intent(SettingsActivity.this, MainActivity.class);
-//                                startActivity(goToAddMainActivity);
-
-                                showSnackbar("database erased");
-                            }
-                        })
-                        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .create().show();
-            }
-        });
+                    showSnackbar("database erased");
+                })
+                // on click
+                .setNegativeButton("CANCEL", (DialogInterface dialog, int which) -> dialog.dismiss())
+                .create().show());
 
         File files = new File(this.getApplicationInfo().dataDir + "/files");
         directoryName = files.getAbsolutePath();
 
         cardViewExport = findViewById(R.id.cardview_export);
-        cardViewExport.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                syncDB();
-                copyToFilesExport();
-                exportDB();
-            }
+        // on click
+        cardViewExport.setOnClickListener((View view) -> {
+            syncDB();
+            copyToFilesExport();
+            exportDB();
         });
 
         cardViewImport = findViewById(R.id.cardview_import);
-        cardViewImport.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                checkPermissionToReadExternalFiles();
-            }
-        });
+        // on click
+        cardViewImport.setOnClickListener((View view) -> checkPermissionToReadExternalFiles());
 
 //        switchCarryOver = findViewById(R.id.switch_carryover);
 //
@@ -212,28 +176,23 @@ public class SettingsActivity extends AppCompatActivity {
 //        });
     }
 
+//    private void initCarryOver() {
+//
+//        carryOverViewModel = ViewModelProviders.of(this).get(CarryOverViewModel.class);
+//
+//        WalletDatabase.databaseWriteExecutor.execute(() ->
+//                carryOver = deepCopy(carryOverViewModel.getCarryOver()));
+//    }
+//
+//    private CarryOver deepCopy(CarryOver carryOver) {
+//
+//        return CarryOver.create(carryOver.getCarryOverId(), carryOver.isCarryOver());
+//    }
+
     private void showSnackbar(String message) {
 
         Snackbar snackbar = Snackbar.make(coordinatorLayout, message, Snackbar.LENGTH_LONG);
         snackbar.show();
-    }
-
-    private void initCarryOver() {
-
-        carryOverViewModel = ViewModelProviders.of(this).get(CarryOverViewModel.class);
-
-        WalletDatabase.databaseWriteExecutor.execute(() -> {
-            carryOver = deepCopy(carryOverViewModel.getCarryOver());
-        });
-    }
-
-    private CarryOver deepCopy(CarryOver carryOver) {
-
-        CarryOver tempCarryOver = new CarryOver();
-        tempCarryOver.setCarryOverId(carryOver.getCarryOverId());
-        tempCarryOver.setCarryOver(carryOver.isCarryOver());
-
-        return tempCarryOver;
     }
 
     private void checkPermissionToReadExternalFiles() {
@@ -257,13 +216,11 @@ public class SettingsActivity extends AppCompatActivity {
             // when permission is denied but still clicks on import
             Snackbar.make(coordinatorLayout, "external storage permission required to read database file in local storage",
                     Snackbar.LENGTH_INDEFINITE)
-                    .setAction("ok", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            // Request the permission
-                            ActivityCompat.requestPermissions(SettingsActivity.this,
-                                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
-                        }
+                    // on click
+                    .setAction("ok", (View view) -> {
+                        // Request the permission
+                        ActivityCompat.requestPermissions(SettingsActivity.this,
+                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
                     })
                     .setActionTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorYellow))
                     .show();
@@ -293,10 +250,9 @@ public class SettingsActivity extends AppCompatActivity {
         transactionViewModel = ViewModelProviders.of(this).get(TransactionViewModel.class);
 
         // sync wal files into database
-        transactionViewModel.checkpoint(new SimpleSQLiteQuery("pragma wal_checkpoint(full)")).observe(this, new Observer<Integer>() {
-            @Override
-            public void onChanged(Integer integer) {
-            }
+        transactionViewModel.checkpoint(new SimpleSQLiteQuery("pragma wal_checkpoint(full)"))
+                // on changed
+                .observe(this, (Integer integer) -> {
         });
     }
 
@@ -348,7 +304,6 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void exportDB() {
 
-        // TODO: use string builder
         Uri path = FileProvider.getUriForFile(
                 this,
                 "com.xingtingkai.wallet.fileprovider",

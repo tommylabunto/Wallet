@@ -61,20 +61,17 @@ public class TransactionRepository {
     // You must call this on a non-UI thread or your app will throw an exception. Room ensures
     // that you're not doing any long running operations on the main thread, blocking the UI.
     public void insertTransaction(Transaction transaction) {
-        WalletDatabase.databaseWriteExecutor.execute(() -> {
-            transactionDao.insertTransaction(transaction);
-        });
+        WalletDatabase.databaseWriteExecutor.execute(() ->
+                transactionDao.insertTransaction(transaction));
     }
     public void deleteTransaction(Transaction transaction) {
-        WalletDatabase.databaseWriteExecutor.execute(() -> {
-            transactionDao.deleteTransaction(transaction);
-        });
+        WalletDatabase.databaseWriteExecutor.execute(() ->
+                transactionDao.deleteTransaction(transaction));
     }
 
     public void updateTransaction(Transaction transaction) {
-        WalletDatabase.databaseWriteExecutor.execute(() -> {
-            transactionDao.updateTransaction(transaction);
-        });
+        WalletDatabase.databaseWriteExecutor.execute(() ->
+                transactionDao.updateTransaction(transaction));
     }
 
     public LiveData<Transaction> getTransaction(long transactionId) {
@@ -87,15 +84,13 @@ public class TransactionRepository {
     }
 
     public void deleteAllRecurringTransactions(double value, String name, String typeName, int frequency) {
-        WalletDatabase.databaseWriteExecutor.execute(() -> {
-            transactionDao.deleteAllRecurringTransactions(value, name, typeName, frequency);
-        });
+        WalletDatabase.databaseWriteExecutor.execute(() ->
+                transactionDao.deleteAllRecurringTransactions(value, name, typeName, frequency));
     }
 
     public void deleteFutureRecurringTransactions(String transactionRecurringId, long milliseconds) {
-        WalletDatabase.databaseWriteExecutor.execute(() -> {
-            transactionDao.deleteFutureRecurringTransactions(transactionRecurringId, milliseconds);
-        });
+        WalletDatabase.databaseWriteExecutor.execute(() ->
+                transactionDao.deleteFutureRecurringTransactions(transactionRecurringId, milliseconds));
     }
 
     public LiveData<Integer> checkpoint(SupportSQLiteQuery supportSQLiteQuery) {

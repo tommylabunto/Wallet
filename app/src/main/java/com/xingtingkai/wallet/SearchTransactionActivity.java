@@ -16,17 +16,16 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.xingtingkai.wallet.adapter.SearchTransactionAdapter;
 import com.xingtingkai.wallet.db.entity.Transaction;
 import com.xingtingkai.wallet.db.viewmodel.TransactionViewModel;
 import com.xingtingkai.wallet.helper.DateFormatter;
 import com.xingtingkai.wallet.helper.SearchSuggestionProvider;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Date;
 import java.util.List;
@@ -71,18 +70,16 @@ public class SearchTransactionActivity extends AppCompatActivity {
         transactionViewModel = ViewModelProviders.of(this).get(TransactionViewModel.class);
 
         // when click on item in recycler view -> populate data and open up to edit
-        searchTransactionAdapter.setOnItemClickListener(new SearchTransactionAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(Transaction transaction) {
-                Intent goToAddEditTransactionActivity = new Intent(SearchTransactionActivity.this, AddEditTransactionActivity.class);
-                goToAddEditTransactionActivity.putExtra(AddEditTransactionActivity.EXTRA_ID, transaction.getTransactionId());
-                goToAddEditTransactionActivity.putExtra(AddEditTransactionActivity.EXTRA_NAME, transaction.getName());
-                goToAddEditTransactionActivity.putExtra(AddEditTransactionActivity.EXTRA_TYPENAME, transaction.getTypeName());
-                goToAddEditTransactionActivity.putExtra(AddEditTransactionActivity.EXTRA_DATE, DateFormatter.formatDateToString(transaction.getDate()));
-                goToAddEditTransactionActivity.putExtra(AddEditTransactionActivity.EXTRA_VALUE, transaction.getValue());
-                goToAddEditTransactionActivity.putExtra(AddEditTransactionActivity.EXTRA_IS_EXPENSE_TYPE, transaction.isExpenseTransaction());
-                startActivityForResult(goToAddEditTransactionActivity, EDIT_TRANSACTION_ACTIVITY_REQUEST_CODE);
-            }
+        // on item click
+        searchTransactionAdapter.setOnItemClickListener((Transaction transaction) -> {
+            Intent goToAddEditTransaction = new Intent(SearchTransactionActivity.this, AddEditTransactionActivity.class);
+            goToAddEditTransaction.putExtra(AddEditTransactionActivity.EXTRA_ID, transaction.getTransactionId());
+            goToAddEditTransaction.putExtra(AddEditTransactionActivity.EXTRA_NAME, transaction.getName());
+            goToAddEditTransaction.putExtra(AddEditTransactionActivity.EXTRA_TYPENAME, transaction.getTypeName());
+            goToAddEditTransaction.putExtra(AddEditTransactionActivity.EXTRA_DATE, DateFormatter.formatDateToString(transaction.getDate()));
+            goToAddEditTransaction.putExtra(AddEditTransactionActivity.EXTRA_VALUE, transaction.getValue());
+            goToAddEditTransaction.putExtra(AddEditTransactionActivity.EXTRA_IS_EXPENSE_TYPE, transaction.isExpenseTransaction());
+            startActivityForResult(goToAddEditTransaction, EDIT_TRANSACTION_ACTIVITY_REQUEST_CODE);
         });
     }
 
@@ -93,12 +90,11 @@ public class SearchTransactionActivity extends AppCompatActivity {
         searchNameSb.append(query);
         searchNameSb.append("%");
 
-        transactionViewModel.searchAllTransactions(searchNameSb.toString()).observe(this, new Observer<List<Transaction>>() {
-            @Override
-            public void onChanged(@Nullable final List<Transaction> transactions) {
-                // Update the cached copy of the words in the transactionAdapter.
-                searchTransactionAdapter.submitList(transactions);
-            }
+        // on changed
+        transactionViewModel.searchAllTransactions(searchNameSb.toString()).observe(this,
+                (@Nullable final List<Transaction> transactions) -> {
+            // Update the cached copy of the words in the transactionAdapter.
+            searchTransactionAdapter.submitList(transactions);
         });
     }
 
@@ -171,16 +167,14 @@ public class SearchTransactionActivity extends AppCompatActivity {
         final int isClicked = 0;
 
         Snackbar snackbar = Snackbar.make(coordinatorLayout, "Transaction deleted", Snackbar.LENGTH_LONG)
-                .setAction("UNDO", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // insert back
-                        transactionViewModel.insertTransaction(transaction);
-                        reload();
+                // on click
+                .setAction("UNDO", (View v) -> {
+                    // insert back
+                    transactionViewModel.insertTransaction(transaction);
+                    reload();
 
-                        Snackbar snackbar1 = Snackbar.make(coordinatorLayout, "Undo successful", Snackbar.LENGTH_SHORT);
-                        snackbar1.show();
-                    }
+                    Snackbar snackbar1 = Snackbar.make(coordinatorLayout, "Undo successful", Snackbar.LENGTH_SHORT);
+                    snackbar1.show();
                 })
                 .addCallback(new Snackbar.Callback() {
 
@@ -247,8 +241,8 @@ public class SearchTransactionActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case R.id.action_settings:
-                Intent goToSettingsActivity = new Intent(SearchTransactionActivity.this, SettingsActivity.class);
-                startActivity(goToSettingsActivity);
+                Intent goToSettings = new Intent(SearchTransactionActivity.this, SettingsActivity.class);
+                startActivity(goToSettings);
                 return true;
             case R.id.action_normal_view:
                 Intent goToMainActivity = new Intent(SearchTransactionActivity.this, MainActivity.class);

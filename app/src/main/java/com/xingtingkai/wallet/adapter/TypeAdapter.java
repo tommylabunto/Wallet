@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,13 +23,11 @@ public class TypeAdapter extends ListAdapter<Type, TypeAdapter.TypeViewHolder> {
             super(itemView);
             textViewType = itemView.findViewById(R.id.textView_type);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = getAdapterPosition();
-                    if (listener != null && position != RecyclerView.NO_POSITION) {
-                        listener.onItemClick(getItem(position));
-                    }
+            // on click
+            itemView.setOnClickListener((View v) -> {
+                int position = getAdapterPosition();
+                if (listener != null && position != RecyclerView.NO_POSITION) {
+                    listener.onItemClick(getItem(position));
                 }
             });
         }
@@ -54,11 +53,11 @@ public class TypeAdapter extends ListAdapter<Type, TypeAdapter.TypeViewHolder> {
         }
     };
 
+    @NonNull
     @Override
-    public TypeViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public TypeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = mInflater.inflate(R.layout.recyclerview_type_item, parent, false);
-        TypeViewHolder holder = new TypeViewHolder(itemView);
-        return holder;
+        return new TypeViewHolder(itemView);
     }
 
     @Override

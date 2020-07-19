@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,13 +30,11 @@ public class MonthlyBudgetAdapter extends ListAdapter<MonthlyBudget, MonthlyBudg
             textViewMonth = itemView.findViewById(R.id.textView_month);
             textViewBudget = itemView.findViewById(R.id.textView_budget);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = getAdapterPosition();
-                    if (listener != null && position != RecyclerView.NO_POSITION) {
-                        listener.onItemClick(getItem(position));
-                    }
+            // on click
+            itemView.setOnClickListener((View v) -> {
+                int position = getAdapterPosition();
+                if (listener != null && position != RecyclerView.NO_POSITION) {
+                    listener.onItemClick(getItem(position));
                 }
             });
         }
@@ -63,18 +62,18 @@ public class MonthlyBudgetAdapter extends ListAdapter<MonthlyBudget, MonthlyBudg
         }
     };
 
+    @NonNull
     @Override
-    public MonthlyBudgetViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public MonthlyBudgetViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = mInflater.inflate(R.layout.recyclerview_monthly_budget_item, parent, false);
-        MonthlyBudgetViewHolder holder = new MonthlyBudgetViewHolder(itemView);
-        return holder;
+        return new MonthlyBudgetViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(MonthlyBudgetViewHolder holder, int position) {
         MonthlyBudget monthlyBudget = getItem(position);
-
-        holder.textViewBudget.setText(monthlyBudget.getBudget() + "");
+        String budget = mInflater.getContext().getString(R.string.single_string_param, monthlyBudget.getBudget() + "");
+        holder.textViewBudget.setText(budget);
 
         // month uses 1 (jan) to 12 (dec)
         Month month = Month.of(monthlyBudget.getMonth() + 1);

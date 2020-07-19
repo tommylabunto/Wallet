@@ -44,19 +44,17 @@ public class TypeRepository {
     // You must call this on a non-UI thread or your app will throw an exception. Room ensures
     // that you're not doing any long running operations on the main thread, blocking the UI.
     public void insertType(Type type) {
-        WalletDatabase.databaseWriteExecutor.execute(() -> {
-            typeDao.insertType(type);
-        });
+        WalletDatabase.databaseWriteExecutor.execute(() ->
+                typeDao.insertType(type));
     }
+
     public void deleteType(Type type) {
-        WalletDatabase.databaseWriteExecutor.execute(() -> {
-            typeDao.deleteType(type);
-        });
+        WalletDatabase.databaseWriteExecutor.execute(() ->
+                typeDao.deleteType(type));
     }
 
     public void updateType(Type type) {
-        WalletDatabase.databaseWriteExecutor.execute(() -> {
-            typeDao.updateType(type);
-        });
+        WalletDatabase.databaseWriteExecutor.execute(() ->
+                typeDao.updateType(type));
     }
 }

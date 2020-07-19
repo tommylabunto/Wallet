@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,13 +25,11 @@ public class SearchTransactionAdapter extends ListAdapter<Transaction, SearchTra
             textViewTypeName = itemView.findViewById(R.id.textView_typeName);
             textViewTypeAmount = itemView.findViewById(R.id.textView_amount);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = getAdapterPosition();
-                    if (listener != null && position != RecyclerView.NO_POSITION) {
-                        listener.onItemClick(getItem(position));
-                    }
+            // on click
+            itemView.setOnClickListener((View v) -> {
+                int position = getAdapterPosition();
+                if (listener != null && position != RecyclerView.NO_POSITION) {
+                    listener.onItemClick(getItem(position));
                 }
             });
         }
@@ -61,18 +60,19 @@ public class SearchTransactionAdapter extends ListAdapter<Transaction, SearchTra
         }
     };
 
+    @NonNull
     @Override
-    public SearchTransactionViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public SearchTransactionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = mInflater.inflate(R.layout.recyclerview_search_transaction_item, parent, false);
-        SearchTransactionViewHolder holder = new SearchTransactionViewHolder(itemView);
-        return holder;
+        return new SearchTransactionViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(SearchTransactionViewHolder holder, int position) {
         Transaction transaction = getItem(position);
         holder.textViewTypeName.setText(transaction.getName());
-        holder.textViewTypeAmount.setText( (int) transaction.getValue() + "");
+        String value = mInflater.getContext().getString(R.string.single_string_param, (int) transaction.getValue() + "");
+        holder.textViewTypeAmount.setText(value);
     }
 
     public interface OnItemClickListener {

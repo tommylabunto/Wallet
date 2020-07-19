@@ -61,7 +61,7 @@
         android:layout_marginStart="95dp"
         android:layout_marginTop="10dp"
         android:fontFamily="@font/roboto_bold"
-        android:text="@string/Budget"
+        android:text="@string/budget_label"
         android:textSize="16sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/divider" />
@@ -73,7 +73,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="100dp"
         android:fontFamily="@font/roboto"
-        android:text="@string/budget"
+        android:text="@string/budget_value"
         android:textSize="16sp"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/divider" />
@@ -86,7 +86,7 @@
         android:layout_marginStart="95dp"
         android:layout_marginTop="10dp"
         android:fontFamily="@font/roboto_bold"
-        android:text="@string/expenses"
+        android:text="@string/expenses_label"
         android:textSize="16sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView_monthly_budget_label" />
@@ -98,7 +98,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="100dp"
         android:fontFamily="@font/roboto"
-        android:text="@string/expenses"
+        android:text="@string/expenses_value"
         android:textSize="16sp"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView_monthly_budget" />
@@ -110,7 +110,7 @@
         android:layout_marginStart="95dp"
         android:layout_marginTop="10dp"
         android:fontFamily="@font/roboto_bold"
-        android:text="@string/remaining"
+        android:text="@string/remaining_label"
         android:textSize="16sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView_totalAmount_label" />
@@ -122,7 +122,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="100dp"
         android:fontFamily="@font/roboto"
-        android:text="@string/remaining"
+        android:text="@string/remaining_value"
         android:textSize="16sp"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView_totalAmount" />

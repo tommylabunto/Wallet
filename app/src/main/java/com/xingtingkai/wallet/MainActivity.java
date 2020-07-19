@@ -21,11 +21,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.xingtingkai.wallet.adapter.TransactionAdapter;
 import com.xingtingkai.wallet.db.WalletDatabase;
 import com.xingtingkai.wallet.db.entity.Transaction;
@@ -33,15 +34,12 @@ import com.xingtingkai.wallet.db.viewmodel.TransactionViewModel;
 import com.xingtingkai.wallet.db.viewmodel.TypeViewModel;
 import com.xingtingkai.wallet.helper.DateFormatter;
 import com.xingtingkai.wallet.helper.SearchSuggestionProvider;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.time.Month;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-// TODO: replace long with Long
-// TODO: spinner transaction type not reflected correctly
+
 public class MainActivity extends AppCompatActivity {
 
     // add
@@ -75,35 +73,30 @@ public class MainActivity extends AppCompatActivity {
 
         // create transaction
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent goToAddEditActivity = new Intent(MainActivity.this, AddEditTransactionActivity.class);
-                startActivityForResult(goToAddEditActivity, ADD_TRANSACTION_ACTIVITY_REQUEST_CODE);
-            }
+        // on click
+        fab.setOnClickListener((View view) -> {
+            Intent goToAddEditActivity = new Intent(MainActivity.this, AddEditTransactionActivity.class);
+            startActivityForResult(goToAddEditActivity, ADD_TRANSACTION_ACTIVITY_REQUEST_CODE);
         });
 
         textViewYear = findViewById(R.id.textView_year);
         textViewMonth = findViewById(R.id.textView_month);
 
         prevMonth = findViewById(R.id.left_button);
-        prevMonth.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startMonthCal.add(Calendar.MONTH, -1);
-                endMonthCal.add(Calendar.MONTH, -1);
-                updateTransactionsInAMonth();
-            }
+        // on click
+        prevMonth.setOnClickListener((View view) -> {
+            startMonthCal.add(Calendar.MONTH, -1);
+            endMonthCal.add(Calendar.MONTH, -1);
+            updateTransactionsInAMonth();
+            updateTextView();
         });
 
         nextMonth = findViewById(R.id.right_button);
-        nextMonth.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                endMonthCal.add(Calendar.MONTH, 1);
-                startMonthCal.add(Calendar.MONTH, 1);
-                updateTransactionsInAMonth();
-            }
+        nextMonth.setOnClickListener((View view) -> {
+            endMonthCal.add(Calendar.MONTH, 1);
+            startMonthCal.add(Calendar.MONTH, 1);
+            updateTransactionsInAMonth();
+            updateTextView();
         });
 
         // show transaction in recycler view
@@ -124,7 +117,12 @@ public class MainActivity extends AppCompatActivity {
             actionBar.setDisplayShowTitleEnabled(false);
         }
 
-        // remove blinking effect from animating shared elements
+        removeBlinking();
+    }
+
+    // remove blinking effect from animating shared elements
+    private void removeBlinking() {
+
         Fade fade = new Fade();
         View decor = getWindow().getDecorView();
         fade.excludeTarget(decor.findViewById(R.id.action_bar_container), true);
@@ -155,7 +153,8 @@ public class MainActivity extends AppCompatActivity {
         // originally is all caps
         String monthString = month.name().substring(0,1) + month.name().substring(1,3).toLowerCase();
 
-        textViewYear.setText(yearInt + "");
+        String year = getString(R.string.single_string_param, yearInt + "");
+        textViewYear.setText(year);
         textViewMonth.setText(monthString);
     }
 
@@ -166,45 +165,42 @@ public class MainActivity extends AppCompatActivity {
         transactionViewModel = ViewModelProviders.of(this).get(TransactionViewModel.class);
 
         updateTransactionsInAMonth();
+        updateTextView();
 
         // when click on item in recycler view -> populate data and open up to edit
-        transactionAdapter.setOnItemClickListener(new TransactionAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(Transaction transaction) {
-                Intent goToAddEditTransactionActivity = new Intent(MainActivity.this, AddEditTransactionActivity.class);
-                goToAddEditTransactionActivity.putExtra(AddEditTransactionActivity.EXTRA_ID, transaction.getTransactionId());
-                goToAddEditTransactionActivity.putExtra(AddEditTransactionActivity.EXTRA_NAME, transaction.getName());
-                goToAddEditTransactionActivity.putExtra(AddEditTransactionActivity.EXTRA_TYPENAME, transaction.getTypeName());
-                goToAddEditTransactionActivity.putExtra(AddEditTransactionActivity.EXTRA_DATE, DateFormatter.formatDateToString(transaction.getDate()));
-                goToAddEditTransactionActivity.putExtra(AddEditTransactionActivity.EXTRA_VALUE, transaction.getValue());
-                goToAddEditTransactionActivity.putExtra(AddEditTransactionActivity.EXTRA_IS_EXPENSE_TYPE, transaction.isExpenseTransaction());
-                startActivityForResult(goToAddEditTransactionActivity, EDIT_TRANSACTION_ACTIVITY_REQUEST_CODE);
-            }
+        // on item click
+        transactionAdapter.setOnItemClickListener((Transaction transaction) -> {
+            Intent goToAddEditTransaction = new Intent(MainActivity.this, AddEditTransactionActivity.class);
+            goToAddEditTransaction.putExtra(AddEditTransactionActivity.EXTRA_ID, transaction.getTransactionId());
+            goToAddEditTransaction.putExtra(AddEditTransactionActivity.EXTRA_NAME, transaction.getName());
+            goToAddEditTransaction.putExtra(AddEditTransactionActivity.EXTRA_TYPENAME, transaction.getTypeName());
+            goToAddEditTransaction.putExtra(AddEditTransactionActivity.EXTRA_DATE, DateFormatter.formatDateToString(transaction.getDate()));
+            goToAddEditTransaction.putExtra(AddEditTransactionActivity.EXTRA_VALUE, transaction.getValue());
+            goToAddEditTransaction.putExtra(AddEditTransactionActivity.EXTRA_IS_EXPENSE_TYPE, transaction.isExpenseTransaction());
+            startActivityForResult(goToAddEditTransaction, EDIT_TRANSACTION_ACTIVITY_REQUEST_CODE);
         });
 
         typeViewModel = ViewModelProviders.of(this).get(TypeViewModel.class);
 
-        typeViewModel.getAllTypesString().observe(this, new Observer<List<String>>() {
-            @Override
-            public void onChanged(@Nullable final List<String> types) {
-
-                if (types != null && types.size() == 0) {
-                    WalletDatabase.addTypes();
-                }
+        // on changed
+        typeViewModel.getAllTypesString().observe(this, (@Nullable final List<String> types) -> {
+            if (types != null && types.size() == 0) {
+                WalletDatabase.addTypes();
             }
         });
     }
 
     private void updateTransactionsInAMonth() {
 
-        transactionViewModel.getAllTransactionsInAMonth(startMonthCal.getTimeInMillis(), endMonthCal.getTimeInMillis()).observe(this, new Observer<List<Transaction>>() {
-            @Override
-            public void onChanged(@Nullable final List<Transaction> transactions) {
-                // Update the cached copy of the words in the transactionAdapter.
-                transactionAdapter.submitList(transactions);
-                transactionAdapter.passTransactions(transactions);
-            }
+        // on changed
+        transactionViewModel.getAllTransactionsInAMonth(startMonthCal.getTimeInMillis(), endMonthCal.getTimeInMillis()).observe(this, transactions -> {
+            // Update the cached copy of the words in the transactionAdapter.
+            transactionAdapter.submitList(transactions);
+            transactionAdapter.passTransactions(transactions);
         });
+    }
+
+    private void updateTextView() {
 
         int yearInt = startMonthCal.get(Calendar.YEAR);
         int monthInt = startMonthCal.get(Calendar.MONTH);
@@ -213,7 +209,8 @@ public class MainActivity extends AppCompatActivity {
         // originally is all caps
         String monthString = month.name().substring(0,1) + month.name().substring(1,3).toLowerCase();
 
-        textViewYear.setText(yearInt + "");
+        String year = getString(R.string.single_string_param, yearInt + "");
+        textViewYear.setText(year);
         textViewMonth.setText(monthString);
     }
 
@@ -291,15 +288,15 @@ public class MainActivity extends AppCompatActivity {
         // Get the intent, verify the action and get the query
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-            Intent goToSearchTransactionActivity = new Intent(MainActivity.this, SearchTransactionActivity.class);
-            goToSearchTransactionActivity.setAction(Intent.ACTION_SEARCH);
-            goToSearchTransactionActivity.putExtra(SearchTransactionActivity.EXTRA_SEARCH, query);
+            Intent goToSearchTransaction = new Intent(MainActivity.this, SearchTransactionActivity.class);
+            goToSearchTransaction.setAction(Intent.ACTION_SEARCH);
+            goToSearchTransaction.putExtra(SearchTransactionActivity.EXTRA_SEARCH, query);
 
             SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
                     SearchSuggestionProvider.AUTHORITY, SearchSuggestionProvider.MODE);
             suggestions.saveRecentQuery(query, null);
 
-            startActivity(goToSearchTransactionActivity);
+            startActivity(goToSearchTransaction);
         }
     }
 
@@ -332,15 +329,12 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case R.id.action_settings:
-                Intent goToSettingsActivity = new Intent(MainActivity.this, SettingsActivity.class);
-
-
-                startActivity(goToSettingsActivity);
+                Intent goToSettings = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(goToSettings);
                 return true;
 
             case R.id.action_month_view:
-                Intent goToMonthlyTransactionActivity = new Intent(MainActivity.this, MonthlyTransactionActivity.class);
-
+                Intent goToMonthlyTransaction = new Intent(MainActivity.this, MonthlyTransactionActivity.class);
 
                 ActivityOptions options = ActivityOptions
                         .makeSceneTransitionAnimation(MainActivity.this,
@@ -350,7 +344,7 @@ public class MainActivity extends AppCompatActivity {
                                 Pair.create(textViewYear, "changeTextViewYear")
                         );
 
-                startActivity(goToMonthlyTransactionActivity, options.toBundle());
+                startActivity(goToMonthlyTransaction, options.toBundle());
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,13 +30,11 @@ public class MonthlyTransactionAdapter extends ListAdapter<Transaction, MonthlyT
             textViewTypeName = itemView.findViewById(R.id.textView_typeName);
             textViewTypeAmount = itemView.findViewById(R.id.textView_amount);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = getAdapterPosition();
-                    if (listener != null && position != RecyclerView.NO_POSITION) {
-                        listener.onItemClick(getItem(position));
-                    }
+            // on click
+            itemView.setOnClickListener((View v) -> {
+                int position = getAdapterPosition();
+                if (listener != null && position != RecyclerView.NO_POSITION) {
+                    listener.onItemClick(getItem(position));
                 }
             });
         }
@@ -66,18 +65,19 @@ public class MonthlyTransactionAdapter extends ListAdapter<Transaction, MonthlyT
         }
     };
 
+    @NonNull
     @Override
-    public MonthlyTransactionViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public MonthlyTransactionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = mInflater.inflate(R.layout.recyclerview_monthly_transaction_item, parent, false);
-        MonthlyTransactionViewHolder holder = new MonthlyTransactionViewHolder(itemView);
-        return holder;
+        return new MonthlyTransactionViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(MonthlyTransactionViewHolder holder, int position) {
         Transaction transaction = getItem(position);
         holder.textViewTypeName.setText(transaction.getTypeName());
-        holder.textViewTypeAmount.setText( (int) transaction.getValue() + "");
+        String value = mInflater.getContext().getString(R.string.single_string_param, (int) transaction.getValue() + "");
+        holder.textViewTypeAmount.setText(value);
 
         if (!transaction.isExpenseTransaction()) {
             holder.textViewTypeName.setTypeface(holder.textViewTypeName.getTypeface(), Typeface.BOLD);

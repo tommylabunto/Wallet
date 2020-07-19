@@ -29,14 +29,20 @@
     <!--  view -->
     <string name="month">Month</string>
     <string name="year">Year</string>
-    <string name="budget">budget</string>
+    <string name="budget">Budget</string>
     <string name="previous_month">previous month</string>
     <string name="next_month">next month</string>
     <string name="next_year">next year</string>
     <string name="previous_year">previous year</string>
-    <string name="Budget">Budget</string>
-    <string name="expenses">Expenses</string>
-    <string name="remaining">Remaining</string>
+    <string name="budget_label">Budget</string>
+    <string name="budget_value">0</string>
+    <string name="expenses_label">Expenses</string>
+    <string name="expenses_value">0</string>
+    <string name="remaining_label">Remaining</string>
+    <string name="remaining_value">0</string>
+    <string name="deficit">Deficit</string>
+    <string name="surplus">Surplus</string>
+    <string name="balance">Balance</string>
 
     <!--  add edit -->
     <string name="expense">Expense</string>
@@ -48,6 +54,7 @@
     <string name="repeat_number_of_years">repeat number of years</string>
     <string name="date">date</string>
     <string name="type">type</string>
+    <string name="single_string_param">%1$s</string>
 
     <!--  settings -->
     <string name="data">Data</string>
@@ -68,12 +75,17 @@
     <string name="import_label">Import</string>
     <string name="import_description">Import database by selecting a document in your local storage. Data in the existing database wil be removed.</string>
 
+    <string name="Monthly">Monthly</string>
+    <string name="Quarterly">Quarterly</string>
+    <string name="Biannually">Biannually</string>
+    <string name="Annually">Annually</string>
+
     <!--  add edit repeat transaction -->
     <string-array name="frequency_array">
-        <item>Monthly</item>
-        <item>Quarterly</item>
-        <item>Biannually</item>
-        <item>Annually</item>
+        <item>@string/Monthly</item>
+        <item>@string/Quarterly</item>
+        <item>@string/Biannually</item>
+        <item>@string/Annually</item>
     </string-array>
 
 </resources>

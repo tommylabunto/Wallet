@@ -14,27 +14,24 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.common.collect.ImmutableList;
 import com.xingtingkai.wallet.db.entity.Type;
 import com.xingtingkai.wallet.db.viewmodel.TransactionViewModel;
 import com.xingtingkai.wallet.db.viewmodel.TypeViewModel;
 import com.xingtingkai.wallet.helper.DateFormatter;
 import com.xingtingkai.wallet.helper.DatePickerFragment;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -68,20 +65,16 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
     private static String formattedDate;
 
     private Spinner spinner;
-    private ArrayAdapter<String> adapter;
     private static String type;
 
-    private static List<String> expenseTypeList;
-    private static List<String> incomeTypeList;
+    private static ImmutableList<String> expenseTypeList;
+    private static ImmutableList<String> incomeTypeList;
 
     private TypeViewModel typeViewModel;
     private TransactionViewModel transactionViewModel;
 
     private RadioButton radioButtonExpense;
     private RadioButton radioButtonIncome;
-    private static boolean isExpenseType;
-
-    public static String[] nameSuggestions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +84,7 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
         radioButtonExpense = findViewById(R.id.radio_expense);
         radioButtonIncome = findViewById(R.id.radio_income);
 
-        editTextName = (AutoCompleteTextView) findViewById(R.id.edit_text_name);
+        editTextName = findViewById(R.id.edit_text_name);
         editTextName.setThreshold(1);
         editTextValue = findViewById(R.id.edit_text_value);
         editTextDate = findViewById(R.id.edit_text_dateTime);
@@ -101,9 +94,8 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
 
         spinner = findViewById(R.id.spinner_type);
 
-        isExpenseType = true;
-        expenseTypeList = new ArrayList<>();
-        incomeTypeList = new ArrayList<>();
+        expenseTypeList = new ImmutableList.Builder<String>().build();
+        incomeTypeList = new ImmutableList.Builder<String>().build();
         initViewModel();
 
         // bring focus to edit text and show keybaord
@@ -112,29 +104,35 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
         }
 
         // submit form when clicked 'enter' on soft keyboard
-        editTextName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                boolean handled = false;
-                if (actionId == EditorInfo.IME_ACTION_SEND) {
-                    createOrSaveTransaction();
-                    handled = true;
+        // on editor action
+        editTextName.setOnEditorActionListener((TextView v, int actionId, KeyEvent event) -> {
+            boolean handled = false;
+            if (actionId == EditorInfo.IME_ACTION_SEND) {
+                if (!violateInputValidation()) {
+                    Intent intent = extractInputToIntent("save");
+
+                    setResult(RESULT_OK, intent);
+                    finish();
                 }
-                return handled;
+                handled = true;
             }
+            return handled;
         });
 
         // submit form when clicked 'enter' on soft keyboard
-        editTextValue.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                boolean handled = false;
-                if (actionId == EditorInfo.IME_ACTION_SEND) {
-                    createOrSaveTransaction();
-                    handled = true;
+        // on editor action
+        editTextValue.setOnEditorActionListener((TextView v, int actionId, KeyEvent event) -> {
+            boolean handled = false;
+            if (actionId == EditorInfo.IME_ACTION_SEND) {
+                if (!violateInputValidation()) {
+                    Intent intent = extractInputToIntent("save");
+
+                    setResult(RESULT_OK, intent);
+                    finish();
                 }
-                return handled;
+                handled = true;
             }
+            return handled;
         });
 
         ActionBar actionBar = getSupportActionBar();
@@ -143,14 +141,12 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
             actionBar.setDisplayShowTitleEnabled(false);
         }
 
-        editTextDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        // on click
+        editTextDate.setOnClickListener((View v) -> {
 
-                Calendar calendar = formatSelectedDate();
-                DialogFragment datePicker = new DatePickerFragment(calendar);
-                datePicker.show(getSupportFragmentManager(), "date picker");
-            }
+            Calendar calendar = formatSelectedDate();
+            DialogFragment datePicker = new DatePickerFragment(calendar);
+            datePicker.show(getSupportFragmentManager(), "date picker");
         });
 
         extractIntent();
@@ -168,17 +164,17 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
             formattedDate = intent.getStringExtra(EXTRA_DATE);
             editTextDate.setText(DateFormatter.beautifyDateString(formattedDate));
 
-            editTextValue.setText(intent.getDoubleExtra(EXTRA_VALUE, 1) + "");
+            String value = getString(R.string.single_string_param, intent.getDoubleExtra(EXTRA_VALUE, 1) + "");
+            editTextValue.setText(value);
 
             // place cursor on the right side
             // only for the first edit text
-            if (editTextValue.getText().length() > 0 ) {
+            if (editTextValue.getText() != null && editTextValue.getText().length() > 0 ) {
                 editTextValue.setSelection(editTextValue.getText().length());
             }
         } else {
             setTodayDate(editTextDate);
             radioButtonExpense.setChecked(true);
-            isExpenseType = true;
         }
     }
 
@@ -186,75 +182,76 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
 
         transactionViewModel = ViewModelProviders.of(this).get(TransactionViewModel.class);
 
-        transactionViewModel.getAllTransactionNameString().observe(this, new Observer<List<String>>() {
-            @Override
-            public void onChanged(@Nullable final List<String> nameSuggestions) {
-
-                deepCopySuggestions(nameSuggestions);
-            }
-        });
+        // on changed
+        transactionViewModel.getAllTransactionNameString().observe(this, this::deepCopySuggestions);
 
         typeViewModel = ViewModelProviders.of(this).get(TypeViewModel.class);
 
-        typeViewModel.getAllTypes().observe(this, new Observer<List<Type>>() {
-            @Override
-            public void onChanged(@Nullable final List<Type> types) {
-
-                deepCopyList(types);
-            }
-        });
+        // on changed
+        typeViewModel.getAllTypes().observe(this, this::deepCopyList);
     }
 
     private void deepCopySuggestions(List<String> tempNameSuggestions) {
 
-        int arraySize = tempNameSuggestions.size();
+        ImmutableList<String> nameSuggestions = ImmutableList.copyOf(tempNameSuggestions);
 
-        nameSuggestions = new String[arraySize];
-
-        for (int i = 0; i < arraySize; i++) {
-            nameSuggestions[i] = tempNameSuggestions.get(i);
-        }
+//        int arraySize = tempNameSuggestions.size();
+//
+//        String[] nameSuggestions = new String[arraySize];
+//
+//        for (int i = 0; i < arraySize; i++) {
+//            nameSuggestions[i] = tempNameSuggestions.get(i);
+//        }
 
         ArrayAdapter<String> nameSuggestionsAdapter =
-                new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, nameSuggestions);
+                new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, nameSuggestions);
         editTextName.setAdapter(nameSuggestionsAdapter);
     }
 
     private void deepCopyList(List<Type> types) {
 
-        expenseTypeList = new ArrayList<>();
-        incomeTypeList = new ArrayList<>();
+        expenseTypeList = new ImmutableList.Builder<String>().build();
+        incomeTypeList = new ImmutableList.Builder<String>().build();
+
+        ImmutableList.Builder<String> expenseTypeBuilder = new ImmutableList.Builder<>();
+        ImmutableList.Builder<String> incomeTypeBuilder = new ImmutableList.Builder<>();
 
         for (Type type : types) {
 
             if (type.isExpenseType()) {
-                expenseTypeList.add(type.getName());
+                expenseTypeBuilder.add(type.getName());
             } else {
-                incomeTypeList.add(type.getName());
+                incomeTypeBuilder.add(type.getName());
             }
         }
 
-        updateRadioButton();
-        showSpinner();
-        extractIntentToSpinner();
+        expenseTypeList = expenseTypeBuilder.build();
+        incomeTypeList = incomeTypeBuilder.build();
+
+        boolean isExpenseType = updateRadioButton();
+        ArrayAdapter<String> adapter = showSpinner(isExpenseType);
+        extractIntentToSpinner(adapter);
         //extractIntent();
     }
 
-    private void updateRadioButton() {
+    private boolean updateRadioButton() {
 
         Intent intent = getIntent();
 
         if (intent.getBooleanExtra(EXTRA_IS_EXPENSE_TYPE, true)) {
             radioButtonExpense.setChecked(true);
-            isExpenseType = true;
+            return true;
         } else {
             radioButtonIncome.setChecked(true);
-            isExpenseType = false;
+            return false;
         }
     }
 
-    private void showSpinner() {
-        initAdapterType();
+    private ArrayAdapter<String> showSpinner(boolean isExpenseType) {
+
+        ArrayAdapter<String> adapter = initAdapterType(isExpenseType);
+        spinner.setAdapter(adapter);
+
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -265,9 +262,28 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+
+        return adapter;
     }
 
-    private void extractIntentToSpinner(){
+    // it takes a while to copy types, so the list might be null
+    private ArrayAdapter<String> initAdapterType(boolean isExpenseType) {
+
+        ArrayAdapter<String> adapter;
+
+        if (isExpenseType) {
+            adapter = new ArrayAdapter<>(this,
+                    android.R.layout.simple_spinner_item, expenseTypeList);
+        } else {
+            adapter = new ArrayAdapter<>(this,
+                    android.R.layout.simple_spinner_item, incomeTypeList);
+        }
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        return adapter;
+    }
+
+    private void extractIntentToSpinner(ArrayAdapter<String> adapter){
 
         Intent intent = getIntent();
 
@@ -276,26 +292,12 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
             type = intent.getStringExtra(EXTRA_TYPENAME);
 
             if (adapter == null) {
-                initAdapterType();
+                initAdapterType(true);
             }
 
             int selectionPosition = adapter.getPosition(type);
             spinner.setSelection(selectionPosition);
         }
-    }
-
-    // it takes a while to copy types, so the list might be null
-    private void initAdapterType() {
-
-        if (isExpenseType) {
-            adapter = new ArrayAdapter<String>(this,
-                    android.R.layout.simple_spinner_item, expenseTypeList);
-        } else {
-            adapter = new ArrayAdapter<String>(this,
-                    android.R.layout.simple_spinner_item, incomeTypeList);
-        }
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
     }
 
     private Calendar formatSelectedDate() {
@@ -307,16 +309,13 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
         return calendar;
     }
 
-    /*
-    when save a recurring transaction -> it becomes a non-recurring transaction because the data is not passed into the transaction
-     */
-    private void createOrSaveTransaction() {
+    private boolean violateInputValidation() {
 
         String name = editTextName.getText().toString().trim();
         String valueString = editTextValue.getText().toString().trim();
         double value = 0;
 
-        boolean violateInputValidation = false;
+        boolean violate = false;
 
         if (!valueString.isEmpty()) {
             value = Double.parseDouble(valueString);
@@ -324,32 +323,28 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
 
         if (name.isEmpty()) {
             textInputLayoutName.setError("Please enter a name.");
-            violateInputValidation = true;
+            violate = true;
         } else {
             textInputLayoutName.setError("");
         }
 
         if (value == 0) {
             textInputLayoutValue.setError("Please enter an amount.");
-            violateInputValidation = true;
+            violate = true;
         } else if (value < 0) {
             textInputLayoutValue.setError("Please enter an amount greater than 0.");
-            violateInputValidation = true;
+            violate = true;
         } else {
             textInputLayoutValue.setError("");
         }
 
-        if (violateInputValidation) {
-            return;
-        }
-
-        Intent newIntent = createIntent(formattedDate, value, name, type, "save");
-
-        setResult(RESULT_OK, newIntent);
-        finish();
+        return violate;
     }
 
-    private void deleteTransaction() {
+    /*
+    when save a recurring transaction -> it becomes a non-recurring transaction because the data is not passed into the transaction
+     */
+    private Intent extractInputToIntent(String operation) {
 
         String name = editTextName.getText().toString().trim();
         String valueString = editTextValue.getText().toString().trim();
@@ -359,14 +354,12 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
             value = Double.parseDouble(valueString);
         }
 
-        if (value < 0) {
+        // bypass check for delete
+        if (operation.equals("delete") && value < 0) {
             value = 0;
         }
 
-        Intent oldIntent = createIntent(formattedDate, value, name, type, "delete");
-
-        setResult(RESULT_OK, oldIntent);
-        finish();
+        return createIntent(formattedDate, value, name, type, operation);
     }
 
     private Intent createIntent(String dateString, double value, String name, String typeName, String operation) {
@@ -377,6 +370,8 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
         intent.putExtra(EXTRA_DATE, dateString);
         intent.putExtra(EXTRA_VALUE, value);
         intent.putExtra(EXTRA_OPERATION, operation);
+
+        boolean isExpenseType = radioButtonExpense.isChecked();
 
         intent.putExtra(EXTRA_IS_EXPENSE_TYPE, isExpenseType);
 
@@ -396,14 +391,12 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
         switch (view.getId()) {
             case R.id.radio_expense:
                 if (checked) {
-                    isExpenseType = true;
-                    showSpinner();
+                    showSpinner(true);
                     break;
                 }
             case R.id.radio_income:
                 if (checked) {
-                    isExpenseType = false;
-                    showSpinner();
+                    showSpinner(false);
                     break;
                 }
         }
@@ -420,10 +413,18 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.save_item:
-                createOrSaveTransaction();
+                if (!violateInputValidation()) {
+                    Intent intent = extractInputToIntent("save");
+
+                    setResult(RESULT_OK, intent);
+                    finish();
+                }
                 return true;
             case R.id.delete_item:
-                deleteTransaction();
+                Intent intent = extractInputToIntent("delete");
+
+                setResult(RESULT_OK, intent);
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -442,7 +443,7 @@ public class AddEditTransactionActivity extends AppCompatActivity implements Dat
         editTextDate.setText(DateFormatter.beautifyDateString(formattedDate));
     }
 
-    private void setTodayDate(EditText editTextDate) {
+    private void setTodayDate(TextInputEditText editTextDate) {
 
         Calendar calendar = Calendar.getInstance();
         formattedDate = DateFormatter.formatDateToString(calendar.getTime());

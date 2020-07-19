@@ -23,12 +23,12 @@ public interface CarryOverDao {
     @Delete
     public void deleteCarryOver(CarryOver carryOver);
 
-    @Query("SELECT carryOverId, isCarryOver FROM carryOver ORDER BY carryOverId ASC")
+    @Query("SELECT carryOverId, carryOver FROM carryOver ORDER BY carryOverId ASC")
     public LiveData<List<CarryOver>> getAllCarryOver();
 
-    @Query("SELECT carryOverId, isCarryOver FROM carryOver ORDER BY carryOverId ASC")
+    @Query("SELECT carryOverId, carryOver FROM carryOver ORDER BY carryOverId ASC")
     public List<CarryOver> getAllCarryOverList();
 
-    @Query("SELECT carryOverId, isCarryOver FROM carryOver ORDER BY carryOverId ASC LIMIT 1")
+    @Query("SELECT carryOverId, carryOver FROM carryOver ORDER BY carryOverId ASC LIMIT 1")
     public CarryOver getCarryOver();
 }

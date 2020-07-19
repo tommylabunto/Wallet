@@ -8,7 +8,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,7 +25,7 @@ public class TypeActivity extends AppCompatActivity {
     protected static final int ADD_TYPE_ACTIVITY_REQUEST_CODE = 1;
     protected static final int EDIT_TYPE_ACTIVITY_REQUEST_CODE = 2;
 
-    private static final int numOfColumns = 2;
+    private static final int NUMBER_OF_COLUMNS = 2;
 
     private TypeViewModel typeViewModel;
 
@@ -45,12 +44,10 @@ public class TypeActivity extends AppCompatActivity {
 
         // create type
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent goToAddEditTypeActivity = new Intent(TypeActivity.this, AddEditTypeActivity.class);
-                startActivityForResult(goToAddEditTypeActivity, ADD_TYPE_ACTIVITY_REQUEST_CODE);
-            }
+        // on click
+        fab.setOnClickListener((View view) -> {
+            Intent goToAddEditType = new Intent(TypeActivity.this, AddEditTypeActivity.class);
+            startActivityForResult(goToAddEditType, ADD_TYPE_ACTIVITY_REQUEST_CODE);
         });
 
         // show transaction in recycler view
@@ -58,13 +55,13 @@ public class TypeActivity extends AppCompatActivity {
         typeExpenseAdapter = new TypeAdapter(this);
         recyclerViewExpense.setHasFixedSize(true);
         recyclerViewExpense.setAdapter(typeExpenseAdapter);
-        recyclerViewExpense.setLayoutManager(new GridLayoutManager(this, numOfColumns));
+        recyclerViewExpense.setLayoutManager(new GridLayoutManager(this, NUMBER_OF_COLUMNS));
 
         RecyclerView recyclerViewIncome = findViewById(R.id.recyclerview_income_type);
         typeIncomeAdapter = new TypeAdapter(this);
         recyclerViewIncome.setHasFixedSize(true);
         recyclerViewIncome.setAdapter(typeIncomeAdapter);
-        recyclerViewIncome.setLayoutManager(new GridLayoutManager(this, numOfColumns));
+        recyclerViewIncome.setLayoutManager(new GridLayoutManager(this, NUMBER_OF_COLUMNS));
 
         initViewModels();
 
@@ -80,60 +77,49 @@ public class TypeActivity extends AppCompatActivity {
 
         typeViewModel = ViewModelProviders.of(this).get(TypeViewModel.class);
 
-        typeViewModel.getAllExpenseTypes().observe(this, new Observer<List<Type>>() {
-            @Override
-            public void onChanged(@Nullable final List<Type> types) {
-                typeExpenseAdapter.submitList(types);
-                updateExpenseTypeCount(types);
-            }
+        // on changed
+        typeViewModel.getAllExpenseTypes().observe(this,
+                (@Nullable final List<Type> types) -> {
+            typeExpenseAdapter.submitList(types);
+            updateExpenseTypeCount(types);
         });
 
         // when click on item in recycler view -> populate data and open up to edit
-        typeExpenseAdapter.setOnItemClickListener(new TypeAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(Type type) {
-                Intent goToAddEditTypeActivity = new Intent(TypeActivity.this, AddEditTypeActivity.class);
-                goToAddEditTypeActivity.putExtra(AddEditTypeActivity.EXTRA_ID, type.getTypeId());
-                goToAddEditTypeActivity.putExtra(AddEditTypeActivity.EXTRA_NAME, type.getName());
-                goToAddEditTypeActivity.putExtra(AddEditTypeActivity.EXTRA_IS_EXPENSE_TYPE, type.isExpenseType());
-                startActivityForResult(goToAddEditTypeActivity, EDIT_TYPE_ACTIVITY_REQUEST_CODE);
-            }
+        // on item click
+        typeExpenseAdapter.setOnItemClickListener((Type type) -> {
+            Intent goToAddEditType = new Intent(TypeActivity.this, AddEditTypeActivity.class);
+            goToAddEditType.putExtra(AddEditTypeActivity.EXTRA_ID, type.getTypeId());
+            goToAddEditType.putExtra(AddEditTypeActivity.EXTRA_NAME, type.getName());
+            goToAddEditType.putExtra(AddEditTypeActivity.EXTRA_IS_EXPENSE_TYPE, type.isExpenseType());
+            startActivityForResult(goToAddEditType, EDIT_TYPE_ACTIVITY_REQUEST_CODE);
         });
 
-        typeViewModel.getAllIncomeTypes().observe(this, new Observer<List<Type>>() {
-            @Override
-            public void onChanged(@Nullable final List<Type> types) {
-                typeIncomeAdapter.submitList(types);
-                updateIncomeTypeCount(types);
-            }
+        // on changed
+        typeViewModel.getAllIncomeTypes().observe(this, (@Nullable final List<Type> types) -> {
+            typeIncomeAdapter.submitList(types);
+            updateIncomeTypeCount(types);
         });
 
         // when click on item in recycler view -> populate data and open up to edit
-        typeIncomeAdapter.setOnItemClickListener(new TypeAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(Type type) {
-                Intent goToAddEditTypeActivity = new Intent(TypeActivity.this, AddEditTypeActivity.class);
-                goToAddEditTypeActivity.putExtra(AddEditTypeActivity.EXTRA_ID, type.getTypeId());
-                goToAddEditTypeActivity.putExtra(AddEditTypeActivity.EXTRA_NAME, type.getName());
-                goToAddEditTypeActivity.putExtra(AddEditTypeActivity.EXTRA_IS_EXPENSE_TYPE, type.isExpenseType());
-                startActivityForResult(goToAddEditTypeActivity, EDIT_TYPE_ACTIVITY_REQUEST_CODE);
-            }
+        // on item click
+        typeIncomeAdapter.setOnItemClickListener((Type type) -> {
+            Intent goToAddEditType = new Intent(TypeActivity.this, AddEditTypeActivity.class);
+            goToAddEditType.putExtra(AddEditTypeActivity.EXTRA_ID, type.getTypeId());
+            goToAddEditType.putExtra(AddEditTypeActivity.EXTRA_NAME, type.getName());
+            goToAddEditType.putExtra(AddEditTypeActivity.EXTRA_IS_EXPENSE_TYPE, type.isExpenseType());
+            startActivityForResult(goToAddEditType, EDIT_TYPE_ACTIVITY_REQUEST_CODE);
         });
     }
 
     private void updateExpenseTypeCount(List<Type> expenseTypes) {
 
         // refresh values because onchanged will keep adding it
-        numOfExpenseTypes = 0;
-
         numOfExpenseTypes = expenseTypes.size();
     }
 
     private void updateIncomeTypeCount(List<Type> incomeTypes) {
 
         // refresh values because onchanged will keep adding it
-        numOfIncomeTypes = 0;
-
         numOfIncomeTypes = incomeTypes.size();
     }
 

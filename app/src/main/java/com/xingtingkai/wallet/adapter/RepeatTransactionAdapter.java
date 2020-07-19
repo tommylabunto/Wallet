@@ -6,14 +6,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.xingtingkai.wallet.R;
 import com.xingtingkai.wallet.db.entity.Transaction;
-
-import java.util.List;
 
 public class RepeatTransactionAdapter extends ListAdapter<Transaction, RepeatTransactionAdapter.RepeatTransactionViewHolder> {
 
@@ -26,13 +25,11 @@ public class RepeatTransactionAdapter extends ListAdapter<Transaction, RepeatTra
             wordItemView = itemView.findViewById(R.id.textView_year);
             textViewValue = itemView.findViewById(R.id.textView_value);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = getAdapterPosition();
-                    if (listener != null && position != RecyclerView.NO_POSITION) {
-                        listener.onItemClick(getItem(position));
-                    }
+            // on click
+            itemView.setOnClickListener((View v) -> {
+                int position = getAdapterPosition();
+                if (listener != null && position != RecyclerView.NO_POSITION) {
+                    listener.onItemClick(getItem(position));
                 }
             });
         }
@@ -40,8 +37,6 @@ public class RepeatTransactionAdapter extends ListAdapter<Transaction, RepeatTra
 
     private final LayoutInflater mInflater;
     private RepeatTransactionAdapter.OnItemClickListener listener;
-
-    private List<Transaction> transactions;
 
     public RepeatTransactionAdapter(Context context) {
         super(DIFF_CALLBACK);
@@ -67,18 +62,19 @@ public class RepeatTransactionAdapter extends ListAdapter<Transaction, RepeatTra
         }
     };
 
+    @NonNull
     @Override
-    public RepeatTransactionViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RepeatTransactionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = mInflater.inflate(R.layout.recyclerview_repeat_transaction, parent, false);
-        RepeatTransactionViewHolder holder = new RepeatTransactionViewHolder(itemView);
-        return holder;
+        return new RepeatTransactionViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(RepeatTransactionViewHolder holder, int position) {
         Transaction transaction = getItem(position);
         holder.wordItemView.setText(transaction.getName());
-        holder.textViewValue.setText( (int) transaction.getValue() + "");
+        String value = mInflater.getContext().getString(R.string.single_string_param, (int) transaction.getValue() + "");
+        holder.textViewValue.setText(value);
     }
 
     public interface OnItemClickListener {

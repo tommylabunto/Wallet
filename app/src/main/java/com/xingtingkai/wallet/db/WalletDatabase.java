@@ -74,15 +74,12 @@ public abstract class WalletDatabase extends RoomDatabase {
             // If you want to keep data through app restarts,
             // comment out the following block
             databaseWriteExecutor.execute(() -> {
-                // Populate the database in the background.
-                TransactionDao transactionDao = INSTANCE.getTransactionDao();
-
                 // one db should only have one instance of a carry over
-                CarryOverDao carryOverDao = INSTANCE.getCarryOverDao();
-
-                if (carryOverDao.getAllCarryOverList().size() == 0) {
-                    carryOverDao.insertCarryOver(new CarryOver());
-                }
+//                CarryOverDao carryOverDao = INSTANCE.getCarryOverDao();
+//
+//                if (carryOverDao.getAllCarryOverList().size() == 0) {
+//                    carryOverDao.insertCarryOver(CarryOver.create(1L, false));
+//                }
 
                 // db creates 10 years worth of monthly budgets if there are no more upcoming budgets
                 // takes at least 2 minutes to populate whole list

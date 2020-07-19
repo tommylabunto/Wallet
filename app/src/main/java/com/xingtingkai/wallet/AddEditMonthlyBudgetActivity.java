@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -57,16 +58,16 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
         }
 
         // submit form when clicked 'enter' on soft keyboard
-        editTextBudget.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                boolean handled = false;
-                if (actionId == EditorInfo.IME_ACTION_SEND) {
-                    showAlertDialog();
-                    handled = true;
+        // on editor action
+        editTextBudget.setOnEditorActionListener((TextView v, int actionId, KeyEvent event) -> {
+            boolean handled = false;
+            if (actionId == EditorInfo.IME_ACTION_SEND) {
+                if (!violateInputValidation()) {
+                    createAlertDialog().show();
                 }
-                return handled;
+                handled = true;
             }
+            return handled;
         });
 
         textInputLayoutBudget = findViewById(R.id.edit_text_budget_input_layout);
@@ -82,7 +83,8 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
     private void extractIntent() {
         Intent intent = getIntent();
         if (intent.hasExtra(EXTRA_ID)) {
-            textViewYear.setText(intent.getIntExtra(EXTRA_YEAR, 0) + "");
+            String year = getString(R.string.single_string_param, intent.getIntExtra(EXTRA_YEAR, 0) + "");
+            textViewYear.setText(year);
 
             month = intent.getIntExtra(EXTRA_MONTH, 0);
 
@@ -93,66 +95,132 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
             String monthString = tempMonth.name().substring(0, 1) + tempMonth.name().substring(1, 3).toLowerCase();
 
             textViewMonth.setText(monthString);
-            editTextBudget.setText(intent.getIntExtra(EXTRA_BUDGET, 0) + "");
+            String budget = getString(R.string.single_string_param, intent.getIntExtra(EXTRA_BUDGET, 0) + "");
+            editTextBudget.setText(budget);
+
+            Editable budgetEditable = editTextBudget.getText();
 
             // place cursor on the right side
             // only for the first edit text
-            if (editTextBudget.getText().length() > 0 ) {
-                editTextBudget.setSelection(editTextBudget.getText().length());
+            if (budgetEditable != null && budgetEditable.length() > 0) {
+                editTextBudget.setSelection(budgetEditable.length());
             }
+
         }
     }
 
-    private void createOrSaveMonthlyBudget(String operation) {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.add_item_menu, menu);
 
-        int year = 0;
-        int budget = 0;
-
-        String yearString = textViewYear.getText().toString().trim();
-        String budgetString = editTextBudget.getText().toString().trim();
-
-        if (!yearString.isEmpty()) {
-            year = Integer.parseInt(yearString);
-        }
-
-        if (!budgetString.isEmpty()) {
-            budget = Integer.parseInt(budgetString);
-        }
-
-        Intent newIntent = createIntent(budget, year, month, operation);
-
-        setResult(RESULT_OK, newIntent);
-        finish();
+        // not allowed to delete monthly budget
+        MenuItem delete = menu.findItem(R.id.delete_item);
+        delete.setVisible(false);
+        return true;
     }
 
-    /*
-    if delete a type that a transaction uses, it won't crash.
-    the spinner will just set the type to the top option as default
-     */
-    private void deleteMonthlyBudget() {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.save_item:
+                if (!violateInputValidation()) {
+                    createAlertDialog().show();
+                }
+                return true;
+            case R.id.delete_item:
+                // not allowed to delete monthly budget
+//                Intent intent = extractInputToIntent("delete");
+//
+//                setResult(RESULT_OK, intent);
+//                finish();
 
-        int year = 0;
-        int budget = 0;
-
-        String yearString = textViewYear.getText().toString().trim();
-        String budgetString = editTextBudget.getText().toString().trim();
-
-        if (!yearString.isEmpty()) {
-            year = Integer.parseInt(yearString);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
+    }
+
+    private boolean violateInputValidation() {
+
+        int budget = 0;
+        boolean violate = false;
+
+        String budgetString = editTextBudget.getText().toString().trim();
 
         if (!budgetString.isEmpty()) {
             budget = Integer.parseInt(budgetString);
         }
 
         if (budget < 0) {
+            textInputLayoutBudget.setError("Please enter an amount.");
+            violate = true;
+        } else {
+            textInputLayoutBudget.setError("");
+        }
+
+        return violate;
+    }
+
+    private AlertDialog createAlertDialog() {
+
+        String[] choices = {
+                "Update this month only",
+                "Update subsequent months",
+                "Update all months"
+        };
+
+        //new MaterialAlertDialogBuilder(this)
+        return new AlertDialog.Builder(this)
+                .setTitle("Update")
+                // on click
+                .setSingleChoiceItems(choices, 0, (DialogInterface dialog, int which) -> {
+                })
+                // on click
+                .setPositiveButton("yes", (DialogInterface dialog, int which) -> {
+                    int selectedPosition = ((AlertDialog)dialog).getListView().getCheckedItemPosition();
+
+                    Intent intent;
+
+                    if (selectedPosition == 0) {
+                        intent = extractInputToIntent("save");
+                    } else if (selectedPosition == 1) {
+                        intent = extractInputToIntent("save next");
+                    } else {
+                        intent = extractInputToIntent("save all");
+                    }
+
+                    setResult(RESULT_OK, intent);
+                    finish();
+                })
+                // on click
+                .setNegativeButton("no", (DialogInterface dialog, int which) -> {
+                })
+                .create();
+    }
+
+    private Intent extractInputToIntent(String operation) {
+
+        int year = 0;
+        int budget = 0;
+
+        String yearString = textViewYear.getText().toString().trim();
+        String budgetString = editTextBudget.getText().toString().trim();
+
+        if (!yearString.isEmpty()) {
+            year = Integer.parseInt(yearString);
+        }
+
+        if (!budgetString.isEmpty()) {
+            budget = Integer.parseInt(budgetString);
+        }
+
+        // bypass check for delete
+        if (operation.equals("delete") && budget < 0) {
             budget = 0;
         }
 
-        Intent oldIntent = createIntent(budget, year, month, "delete");
-
-        setResult(RESULT_OK, oldIntent);
-        finish();
+        return createIntent(budget, year, month, operation);
     }
 
     private Intent createIntent(int budget, int year, int month, String operation) {
@@ -167,91 +235,6 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
         if (id != -1) {
             intent.putExtra(EXTRA_ID, id);
         }
-
         return intent;
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.add_item_menu, menu);
-
-        MenuItem delete = menu.findItem(R.id.delete_item);
-        delete.setVisible(false);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.save_item:
-                checkForInputValidation();
-                return true;
-            case R.id.delete_item:
-                deleteMonthlyBudget();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    private void checkForInputValidation() {
-
-        int budget = 0;
-        boolean violateInputValidation = false;
-
-        String budgetString = editTextBudget.getText().toString().trim();
-
-        if (!budgetString.isEmpty()) {
-            budget = Integer.parseInt(budgetString);
-        }
-
-        if (budget < 0) {
-            textInputLayoutBudget.setError("Please enter an amount.");
-            violateInputValidation = true;
-        } else {
-            textInputLayoutBudget.setError("");
-        }
-
-        if (!violateInputValidation) {
-            showAlertDialog();
-        }
-    }
-
-    private void showAlertDialog() {
-
-        String[] choices = new String[3];
-        choices[0] = "Update this month only";
-        choices[1] = "Update subsequent months";
-        choices[2] = "Update all months";
-
-        //new MaterialAlertDialogBuilder(this)
-        new AlertDialog.Builder(this)
-                .setTitle("Update")
-                .setSingleChoiceItems(choices, 0, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                })
-                .setPositiveButton("yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        int selectedPosition = ((AlertDialog)dialog).getListView().getCheckedItemPosition();
-
-                        if (selectedPosition == 0) {
-                            createOrSaveMonthlyBudget("save");
-                        } else if (selectedPosition == 1) {
-                            createOrSaveMonthlyBudget("save next");
-                        } else {
-                            createOrSaveMonthlyBudget("save all");
-                        }
-                    }
-                })
-                .setNegativeButton("no", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                })
-                .create().show();
     }
 }

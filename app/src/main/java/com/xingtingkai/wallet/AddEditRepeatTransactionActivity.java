@@ -14,28 +14,25 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.ImmutableList;
 import com.xingtingkai.wallet.db.entity.Type;
 import com.xingtingkai.wallet.db.viewmodel.TransactionViewModel;
 import com.xingtingkai.wallet.db.viewmodel.TypeViewModel;
 import com.xingtingkai.wallet.helper.DateFormatter;
 import com.xingtingkai.wallet.helper.DatePickerFragment;
-import com.xingtingkai.wallet.helper.FrequencyStringConverter;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -79,7 +76,6 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
     private ArrayAdapter<CharSequence> adapterFrequency;
 
     private Spinner spinnerType;
-    private ArrayAdapter<String> adapterType;
 
     private TypeViewModel typeViewModel;
     private TransactionViewModel transactionViewModel;
@@ -91,12 +87,8 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
 
     private static int frequency;
 
-    private static List<String> expenseTypeList;
-    private static List<String> incomeTypeList;
-
-    private static boolean isExpenseType;
-
-    public static String[] nameSuggestions;
+    private static ImmutableList<String> expenseTypeList;
+    private static ImmutableList<String> incomeTypeList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,7 +98,7 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
         radioButtonExpense = findViewById(R.id.radio_expense);
         radioButtonIncome = findViewById(R.id.radio_income);
 
-        editTextName = (AutoCompleteTextView) findViewById(R.id.edit_text_name);
+        editTextName = findViewById(R.id.edit_text_name);
         editTextName.setThreshold(1);
         editTextValue = findViewById(R.id.edit_text_value);
         editTextDate = findViewById(R.id.edit_text_dateTime);
@@ -123,13 +115,11 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
             actionBar.setHomeAsUpIndicator(R.drawable.ic_close);
         }
 
-        editTextDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Calendar calendar = formatSelectedDate();
-                DialogFragment datePicker = new DatePickerFragment(calendar);
-                datePicker.show(getSupportFragmentManager(), "date picker");
-            }
+        // on click
+        editTextDate.setOnClickListener((View v) -> {
+            Calendar calendar = formatSelectedDate();
+            DialogFragment datePicker = new DatePickerFragment(calendar);
+            datePicker.show(getSupportFragmentManager(), "date picker");
         });
 
         adapterFrequency = ArrayAdapter.createFromResource(this,
@@ -140,7 +130,14 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String frequencyString = parent.getItemAtPosition(position).toString();
-                frequency = FrequencyStringConverter.convertFrequencyStringToInt(frequencyString);
+                Integer frequencyUnboxed = getFrequencyMap().get(frequencyString);
+
+                if (frequencyUnboxed != null) {
+                    frequency = frequencyUnboxed;
+                } else {
+                    // default to monthly
+                    frequency = 12;
+                }
             }
 
             @Override
@@ -148,27 +145,29 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
             }
         });
 
-        isExpenseType = true;
-        expenseTypeList = new ArrayList<>();
-        incomeTypeList = new ArrayList<>();
+        expenseTypeList = new ImmutableList.Builder<String>().build();
+        incomeTypeList = new ImmutableList.Builder<String>().build();
         initViewModel();
 
-        // bring focus to edit text and show keybaord
+        // bring focus to edit text and show keyboard
         if (editTextValue.requestFocus()) {
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         }
 
         // submit form when clicked 'enter' on soft keyboard
-        editTextRepeat.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                boolean handled = false;
-                if (actionId == EditorInfo.IME_ACTION_SEND) {
-                    createOrSaveTransaction();
-                    handled = true;
+        // on editor action
+        editTextRepeat.setOnEditorActionListener((TextView v, int actionId, KeyEvent event) -> {
+            boolean handled = false;
+            if (actionId == EditorInfo.IME_ACTION_SEND) {
+                if (!violateInputValidation()) {
+                    Intent intent = extractInputToIntent("save");
+
+                    setResult(RESULT_OK, intent);
+                    finish();
                 }
-                return handled;
+                handled = true;
             }
+            return handled;
         });
 
         extractIntent();
@@ -178,76 +177,76 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
 
         transactionViewModel = ViewModelProviders.of(this).get(TransactionViewModel.class);
 
-        transactionViewModel.getAllTransactionNameString().observe(this, new Observer<List<String>>() {
-            @Override
-            public void onChanged(@Nullable final List<String> nameSuggestions) {
-
-                deepCopySuggestions(nameSuggestions);
-            }
-        });
+        // on changed
+        transactionViewModel.getAllTransactionNameString().observe(this, this::deepCopySuggestions);
 
         typeViewModel = ViewModelProviders.of(this).get(TypeViewModel.class);
 
-        typeViewModel.getAllTypes().observe(this, new Observer<List<Type>>() {
-            @Override
-            public void onChanged(@Nullable final List<Type> types) {
-
-                deepCopyList(types);
-            }
-        });
+        // on changed
+        typeViewModel.getAllTypes().observe(this, this::deepCopyList);
     }
 
     private void deepCopySuggestions(List<String> tempNameSuggestions) {
 
-        int arraySize = tempNameSuggestions.size();
+        ImmutableList<String> nameSuggestions = ImmutableList.copyOf(tempNameSuggestions);
 
-        nameSuggestions = new String[arraySize];
-
-        for (int i = 0; i < arraySize; i++) {
-            nameSuggestions[i] = tempNameSuggestions.get(i);
-        }
+//        int arraySize = tempNameSuggestions.size();
+//
+//        String[] nameSuggestions = new String[arraySize];
+//
+//        for (int i = 0; i < arraySize; i++) {
+//            nameSuggestions[i] = tempNameSuggestions.get(i);
+//        }
 
         ArrayAdapter<String> nameSuggestionsAdapter =
-                new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, nameSuggestions);
+                new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, nameSuggestions);
         editTextName.setAdapter(nameSuggestionsAdapter);
     }
 
     private void deepCopyList(List<Type> types) {
 
-        expenseTypeList = new ArrayList<>();
-        incomeTypeList = new ArrayList<>();
+        expenseTypeList = new ImmutableList.Builder<String>().build();
+        incomeTypeList = new ImmutableList.Builder<String>().build();
+
+        ImmutableList.Builder<String> expenseTypeBuilder = new ImmutableList.Builder<>();
+        ImmutableList.Builder<String> incomeTypeBuilder = new ImmutableList.Builder<>();
 
         for (Type type : types) {
 
             if (type.isExpenseType()) {
-                expenseTypeList.add(type.getName());
+                expenseTypeBuilder.add(type.getName());
             } else {
-                incomeTypeList.add(type.getName());
+                incomeTypeBuilder.add(type.getName());
             }
         }
 
-        updateRadioButton();
-        showSpinnerType();
-        extractIntentToSpinner();
+        expenseTypeList = expenseTypeBuilder.build();
+        incomeTypeList = incomeTypeBuilder.build();
+
+        boolean isExpenseType = updateRadioButton();
+        ArrayAdapter<String> adapterType = showSpinnerType(isExpenseType);
+        extractIntentToSpinner(adapterType);
         //extractIntent();
     }
 
-    private void updateRadioButton() {
+    private boolean updateRadioButton() {
 
         Intent intent = getIntent();
 
         if (intent.getBooleanExtra(EXTRA_IS_EXPENSE_TYPE, true)) {
             radioButtonExpense.setChecked(true);
-            isExpenseType = true;
+            return true;
         } else {
             radioButtonIncome.setChecked(true);
-            isExpenseType = false;
+            return false;
         }
     }
 
-    private void showSpinnerType() {
+    private ArrayAdapter<String> showSpinnerType(boolean isExpenseType) {
 
-        initAdapterType();
+        ArrayAdapter<String> adapterType = initAdapterType(isExpenseType);
+        spinnerType.setAdapter(adapterType);
+
         spinnerType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -258,9 +257,11 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+
+        return adapterType;
     }
 
-    private void extractIntentToSpinner(){
+    private void extractIntentToSpinner(ArrayAdapter<String> adapterType){
 
         Intent intent = getIntent();
 
@@ -269,7 +270,7 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
             type = intent.getStringExtra(EXTRA_TYPENAME);
 
             if (adapterType == null) {
-                initAdapterType();
+                initAdapterType(true);
             }
 
             int selectionPositionType = adapterType.getPosition(type);
@@ -286,39 +287,49 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
             formattedDate = intent.getStringExtra(EXTRA_DATE);
             editTextDate.setText(DateFormatter.beautifyDateString(formattedDate));
 
-            editTextValue.setText(intent.getDoubleExtra(EXTRA_VALUE, 1) + "");
+            String value = getString(R.string.single_string_param, intent.getDoubleExtra(EXTRA_VALUE, 1) + "");
+            editTextValue.setText(value);
 
             // place cursor on the right side
             // only for the first edit text
-            if (editTextValue.getText().length() > 0 ) {
+            if (editTextValue.getText() != null && editTextValue.getText().length() > 0 ) {
                 editTextValue.setSelection(editTextValue.getText().length());
             }
 
-            editTextRepeat.setText(intent.getIntExtra(EXTRA_REPEAT, 1) + "");
+            String numOfRepeat = getString(R.string.single_string_param, intent.getIntExtra(EXTRA_REPEAT, 1) + "");
+            editTextRepeat.setText(numOfRepeat);
 
             frequency = intent.getIntExtra(EXTRA_FREQUENCY, 12);
-            String frequencyString = FrequencyStringConverter.convertFrequencyIntToString(frequency);
+            String frequencyString = getFrequencyMap().inverse().get(frequency);
+
+            // default to monthly
+            if (frequencyString == null) {
+                frequencyString = "Monthly";
+            }
+
             int selectionPosition = adapterFrequency.getPosition(frequencyString);
             spinnerFrequency.setSelection(selectionPosition);
         } else {
             setTodayDate(editTextDate);
             radioButtonExpense.setChecked(true);
-            isExpenseType = true;
         }
     }
 
     // it takes a while to copy types, so the list might be null
-    private void initAdapterType() {
+    private ArrayAdapter<String> initAdapterType(boolean isExpenseType) {
+
+        ArrayAdapter<String> adapterType;
 
         if (isExpenseType) {
-            adapterType = new ArrayAdapter<String>(this,
+            adapterType = new ArrayAdapter<>(this,
                     android.R.layout.simple_spinner_item, expenseTypeList);
         } else {
-            adapterType = new ArrayAdapter<String>(this,
+            adapterType = new ArrayAdapter<>(this,
                     android.R.layout.simple_spinner_item, incomeTypeList);
         }
         adapterType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerType.setAdapter(adapterType);
+
+        return adapterType;
     }
 
     private Calendar formatSelectedDate() {
@@ -330,7 +341,7 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
         return calendar;
     }
 
-    private void createOrSaveTransaction() {
+    private boolean violateInputValidation() {
 
         String name = editTextName.getText().toString().trim();
         String valueString = editTextValue.getText().toString().trim();
@@ -339,7 +350,7 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
         String repeatString = editTextRepeat.getText().toString();
         int repeat = -1;
 
-        boolean violateInputValidation = false;
+        boolean violate = false;
 
         if (!valueString.isEmpty()) {
             value = Double.parseDouble(valueString);
@@ -351,49 +362,39 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
 
         if (name.isEmpty()) {
             textInputLayoutName.setError("Please enter a name.");
-            violateInputValidation = true;
+            violate = true;
         } else {
             textInputLayoutName.setError("");
         }
 
         if (value == 0) {
             textInputLayoutValue.setError("Please enter an amount.");
-            violateInputValidation = true;
+            violate = true;
         } else if (value < 0) {
             textInputLayoutValue.setError("Please enter an amount greater than 0.");
-            violateInputValidation = true;
+            violate = true;
         } else {
             textInputLayoutValue.setError("");
         }
 
         if (repeat < 0 || repeat > 30) {
             textInputLayoutRepeat.setError("Please enter a value between 0 and 30.");
-            violateInputValidation = true;
+            violate = true;
         } else {
             textInputLayoutRepeat.setError("");
         }
 
-        if (violateInputValidation) {
-            return;
-        }
-
-        Intent newIntent = createIntent(formattedDate, value, name, type, frequency, repeat);
-        newIntent.putExtra(EXTRA_OPERATION, "save");
-
-        setResult(RESULT_OK, newIntent);
-        finish();
-
+        return violate;
     }
 
-    private void deleteTransaction() {
+    private Intent extractInputToIntent(String operation) {
 
         String name = editTextName.getText().toString().trim();
         String valueString = editTextValue.getText().toString().trim();
         double value = 0;
 
-        String repeatString = editTextRepeat.getText().toString().trim();
-
-        int repeat = 0;
+        String repeatString = editTextRepeat.getText().toString();
+        int repeat = -1;
 
         if (!valueString.isEmpty()) {
             value = Double.parseDouble(valueString);
@@ -403,23 +404,23 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
             repeat = Integer.parseInt(repeatString);
         }
 
-        // force value to be within acceptable range, since user is going to delete anyway
-        if (repeat < 0 || repeat > 30) {
-            repeat = 0;
+        /*
+        bypass check for delete
+        force value to be within acceptable range, since user is going to delete anyway
+        */
+        if (operation.equals("delete")) {
+            if (repeat < 0 || repeat > 30) {
+                repeat = 0;
+            }
+
+            if (value < 0) {
+                value = 0;
+            }
         }
-
-        if (value < 0) {
-            value = 0;
-        }
-
-        Intent oldIntent = createIntent(formattedDate, value, name, type, frequency, repeat);
-        oldIntent.putExtra(EXTRA_OPERATION, "delete");
-
-        setResult(RESULT_OK, oldIntent);
-        finish();
+        return createIntent(formattedDate, value, name, type, frequency, repeat, operation);
     }
 
-    private Intent createIntent(String dateString, double value, String name, String typeName, int frequency, int repeat) {
+    private Intent createIntent(String dateString, double value, String name, String typeName, int frequency, int repeat, String operation) {
 
         Intent intent = new Intent();
         intent.putExtra(EXTRA_NAME, name);
@@ -429,7 +430,11 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
         intent.putExtra(EXTRA_FREQUENCY, frequency);
         intent.putExtra(EXTRA_REPEAT, repeat);
 
+        boolean isExpenseType = radioButtonExpense.isChecked();
+
         intent.putExtra(EXTRA_IS_EXPENSE_TYPE, isExpenseType);
+
+        intent.putExtra(EXTRA_OPERATION, operation);
 
         long id = getIntent().getLongExtra(EXTRA_ID, -1);
         if (id != -1) {
@@ -458,10 +463,18 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.save_item:
-                createOrSaveTransaction();
+                if (!violateInputValidation()) {
+                    Intent intent = extractInputToIntent("save");
+
+                    setResult(RESULT_OK, intent);
+                    finish();
+                }
                 return true;
             case R.id.delete_item:
-                deleteTransaction();
+                Intent intent = extractInputToIntent("delete");
+
+                setResult(RESULT_OK, intent);
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -476,14 +489,12 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
         switch (view.getId()) {
             case R.id.radio_expense:
                 if (checked) {
-                    isExpenseType = true;
-                    showSpinnerType();
+                    showSpinnerType(true);
                     break;
                 }
             case R.id.radio_income:
                 if (checked) {
-                    isExpenseType = false;
-                    showSpinnerType();
+                    showSpinnerType(false);
                     break;
                 }
         }
@@ -501,10 +512,20 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
         editTextDate.setText(DateFormatter.beautifyDateString(formattedDate));
     }
 
-    private void setTodayDate(EditText editTextDate) {
+    private void setTodayDate(TextInputEditText editTextDate) {
 
         Calendar calendar = Calendar.getInstance();
         formattedDate = DateFormatter.formatDateToString(calendar.getTime());
         editTextDate.setText(DateFormatter.beautifyDateString(formattedDate));
+    }
+
+    ImmutableBiMap<String, Integer> getFrequencyMap() {
+
+        return ImmutableBiMap.of(
+                getString(R.string.Annually), 1,
+                getString(R.string.Biannually), 2,
+                getString(R.string.Quarterly), 4,
+                getString(R.string.Monthly), 12
+        );
     }
 }

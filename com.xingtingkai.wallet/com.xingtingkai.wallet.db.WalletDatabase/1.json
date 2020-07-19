@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "1844ccd4b3d8fd990e109b48bb40b917",
+    "identityHash": "15c7b2aafdf4be7bd03b43fbc974cb82",
     "entities": [
       {
         "tableName": "MonthlyBudget",
@@ -150,7 +150,7 @@
       },
       {
         "tableName": "CarryOver",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`carryOverId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `isCarryOver` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`carryOverId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `carryOver` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "carryOverId",
@@ -159,8 +159,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "isCarryOver",
-            "columnName": "isCarryOver",
+            "fieldPath": "carryOver",
+            "columnName": "carryOver",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -178,7 +178,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1844ccd4b3d8fd990e109b48bb40b917')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '15c7b2aafdf4be7bd03b43fbc974cb82')"
     ]
   }
 }

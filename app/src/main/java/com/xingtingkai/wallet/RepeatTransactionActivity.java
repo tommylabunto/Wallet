@@ -8,13 +8,13 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.common.collect.ImmutableList;
 import com.xingtingkai.wallet.adapter.RepeatTransactionAdapter;
 import com.xingtingkai.wallet.db.WalletDatabase;
 import com.xingtingkai.wallet.db.entity.Transaction;
@@ -22,7 +22,6 @@ import com.xingtingkai.wallet.db.viewmodel.TransactionViewModel;
 import com.xingtingkai.wallet.db.viewmodel.TypeViewModel;
 import com.xingtingkai.wallet.helper.DateFormatter;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -48,12 +47,10 @@ public class RepeatTransactionActivity extends AppCompatActivity {
 
         // create transaction
         FloatingActionButton fab = findViewById(R.id.repeat_fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent goToAddEditRepeatTransactionActivity = new Intent(RepeatTransactionActivity.this, AddEditRepeatTransactionActivity.class);
-                startActivityForResult(goToAddEditRepeatTransactionActivity, ADD_TRANSACTION_ACTIVITY_REQUEST_CODE);
-            }
+        // on click
+        fab.setOnClickListener((View view) -> {
+            Intent goToAddEditRepeatTransaction = new Intent(RepeatTransactionActivity.this, AddEditRepeatTransactionActivity.class);
+            startActivityForResult(goToAddEditRepeatTransaction, ADD_TRANSACTION_ACTIVITY_REQUEST_CODE);
         });
 
         // show transaction in recycler view
@@ -86,98 +83,89 @@ public class RepeatTransactionActivity extends AppCompatActivity {
 
         transactionViewModel = ViewModelProviders.of(this).get(TransactionViewModel.class);
 
-        transactionViewModel.getExpenseRecurringTransactions(today.getTimeInMillis()).observe(this, new Observer<List<Transaction>>() {
-            @Override
-            public void onChanged(@Nullable final List<Transaction> transactions) {
-                // Update the cached copy of the words in the transactionAdapter.
-                // list received is not distinct by recurring id
-                List<Transaction> distinctTransactions = deepCopyDistinctTransaction(transactions);
-                repeatExpenseTransactionAdapter.submitList(distinctTransactions);
-            }
+        // on changed
+        transactionViewModel.getExpenseRecurringTransactions(today.getTimeInMillis()).observe(this,
+                (@Nullable final List<Transaction> transactions) -> {
+            // Update the cached copy of the words in the transactionAdapter.
+            // list received is not distinct by recurring id
+            List<Transaction> distinctTransactions = deepCopyDistinctTransaction(transactions);
+            repeatExpenseTransactionAdapter.submitList(distinctTransactions);
         });
 
         // when click on item in recycler view -> populate data and open up to edit
-        repeatExpenseTransactionAdapter.setOnItemClickListener(new RepeatTransactionAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(Transaction transaction) {
-                Intent goToAddEditRepeatTransactionActivity = new Intent(
-                        RepeatTransactionActivity.this, AddEditRepeatTransactionActivity.class);
-                goToAddEditRepeatTransactionActivity.putExtra(AddEditRepeatTransactionActivity.EXTRA_ID,
-                        transaction.getTransactionId());
-                goToAddEditRepeatTransactionActivity.putExtra(AddEditRepeatTransactionActivity.EXTRA_NAME,
-                        transaction.getName());
-                goToAddEditRepeatTransactionActivity.putExtra(AddEditRepeatTransactionActivity.EXTRA_TYPENAME,
-                        transaction.getTypeName());
-                goToAddEditRepeatTransactionActivity.putExtra(AddEditRepeatTransactionActivity.EXTRA_DATE,
-                        DateFormatter.formatDateToString(transaction.getDate()));
-                goToAddEditRepeatTransactionActivity.putExtra(AddEditRepeatTransactionActivity.EXTRA_VALUE,
-                        transaction.getValue());
-                goToAddEditRepeatTransactionActivity.putExtra(AddEditRepeatTransactionActivity.EXTRA_FREQUENCY,
-                        transaction.getFrequency());
-                goToAddEditRepeatTransactionActivity.putExtra(AddEditRepeatTransactionActivity.EXTRA_REPEAT,
-                        transaction.getNumOfRepeat());
-                goToAddEditRepeatTransactionActivity.putExtra(AddEditRepeatTransactionActivity.EXTRA_IS_EXPENSE_TYPE,
-                        transaction.isExpenseTransaction());
-                goToAddEditRepeatTransactionActivity.putExtra(AddEditRepeatTransactionActivity.EXTRA_RECURRING_ID,
-                        transaction.getTransactionRecurringId());
-                startActivityForResult(goToAddEditRepeatTransactionActivity, EDIT_TRANSACTION_ACTIVITY_REQUEST_CODE);
-            }
+        // on item click
+        repeatExpenseTransactionAdapter.setOnItemClickListener((Transaction transaction) -> {
+            Intent goToAddEditRepeatTransaction = new Intent(
+                    RepeatTransactionActivity.this, AddEditRepeatTransactionActivity.class);
+            goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_ID,
+                    transaction.getTransactionId());
+            goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_NAME,
+                    transaction.getName());
+            goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_TYPENAME,
+                    transaction.getTypeName());
+            goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_DATE,
+                    DateFormatter.formatDateToString(transaction.getDate()));
+            goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_VALUE,
+                    transaction.getValue());
+            goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_FREQUENCY,
+                    transaction.getFrequency());
+            goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_REPEAT,
+                    transaction.getNumOfRepeat());
+            goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_IS_EXPENSE_TYPE,
+                    transaction.isExpenseTransaction());
+            goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_RECURRING_ID,
+                    transaction.getTransactionRecurringId());
+            startActivityForResult(goToAddEditRepeatTransaction, EDIT_TRANSACTION_ACTIVITY_REQUEST_CODE);
         });
 
-        transactionViewModel.getIncomeRecurringTransactions(today.getTimeInMillis()).observe(this, new Observer<List<Transaction>>() {
-            @Override
-            public void onChanged(@Nullable final List<Transaction> transactions) {
-                // Update the cached copy of the words in the transactionAdapter.
-                // list received is not distinct by recurring id
-                List<Transaction> distinctTransactions = deepCopyDistinctTransaction(transactions);
-                repeatIncomeTransactionAdapter.submitList(distinctTransactions);
-            }
+        // on changed
+        transactionViewModel.getIncomeRecurringTransactions(today.getTimeInMillis()).observe(this,
+                (@Nullable final List<Transaction> transactions) -> {
+            // Update the cached copy of the words in the transactionAdapter.
+            // list received is not distinct by recurring id
+            ImmutableList<Transaction> distinctTransactions = deepCopyDistinctTransaction(transactions);
+            repeatIncomeTransactionAdapter.submitList(distinctTransactions);
         });
 
         // when click on item in recycler view -> populate data and open up to edit
-        repeatIncomeTransactionAdapter.setOnItemClickListener(new RepeatTransactionAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(Transaction transaction) {
-                Intent goToAddEditRepeatTransactionActivity = new Intent(
-                        RepeatTransactionActivity.this, AddEditRepeatTransactionActivity.class);
-                goToAddEditRepeatTransactionActivity.putExtra(AddEditRepeatTransactionActivity.EXTRA_ID,
-                        transaction.getTransactionId());
-                goToAddEditRepeatTransactionActivity.putExtra(AddEditRepeatTransactionActivity.EXTRA_NAME,
-                        transaction.getName());
-                goToAddEditRepeatTransactionActivity.putExtra(AddEditRepeatTransactionActivity.EXTRA_TYPENAME,
-                        transaction.getTypeName());
-                goToAddEditRepeatTransactionActivity.putExtra(AddEditRepeatTransactionActivity.EXTRA_DATE,
-                        DateFormatter.formatDateToString(transaction.getDate()));
-                goToAddEditRepeatTransactionActivity.putExtra(AddEditRepeatTransactionActivity.EXTRA_VALUE,
-                        transaction.getValue());
-                goToAddEditRepeatTransactionActivity.putExtra(AddEditRepeatTransactionActivity.EXTRA_FREQUENCY,
-                        transaction.getFrequency());
-                goToAddEditRepeatTransactionActivity.putExtra(AddEditRepeatTransactionActivity.EXTRA_REPEAT,
-                        transaction.getNumOfRepeat());
-                goToAddEditRepeatTransactionActivity.putExtra(AddEditRepeatTransactionActivity.EXTRA_IS_EXPENSE_TYPE,
-                        transaction.isExpenseTransaction());
-                goToAddEditRepeatTransactionActivity.putExtra(AddEditRepeatTransactionActivity.EXTRA_RECURRING_ID,
-                        transaction.getTransactionRecurringId());
-                startActivityForResult(goToAddEditRepeatTransactionActivity, EDIT_TRANSACTION_ACTIVITY_REQUEST_CODE);
-            }
+        // on item click
+        repeatIncomeTransactionAdapter.setOnItemClickListener((Transaction transaction) -> {
+            Intent goToAddEditRepeatTransaction = new Intent(
+                    RepeatTransactionActivity.this, AddEditRepeatTransactionActivity.class);
+            goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_ID,
+                    transaction.getTransactionId());
+            goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_NAME,
+                    transaction.getName());
+            goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_TYPENAME,
+                    transaction.getTypeName());
+            goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_DATE,
+                    DateFormatter.formatDateToString(transaction.getDate()));
+            goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_VALUE,
+                    transaction.getValue());
+            goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_FREQUENCY,
+                    transaction.getFrequency());
+            goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_REPEAT,
+                    transaction.getNumOfRepeat());
+            goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_IS_EXPENSE_TYPE,
+                    transaction.isExpenseTransaction());
+            goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_RECURRING_ID,
+                    transaction.getTransactionRecurringId());
+            startActivityForResult(goToAddEditRepeatTransaction, EDIT_TRANSACTION_ACTIVITY_REQUEST_CODE);
         });
 
         typeViewModel = ViewModelProviders.of(this).get(TypeViewModel.class);
 
-        typeViewModel.getAllTypesString().observe(this, new Observer<List<String>>() {
-            @Override
-            public void onChanged(@Nullable final List<String> types) {
-
-                if (types != null && types.size() == 0) {
-                    WalletDatabase.addTypes();
-                }
+        // on changed
+        typeViewModel.getAllTypesString().observe(this, (@Nullable final List<String> types) -> {
+            if (types != null && types.size() == 0) {
+                WalletDatabase.addTypes();
             }
         });
     }
 
-    private List<Transaction> deepCopyDistinctTransaction(List<Transaction> transactions) {
+    private ImmutableList<Transaction> deepCopyDistinctTransaction(List<Transaction> transactions) {
 
-        List<Transaction> distinctTransactions = new ArrayList<>();
+        ImmutableList.Builder<Transaction> tempDistinctTransactions = new ImmutableList.Builder<>();
 
         String recurringId = "";
 
@@ -189,16 +177,16 @@ public class RepeatTransactionActivity extends AppCompatActivity {
 
             if (recurringId.isEmpty()) {
                 recurringId = transaction.getTransactionRecurringId();
-                distinctTransactions.add(transaction);
+                tempDistinctTransactions.add(transaction);
             }
 
             if (!recurringId.equals(transaction.getTransactionRecurringId())) {
                 recurringId = transaction.getTransactionRecurringId();
-                distinctTransactions.add(transaction);
+                tempDistinctTransactions.add(transaction);
             }
         }
 
-        return distinctTransactions;
+        return tempDistinctTransactions.build();
     }
 
     @Override
@@ -274,7 +262,18 @@ public class RepeatTransactionActivity extends AppCompatActivity {
         for (int i = 0; i <= numOfTransactions; i++) {
 
             // deep copy so that it wont reference the same object and change date for all transactions
-            newTransaction = deepCopyTransaction(transaction, recurringId, calendar.getTime(), repeat);
+            // newTransaction = deepCopyTransaction(transaction, recurringId, calendar.getTime(), repeat);
+            newTransaction = Transaction.createRecurringTransaction(
+                    0L,
+                    recurringId,
+                    calendar.getTime(),
+                    transaction.getValue(),
+                    transaction.getName(),
+                    transaction.getTypeName(),
+                    transaction.getFrequency(),
+                    repeat,
+                    transaction.isExpenseTransaction());
+
             transactionViewModel.insertTransaction(newTransaction);
 
             // change date for next transaction
@@ -312,20 +311,6 @@ public class RepeatTransactionActivity extends AppCompatActivity {
         } else {
             return repeat;
         }
-    }
-
-    private Transaction deepCopyTransaction(Transaction transaction, String transactionRecurringId, Date date, int numOfRepeat) {
-
-        return Transaction.createRecurringTransaction(
-                0L,
-                transactionRecurringId,
-                date,
-                transaction.getValue(),
-                transaction.getName(),
-                transaction.getTypeName(),
-                transaction.getFrequency(),
-                numOfRepeat,
-                transaction.isExpenseTransaction());
     }
 
     private Transaction extractDataToTransaction(Intent data, long id) {

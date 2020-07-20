@@ -8,7 +8,8 @@ import androidx.room.PrimaryKey;
 
 import com.google.auto.value.AutoValue;
 
-import java.util.Date;
+import java.time.Instant;
+import java.time.ZoneId;
 
 @AutoValue
 @Entity
@@ -22,10 +23,19 @@ public abstract class Transaction {
     @AutoValue.CopyAnnotations
     public abstract String getTransactionRecurringId();
 
-    // do not mutate this object
+    /*
+    cannot store as ZonedDateTime directly
+    - because needs at least 2 parameters to construct, so not applicable in TypeConverter
+    cannot store ZonedDateTime as String
+    - because dao compares time in seconds
+     */
     @AutoValue.CopyAnnotations
     @NonNull
-    public abstract Date getDate();
+    public abstract Instant getInstant();
+
+    @AutoValue.CopyAnnotations
+    @NonNull
+    public abstract ZoneId getZoneId();
 
     @AutoValue.CopyAnnotations
     @Size(min = 0)
@@ -66,17 +76,17 @@ public abstract class Transaction {
     public abstract boolean isExpenseTransaction();
 
     @Ignore
-    public static Transaction createNonRecurringTransaction(long transactionId, Date date, double value, String name, String typeName, boolean expenseTransaction) {
-        return createTransaction(transactionId, "", new Date(date.getTime()), value, name, typeName, false, 1, 0, expenseTransaction);
+    public static Transaction createNonRecurringTransaction(long transactionId, Instant instant, ZoneId zoneId, double value, String name, String typeName, boolean expenseTransaction) {
+        return createTransaction(transactionId, "", instant, zoneId, value, name, typeName, false, 1, 0, expenseTransaction);
     }
 
     @Ignore
-    public static Transaction createRecurringTransaction(long transactionId, String transactionRecurringId, Date date, double value, String name, String typeName, int frequency, int numOfRepeat, boolean expenseTransaction) {
-        return createTransaction(transactionId, transactionRecurringId, new Date(date.getTime()), value, name, typeName, true, frequency, numOfRepeat, expenseTransaction);
+    public static Transaction createRecurringTransaction(long transactionId, String transactionRecurringId, Instant instant, ZoneId zoneId, double value, String name, String typeName, int frequency, int numOfRepeat, boolean expenseTransaction) {
+        return createTransaction(transactionId, transactionRecurringId, instant, zoneId, value, name, typeName, true, frequency, numOfRepeat, expenseTransaction);
     }
 
-    public static Transaction createTransaction(long transactionId, String transactionRecurringId, Date date, double value, String name, String typeName, boolean repeat, int frequency, int numOfRepeat, boolean expenseTransaction) {
-        return new AutoValue_Transaction(transactionId, transactionRecurringId, date, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction);
+    public static Transaction createTransaction(long transactionId, String transactionRecurringId, Instant instant, ZoneId zoneId, double value, String name, String typeName, boolean repeat, int frequency, int numOfRepeat, boolean expenseTransaction) {
+        return new AutoValue_Transaction(transactionId, transactionRecurringId, instant, zoneId, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction);
     }
 
 //    @PrimaryKey(autoGenerate = true)

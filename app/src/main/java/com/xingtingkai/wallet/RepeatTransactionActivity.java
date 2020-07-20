@@ -20,10 +20,10 @@ import com.xingtingkai.wallet.db.WalletDatabase;
 import com.xingtingkai.wallet.db.entity.Transaction;
 import com.xingtingkai.wallet.db.viewmodel.TransactionViewModel;
 import com.xingtingkai.wallet.db.viewmodel.TypeViewModel;
-import com.xingtingkai.wallet.helper.DateFormatter;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -79,12 +79,12 @@ public class RepeatTransactionActivity extends AppCompatActivity {
 
     private void initViewModels() {
 
-        Calendar today = Calendar.getInstance();
-
         transactionViewModel = ViewModelProviders.of(this).get(TransactionViewModel.class);
 
+        long todayEpochSeconds = ZonedDateTime.now().toEpochSecond();
+
         // on changed
-        transactionViewModel.getExpenseRecurringTransactions(today.getTimeInMillis()).observe(this,
+        transactionViewModel.getExpenseRecurringTransactions(todayEpochSeconds).observe(this,
                 (@Nullable final List<Transaction> transactions) -> {
             // Update the cached copy of the words in the transactionAdapter.
             // list received is not distinct by recurring id
@@ -103,8 +103,13 @@ public class RepeatTransactionActivity extends AppCompatActivity {
                     transaction.getName());
             goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_TYPENAME,
                     transaction.getTypeName());
-            goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_DATE,
-                    DateFormatter.formatDateToString(transaction.getDate()));
+//            goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_INSTANT,
+//                    DateFormatter.formatInstantToString(transaction.getInstant(), transaction.getZoneId()));
+            goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_INSTANT,
+                    transaction.getInstant().getEpochSecond());
+
+            goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_ZONE_ID,
+                    transaction.getZoneId().getId());
             goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_VALUE,
                     transaction.getValue());
             goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_FREQUENCY,
@@ -119,7 +124,7 @@ public class RepeatTransactionActivity extends AppCompatActivity {
         });
 
         // on changed
-        transactionViewModel.getIncomeRecurringTransactions(today.getTimeInMillis()).observe(this,
+        transactionViewModel.getIncomeRecurringTransactions(todayEpochSeconds).observe(this,
                 (@Nullable final List<Transaction> transactions) -> {
             // Update the cached copy of the words in the transactionAdapter.
             // list received is not distinct by recurring id
@@ -138,8 +143,10 @@ public class RepeatTransactionActivity extends AppCompatActivity {
                     transaction.getName());
             goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_TYPENAME,
                     transaction.getTypeName());
-            goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_DATE,
-                    DateFormatter.formatDateToString(transaction.getDate()));
+            goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_INSTANT,
+                    transaction.getInstant().getEpochSecond());
+            goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_ZONE_ID,
+                    transaction.getZoneId().getId());
             goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_VALUE,
                     transaction.getValue());
             goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_FREQUENCY,
@@ -236,8 +243,7 @@ public class RepeatTransactionActivity extends AppCompatActivity {
 
         int numOfTransactions = transaction.getFrequency() * transaction.getNumOfRepeat();
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(transaction.getDate());
+        ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(transaction.getInstant(), transaction.getZoneId());
 
         int count = 0;
         int repeat = transaction.getNumOfRepeat();
@@ -266,7 +272,8 @@ public class RepeatTransactionActivity extends AppCompatActivity {
             newTransaction = Transaction.createRecurringTransaction(
                     0L,
                     recurringId,
-                    calendar.getTime(),
+                    zonedDateTime.toInstant(),
+                    transaction.getZoneId(),
                     transaction.getValue(),
                     transaction.getName(),
                     transaction.getTypeName(),
@@ -277,7 +284,7 @@ public class RepeatTransactionActivity extends AppCompatActivity {
             transactionViewModel.insertTransaction(newTransaction);
 
             // change date for next transaction
-            calendar.add(Calendar.MONTH, 12 / transaction.getFrequency());
+            zonedDateTime = zonedDateTime.plusMonths(12 / transaction.getFrequency());
 
             // update repeat for current transaction
             count++;
@@ -296,9 +303,10 @@ public class RepeatTransactionActivity extends AppCompatActivity {
 
     private void deleteRecurringTransactions(Transaction transaction) {
 
+        long transactionEpochSecond = transaction.getInstant().getEpochSecond();
+
         transactionViewModel.deleteFutureRecurringTransactions(
-                transaction.getTransactionRecurringId(),
-                transaction.getDate().getTime());
+                transaction.getTransactionRecurringId(), transactionEpochSecond);
 
         transactionViewModel.deleteTransaction(transaction);
     }
@@ -319,8 +327,14 @@ public class RepeatTransactionActivity extends AppCompatActivity {
         String typeName = data.getStringExtra(AddEditRepeatTransactionActivity.EXTRA_TYPENAME);
         double value = data.getDoubleExtra(AddEditRepeatTransactionActivity.EXTRA_VALUE, 1);
 
-        String dateString = data.getStringExtra(AddEditRepeatTransactionActivity.EXTRA_DATE);
-        Date date = DateFormatter.formatStringToDate(dateString);
+        String zoneIdString = data.getStringExtra(AddEditRepeatTransactionActivity.EXTRA_ZONE_ID);
+        ZoneId zoneId = ZoneId.of(zoneIdString);
+
+//        String dateString = data.getStringExtra(AddEditRepeatTransactionActivity.EXTRA_INSTANT);
+//        Instant instant = DateFormatter.formatStringToInstant(dateString, zoneId);
+
+        long instantLong = data.getLongExtra(AddEditRepeatTransactionActivity.EXTRA_INSTANT, 0L);
+        Instant instant = Instant.ofEpochSecond(instantLong);
 
         int frequency = data.getIntExtra(AddEditRepeatTransactionActivity.EXTRA_FREQUENCY, 12);
         int numOfRepeat = data.getIntExtra(AddEditRepeatTransactionActivity.EXTRA_REPEAT, 1);
@@ -329,12 +343,6 @@ public class RepeatTransactionActivity extends AppCompatActivity {
 
         boolean isExpenseType = data.getBooleanExtra(AddEditTransactionActivity.EXTRA_IS_EXPENSE_TYPE, true);
 
-//        if (id != 0) {
-//            transaction.setTransactionId(id);
-//        }
-
-        //transaction.setTransactionRecurringId(recurringId);
-
-        return Transaction.createRecurringTransaction(id, recurringId, date, value, name, typeName, frequency, numOfRepeat, isExpenseType);
+        return Transaction.createRecurringTransaction(id, recurringId, instant, zoneId, value, name, typeName, frequency, numOfRepeat, isExpenseType);
     }
 }

@@ -33,8 +33,11 @@ import com.xingtingkai.wallet.db.viewmodel.TypeViewModel;
 import com.xingtingkai.wallet.helper.DateFormatter;
 import com.xingtingkai.wallet.helper.DatePickerFragment;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 public class AddEditRepeatTransactionActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
@@ -47,8 +50,10 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
             "com.example.wallet.EXTRA_TYPENAME";
     protected static final String EXTRA_VALUE =
             "com.example.wallet.EXTRA_VALUE";
-    protected static final String EXTRA_DATE =
-            "com.example.wallet.EXTRA_DATE";
+    protected static final String EXTRA_INSTANT =
+            "com.example.wallet.EXTRA_INSTANT";
+    protected static final String EXTRA_ZONE_ID =
+            "com.example.wallet.EXTRA_ZONE_ID";
     protected static final String EXTRA_FREQUENCY =
             "com.example.wallet.EXTRA_FREQUENCY";
     protected static final String EXTRA_REPEAT =
@@ -69,8 +74,7 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
     private TextInputLayout textInputLayoutName;
     private TextInputLayout textInputLayoutRepeat;
 
-    // in the format of "02/12/2020"
-    private static String formattedDate;
+    private static long epochSeconds;
 
     private Spinner spinnerFrequency;
     private ArrayAdapter<CharSequence> adapterFrequency;
@@ -117,8 +121,9 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
 
         // on click
         editTextDate.setOnClickListener((View v) -> {
-            Calendar calendar = formatSelectedDate();
-            DialogFragment datePicker = new DatePickerFragment(calendar);
+            Instant instant = Instant.ofEpochSecond(epochSeconds);
+            ZoneId zoneId = ZoneId.systemDefault();
+            DialogFragment datePicker = new DatePickerFragment(ZonedDateTime.ofInstant(instant, zoneId));
             datePicker.show(getSupportFragmentManager(), "date picker");
         });
 
@@ -189,14 +194,6 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
     private void deepCopySuggestions(List<String> tempNameSuggestions) {
 
         ImmutableList<String> nameSuggestions = ImmutableList.copyOf(tempNameSuggestions);
-
-//        int arraySize = tempNameSuggestions.size();
-//
-//        String[] nameSuggestions = new String[arraySize];
-//
-//        for (int i = 0; i < arraySize; i++) {
-//            nameSuggestions[i] = tempNameSuggestions.get(i);
-//        }
 
         ArrayAdapter<String> nameSuggestionsAdapter =
                 new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, nameSuggestions);
@@ -284,8 +281,11 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
         if (intent.hasExtra(EXTRA_ID)) {
             editTextName.setText(intent.getStringExtra(EXTRA_NAME));
 
-            formattedDate = intent.getStringExtra(EXTRA_DATE);
-            editTextDate.setText(DateFormatter.beautifyDateString(formattedDate));
+            epochSeconds = intent.getLongExtra(EXTRA_INSTANT, 0L);
+            Instant instant = Instant.ofEpochSecond(epochSeconds);
+            ZoneId zoneId = ZoneId.systemDefault();
+            String formattedDate = DateFormatter.formatToDateString(instant, zoneId);
+            editTextDate.setText(formattedDate);
 
             String value = getString(R.string.single_string_param, intent.getDoubleExtra(EXTRA_VALUE, 1) + "");
             editTextValue.setText(value);
@@ -330,15 +330,6 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
         adapterType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         return adapterType;
-    }
-
-    private Calendar formatSelectedDate() {
-
-        Calendar calendar = Calendar.getInstance();
-        Date date = DateFormatter.formatStringToDate(formattedDate);
-        calendar.setTime(date);
-
-        return calendar;
     }
 
     private boolean violateInputValidation() {
@@ -417,15 +408,15 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
                 value = 0;
             }
         }
-        return createIntent(formattedDate, value, name, type, frequency, repeat, operation);
+        return createIntent(epochSeconds, value, name, type, frequency, repeat, operation);
     }
 
-    private Intent createIntent(String dateString, double value, String name, String typeName, int frequency, int repeat, String operation) {
+    private Intent createIntent(Long instantEpochSeconds, double value, String name, String typeName, int frequency, int repeat, String operation) {
 
         Intent intent = new Intent();
         intent.putExtra(EXTRA_NAME, name);
         intent.putExtra(EXTRA_TYPENAME, typeName);
-        intent.putExtra(EXTRA_DATE, dateString);
+        intent.putExtra(EXTRA_INSTANT, instantEpochSeconds);
         intent.putExtra(EXTRA_VALUE, value);
         intent.putExtra(EXTRA_FREQUENCY, frequency);
         intent.putExtra(EXTRA_REPEAT, repeat);
@@ -448,6 +439,13 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
         }
 
         intent.putExtra(EXTRA_RECURRING_ID, recurringId);
+
+        String zoneId = intent.getStringExtra(EXTRA_ZONE_ID);
+        if (zoneId == null) {
+            zoneId = ZoneId.systemDefault().getId();
+        }
+
+        intent.putExtra(EXTRA_ZONE_ID, zoneId);
 
         return intent;
     }
@@ -503,20 +501,25 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.YEAR, year);
-        calendar.set(Calendar.MONTH, month);
-        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        LocalDate localDate = LocalDate.of(year, month + 1, dayOfMonth);
+        LocalTime localTime = LocalTime.now();
+        ZoneId zoneId = ZoneId.systemDefault();
 
-        formattedDate = DateFormatter.formatDateToString(calendar.getTime());
-        editTextDate.setText(DateFormatter.beautifyDateString(formattedDate));
+        ZonedDateTime zonedDateTime = ZonedDateTime.of(localDate, localTime, zoneId);
+        Instant instant = zonedDateTime.toInstant();
+        epochSeconds = instant.getEpochSecond();
+
+        editTextDate.setText(DateFormatter.formatToDateString(instant, zoneId));
     }
 
     private void setTodayDate(TextInputEditText editTextDate) {
 
-        Calendar calendar = Calendar.getInstance();
-        formattedDate = DateFormatter.formatDateToString(calendar.getTime());
-        editTextDate.setText(DateFormatter.beautifyDateString(formattedDate));
+        Instant instant = Instant.now();
+        epochSeconds = instant.getEpochSecond();
+        ZoneId zoneId = ZoneId.systemDefault();
+
+        String formattedDate = DateFormatter.formatToDateString(instant, zoneId);
+        editTextDate.setText(formattedDate);
     }
 
     ImmutableBiMap<String, Integer> getFrequencyMap() {

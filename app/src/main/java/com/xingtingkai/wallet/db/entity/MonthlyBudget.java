@@ -23,7 +23,7 @@ public abstract class MonthlyBudget {
     public abstract int getYear();
 
     @AutoValue.CopyAnnotations
-    // start from 0 to 11
+    // start from 1 to 12
     @Size(min = 0)
     public abstract int getMonth();
 

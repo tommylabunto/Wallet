@@ -54,7 +54,8 @@ public class SearchTransactionAdapter extends ListAdapter<Transaction, SearchTra
             return oldItem.getName().equals(newItem.getName()) &&
                     oldItem.getValue() == newItem.getValue() &&
                     oldItem.getTypeName().equals(newItem.getTypeName()) &&
-                    oldItem.getDate().equals(newItem.getDate()) &&
+                    oldItem.getInstant().equals(newItem.getInstant()) &&
+                    oldItem.getZoneId().equals(newItem.getZoneId()) &&
                     oldItem.isRepeat() == newItem.isRepeat() &&
                     oldItem.isExpenseTransaction() == newItem.isExpenseTransaction();
         }

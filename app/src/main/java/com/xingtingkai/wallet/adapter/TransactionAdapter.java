@@ -17,8 +17,8 @@ import com.xingtingkai.wallet.db.entity.Transaction;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdapter.TransactionViewHolder> {
@@ -72,9 +72,7 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
         public void removeHeader() {
 
             textView_date.setVisibility(View.GONE);
-
             textView_totalAmount.setVisibility(View.GONE);
-
             textView_dayOfDate.setVisibility(View.GONE);
         }
     }
@@ -102,7 +100,8 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
             return oldItem.getName().equals(newItem.getName()) &&
                     oldItem.getValue() == newItem.getValue() &&
                     oldItem.getTypeName().equals(newItem.getTypeName()) &&
-                    oldItem.getDate().equals(newItem.getDate()) &&
+                    oldItem.getInstant().equals(newItem.getInstant()) &&
+                    oldItem.getZoneId().equals(newItem.getZoneId()) &&
                     oldItem.isRepeat() == newItem.isRepeat() &&
                     oldItem.isExpenseTransaction() == newItem.isExpenseTransaction();
         }
@@ -121,11 +120,6 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
         holder.textViewName.setText(transaction.getName());
         String value = mInflater.getContext().getString(R.string.single_string_param, (int) transaction.getValue() + "");
         holder.textViewValue.setText(value);
-
-//        if (!transaction.isExpenseTransaction()) {
-//            holder.textViewName.setTextColor(Color.parseColor("#00ff9b"));
-//            holder.textViewValue.setTextColor(Color.parseColor("#00ff9b"));
-//        }
 
         if (!transaction.isExpenseTransaction()) {
             holder.textViewName.setTypeface(holder.textViewName.getTypeface(), Typeface.BOLD);
@@ -152,18 +146,17 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
 
     private void updateHeader(Transaction transaction, TransactionViewHolder holder) {
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(transaction.getDate());
+        ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(transaction.getInstant(), transaction.getZoneId());
 
-        SimpleDateFormat formatterDate = new SimpleDateFormat("dd");
-        String formattedDate = formatterDate.format(calendar.getTime());
+        DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("dd");
+        String formattedDate = formatterDate.format(zonedDateTime);
 
-        SimpleDateFormat formatterDay = new SimpleDateFormat("EEE");
-        String formattedDay = formatterDay.format(calendar.getTime());
+        DateTimeFormatter formatterDay = DateTimeFormatter.ofPattern("EEE");
+        String formattedDay = formatterDay.format(zonedDateTime);
 
         this.isFirst = false;
 
-        if (transactions != null && !transactions.isEmpty()) {
+        if (transactions != null || !transactions.isEmpty()) {
 
             String totalAmount = calculateTotalAmountInADay(transaction);
 
@@ -179,11 +172,11 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
 
     private String calculateTotalAmountInADay(Transaction transaction) {
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(transaction.getDate());
+        ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(transaction.getInstant(), transaction.getZoneId());
 
-        SimpleDateFormat formatter = new SimpleDateFormat("ddMMyyyy");
-        String formattedDate = formatter.format(calendar.getTime());
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
+
+        String formattedDate = formatter.format(zonedDateTime);
 
         double totalValue = 0;
 
@@ -193,22 +186,29 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
 
         for (int i = 0; i < transactions.size(); i++) {
 
-                if (formatter.format(transactions.get(i).getDate()).equals(formattedDate)) {
+            Transaction tempTransaction = transactions.get(i);
 
-                    // only count expenses, don't minus income from expenses
-                    if (transactions.get(i).isExpenseTransaction()) {
-                        totalValue += transactions.get(i).getValue();
-                    }
+            zonedDateTime = ZonedDateTime.ofInstant(tempTransaction.getInstant(), tempTransaction.getZoneId());
 
-                    if (count == 0 && transactions.get(i).getTransactionId() == transaction.getTransactionId()) {
-                        this.isFirst = true;
-                    }
-                    count++;
+//                if (formatter.format(transactions.get(i).getDate()).equals(formattedDate)) {
+            if (formatter.format(zonedDateTime).equals(formattedDate)) {
 
-                    // refactor this part
-                    if (i + 1 == transactions.size() || (i + 1 < transactions.size() && !formatter.format(transactions.get(i + 1).getDate()).equals(formattedDate))) {
-                        break;
-                    }
+                // only count expenses, don't minus income from expenses
+                if (tempTransaction.isExpenseTransaction()) {
+                    totalValue += tempTransaction.getValue();
+                }
+
+                if (count == 0 && tempTransaction.getTransactionId() == transaction.getTransactionId()) {
+                    this.isFirst = true;
+                }
+                count++;
+
+                if (i + 1 == transactions.size() ||
+                        (i + 1 < transactions.size() && !formatter.format(
+                                ZonedDateTime.ofInstant(transactions.get(i + 1).getInstant(), transactions.get(i + 1).getZoneId()))
+                                .equals(formattedDate))) {
+                    break;
+                }
             }
         }
 

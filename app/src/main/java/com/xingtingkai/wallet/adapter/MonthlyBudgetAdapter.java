@@ -16,12 +16,12 @@ import com.xingtingkai.wallet.R;
 import com.xingtingkai.wallet.db.entity.MonthlyBudget;
 
 import java.time.Month;
-import java.util.Calendar;
+import java.time.ZonedDateTime;
 
 public class MonthlyBudgetAdapter extends ListAdapter<MonthlyBudget, MonthlyBudgetAdapter.MonthlyBudgetViewHolder> {
 
     class MonthlyBudgetViewHolder extends RecyclerView.ViewHolder {
-        private final Calendar calendar = Calendar.getInstance();
+        private final ZonedDateTime zonedDateTime = ZonedDateTime.now();
         private final TextView textViewMonth;
         private final TextView textViewBudget;
 
@@ -76,15 +76,15 @@ public class MonthlyBudgetAdapter extends ListAdapter<MonthlyBudget, MonthlyBudg
         holder.textViewBudget.setText(budget);
 
         // month uses 1 (jan) to 12 (dec)
-        Month month = Month.of(monthlyBudget.getMonth() + 1);
+        Month month = Month.of(monthlyBudget.getMonth());
         // originally is all caps
         String monthString = month.name().substring(0,1) + month.name().substring(1).toLowerCase();
         holder.textViewMonth.setText(monthString);
 
-        int tempMonth = holder.calendar.get(Calendar.MONTH) + 1;
+        Month currMonth = holder.zonedDateTime.getMonth();
 
         // bold same month
-        if (tempMonth == month.getValue()) {
+        if (currMonth.getValue() == month.getValue()) {
             holder.textViewMonth.setTypeface(holder.textViewMonth.getTypeface(), Typeface.BOLD);
             holder.textViewBudget.setTypeface(holder.textViewBudget.getTypeface(), Typeface.BOLD);
         } else {

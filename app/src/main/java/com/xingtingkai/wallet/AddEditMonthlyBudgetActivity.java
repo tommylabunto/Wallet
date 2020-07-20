@@ -89,7 +89,7 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
             month = intent.getIntExtra(EXTRA_MONTH, 0);
 
             // month uses 1 (jan) to 12 (dec)
-            Month tempMonth = Month.of(month + 1);
+            Month tempMonth = Month.of(month);
 
             // originally is all caps
             String monthString = tempMonth.name().substring(0, 1) + tempMonth.name().substring(1, 3).toLowerCase();

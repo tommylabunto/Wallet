@@ -19,7 +19,7 @@ import com.xingtingkai.wallet.db.entity.Transaction;
 import com.xingtingkai.wallet.db.entity.Type;
 
 import java.io.File;
-import java.util.Calendar;
+import java.time.ZonedDateTime;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -83,9 +83,11 @@ public abstract class WalletDatabase extends RoomDatabase {
 
                 // db creates 10 years worth of monthly budgets if there are no more upcoming budgets
                 // takes at least 2 minutes to populate whole list
-                Calendar calendar = Calendar.getInstance();
-                int year = calendar.get(Calendar.YEAR);
-                int month = calendar.get(Calendar.MONTH);
+
+                ZonedDateTime zonedDateTime = ZonedDateTime.now();
+
+                int year = zonedDateTime.getYear();
+                int month = zonedDateTime.getMonth().getValue();
 
                 MonthlyBudgetDao monthlyBudgetDao = INSTANCE.getMonthlyBudgetDao();
 
@@ -97,13 +99,13 @@ public abstract class WalletDatabase extends RoomDatabase {
 
                     for (int i = 0; i < totalMonthlyBudgets; i++) {
 
-                        year = calendar.get(Calendar.YEAR);
-                        month = calendar.get(Calendar.MONTH);
+                        year = zonedDateTime.getYear();
+                        month = zonedDateTime.getMonth().getValue();
 
                         MonthlyBudget monthlyBudget = MonthlyBudget.create(0, budget, year, month);
                         monthlyBudgetDao.insertMonthlyBudget(monthlyBudget);
 
-                        calendar.add(Calendar.MONTH, 1);
+                        zonedDateTime = zonedDateTime.plusMonths(1);
                     }
                 }
             });

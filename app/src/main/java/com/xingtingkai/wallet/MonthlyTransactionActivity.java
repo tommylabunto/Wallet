@@ -34,7 +34,7 @@ import com.xingtingkai.wallet.helper.SearchSuggestionProvider;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Month;
-import java.util.Calendar;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 public class MonthlyTransactionActivity extends AppCompatActivity {
@@ -47,8 +47,8 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
     private ImageButton prevMonth;
     private ImageButton nextMonth;
 
-    private Calendar startMonthCal;
-    private Calendar endMonthCal;
+    private static ZonedDateTime startMonthDate;
+    private static ZonedDateTime endMonthDate;
 
     private TextView textViewMonth;
     private TextView textViewYear;
@@ -81,8 +81,8 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
         prevMonth = findViewById(R.id.left_button);
         // on click
         prevMonth.setOnClickListener((View view) -> {
-            startMonthCal.add(Calendar.MONTH, -1);
-            endMonthCal.add(Calendar.MONTH, -1);
+            startMonthDate = startMonthDate.minusMonths(1);
+            endMonthDate = endMonthDate.minusMonths(1);
             updateTransactionsInAMonth();
             updateMonthlyBudget();
             calculateRemaining();
@@ -91,8 +91,8 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
         nextMonth = findViewById(R.id.right_button);
         // on click
         nextMonth.setOnClickListener((View view) -> {
-            endMonthCal.add(Calendar.MONTH, 1);
-            startMonthCal.add(Calendar.MONTH, 1);
+            startMonthDate = startMonthDate.plusMonths(1);
+            endMonthDate = endMonthDate.plusMonths(1);
             updateTransactionsInAMonth();
             updateMonthlyBudget();
             calculateRemaining();
@@ -121,22 +121,21 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
 
     private void initStartEndCal() {
 
-        // first and last day of month
-        startMonthCal = Calendar.getInstance();
-        startMonthCal.set(Calendar.DAY_OF_MONTH, 1);
-        startMonthCal.set(Calendar.HOUR_OF_DAY, 0);
-        startMonthCal.set(Calendar.MINUTE, 0);
+        startMonthDate = ZonedDateTime
+                .now()
+                .withMinute(0)
+                .withHour(0)
+                .withDayOfMonth(1);
 
-        endMonthCal = Calendar.getInstance();
-        int lastDay = endMonthCal.getActualMaximum(Calendar.DAY_OF_MONTH);
-        endMonthCal.set(Calendar.DAY_OF_MONTH, lastDay);
-        endMonthCal.set(Calendar.HOUR_OF_DAY, 23);
-        endMonthCal.set(Calendar.MINUTE, 59);
+        endMonthDate = ZonedDateTime
+                .now()
+                .withMinute(59)
+                .withHour(23)
+                .withDayOfMonth(startMonthDate.getMonth().maxLength());
 
-        int yearInt = startMonthCal.get(Calendar.YEAR);
-        int monthInt = startMonthCal.get(Calendar.MONTH);
+        int yearInt = startMonthDate.getYear();
         // month uses 1 (jan) to 12 (dec)
-        Month month = Month.of(monthInt + 1);
+        Month month = startMonthDate.getMonth();
         // originally is all caps
         String monthString = month.name().substring(0,1) + month.name().substring(1,3).toLowerCase();
 
@@ -160,8 +159,8 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
 
     private void updateMonthlyBudget() {
 
-        int year = startMonthCal.get(Calendar.YEAR);
-        int month = startMonthCal.get(Calendar.MONTH);
+        int year = startMonthDate.getYear();
+        int month = startMonthDate.getMonth().getValue();
 
         // on changed
         monthlyBudgetViewModel.getMonthlyBudget(year, month).observe(this, this::updateTextViewBudget);
@@ -220,18 +219,21 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
 
     private void updateTransactionsInAMonth() {
 
+        // take some time to calculate, store the variables
+        long startMonthDateEpoch = startMonthDate.toEpochSecond();
+        long endMonthDateEpoch = endMonthDate.toEpochSecond();
+
         // on changed
-        transactionViewModel.getAllTransactionsInAMonthView(startMonthCal.getTimeInMillis(), endMonthCal.getTimeInMillis())
+        transactionViewModel.getAllTransactionsInAMonthView(startMonthDateEpoch, endMonthDateEpoch)
                 .observe(this, (@Nullable final List<Transaction> transactions) -> {
             // Update the cached copy of the words in the transactionAdapter.
             monthlyTransactionAdapter.submitList(transactions);
             analyzeTransactions(transactions);
         });
 
-        int yearInt = startMonthCal.get(Calendar.YEAR);
-        int monthInt = startMonthCal.get(Calendar.MONTH);
+        int yearInt = startMonthDate.getYear();
         // month uses 1 (jan) to 12 (dec)
-        Month month = Month.of(monthInt + 1);
+        Month month = startMonthDate.getMonth();
         // originally is all caps
         String monthString = month.name().substring(0,1) + month.name().substring(1,3).toLowerCase();
 

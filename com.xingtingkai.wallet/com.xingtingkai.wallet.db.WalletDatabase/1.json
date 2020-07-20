@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "15c7b2aafdf4be7bd03b43fbc974cb82",
+    "identityHash": "c04f1c863d2f92a97a7048e00cbfbe82",
     "entities": [
       {
         "tableName": "MonthlyBudget",
@@ -44,7 +44,7 @@
       },
       {
         "tableName": "Transaction",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`transactionId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `transactionRecurringId` TEXT, `date` INTEGER NOT NULL, `value` REAL NOT NULL, `name` TEXT NOT NULL, `typeName` TEXT NOT NULL, `repeat` INTEGER NOT NULL, `frequency` INTEGER NOT NULL, `numOfRepeat` INTEGER NOT NULL, `expenseTransaction` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`transactionId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `transactionRecurringId` TEXT, `instant` INTEGER NOT NULL, `zoneId` TEXT NOT NULL, `value` REAL NOT NULL, `name` TEXT NOT NULL, `typeName` TEXT NOT NULL, `repeat` INTEGER NOT NULL, `frequency` INTEGER NOT NULL, `numOfRepeat` INTEGER NOT NULL, `expenseTransaction` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "transactionId",
@@ -59,9 +59,15 @@
             "notNull": false
           },
           {
-            "fieldPath": "date",
-            "columnName": "date",
+            "fieldPath": "instant",
+            "columnName": "instant",
             "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "zoneId",
+            "columnName": "zoneId",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -178,7 +184,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '15c7b2aafdf4be7bd03b43fbc974cb82')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c04f1c863d2f92a97a7048e00cbfbe82')"
     ]
   }
 }

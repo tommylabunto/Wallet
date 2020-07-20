@@ -25,35 +25,35 @@ public interface TransactionDao {
     @Delete
     public void deleteTransaction(Transaction transaction);
 
-    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE transactionId = :transactionId ORDER BY date ASC")
+    @Query("SELECT transactionId, transactionRecurringId, instant, zoneId, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE transactionId = :transactionId ORDER BY instant ASC")
     public LiveData<Transaction> getTransaction(long transactionId);
 
-    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE date >= :millisecondsStart AND date <= :millisecondsEnd ORDER BY date DESC")
-    public LiveData<List<Transaction>> getAllTransactionsInAMonth(long millisecondsStart, long millisecondsEnd);
+    @Query("SELECT transactionId, transactionRecurringId, instant, zoneId, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE instant >= :epochSecondsStart AND instant <= :epochSecondsEnd ORDER BY instant DESC")
+    public LiveData<List<Transaction>> getAllTransactionsInAMonth(long epochSecondsStart, long epochSecondsEnd);
 
-    @Query("SELECT transactionId, transactionRecurringId, date, sum(value) value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE date >= :millisecondsStart AND date <= :millisecondsEnd GROUP BY typeName ORDER BY date ASC")
-    public LiveData<List<Transaction>> getAllTransactionsInAMonthView(long millisecondsStart, long millisecondsEnd);
+    @Query("SELECT transactionId, transactionRecurringId, instant, zoneId, sum(value) value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE instant >= :epochSecondsStart AND instant <= :epochSecondsEnd GROUP BY typeName ORDER BY instant ASC")
+    public LiveData<List<Transaction>> getAllTransactionsInAMonthView(long epochSecondsStart, long epochSecondsEnd);
 
     /*
     cannot use distinct (all are distinct), group by (don't know which row sqlite selects)
     so list is sorted by recurring id when RepeatTransactionActivity receives it
      */
-    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE repeat = 1 AND date >= :millisecondsToday ORDER BY transactionRecurringId ASC, date ASC")
-    public LiveData<List<Transaction>> getAllRecurringTransactions(long millisecondsToday);
+    @Query("SELECT transactionId, transactionRecurringId, instant, zoneId, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE repeat = 1 AND instant >= :epochSecondsToday ORDER BY transactionRecurringId ASC, instant ASC")
+    public LiveData<List<Transaction>> getAllRecurringTransactions(long epochSecondsToday);
 
-    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE repeat = 1 AND date >= :millisecondsToday AND expenseTransaction = 1 ORDER BY transactionRecurringId ASC, date ASC")
-    public LiveData<List<Transaction>> getExpenseRecurringTransactions(long millisecondsToday);
+    @Query("SELECT transactionId, transactionRecurringId, instant, zoneId, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE repeat = 1 AND instant >= :epochSecondsToday AND expenseTransaction = 1 ORDER BY transactionRecurringId ASC, instant ASC")
+    public LiveData<List<Transaction>> getExpenseRecurringTransactions(long epochSecondsToday);
 
-    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE repeat = 1 AND date >= :millisecondsToday AND expenseTransaction = 0 ORDER BY transactionRecurringId ASC, date ASC")
-    public LiveData<List<Transaction>> getIncomeRecurringTransactions(long millisecondsToday);
+    @Query("SELECT transactionId, transactionRecurringId, instant, zoneId, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE repeat = 1 AND instant >= :epochSecondsToday AND expenseTransaction = 0 ORDER BY transactionRecurringId ASC, instant ASC")
+    public LiveData<List<Transaction>> getIncomeRecurringTransactions(long epochSecondsToday);
 
-    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE repeat = 0 ORDER BY date ASC")
+    @Query("SELECT transactionId, transactionRecurringId, instant, zoneId, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE repeat = 0 ORDER BY instant ASC")
     public LiveData<List<Transaction>> getAllNonRecurringTransactions();
 
-    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` ORDER BY date ASC")
+    @Query("SELECT transactionId, transactionRecurringId, instant, zoneId, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` ORDER BY instant ASC")
     public LiveData<List<Transaction>> getAllTransactions();
 
-    @Query("SELECT transactionId, transactionRecurringId, date, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE name LIKE :searchName ORDER BY date ASC")
+    @Query("SELECT transactionId, transactionRecurringId, instant, zoneId, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE name LIKE :searchName ORDER BY instant ASC")
     public LiveData<List<Transaction>> searchAllTransactions(String searchName);
 
     @Query("DELETE FROM `transaction`")
@@ -62,9 +62,9 @@ public interface TransactionDao {
     @Query("DELETE FROM `transaction` WHERE value = :value AND name = :name AND typeName = :typeName AND frequency = :frequency")
     public void deleteAllRecurringTransactions(double value, String name, String typeName, int frequency);
 
-    // date is stored as long in sqlite (seen in converters)
-    @Query("DELETE FROM `transaction` WHERE transactionRecurringId = :transactionRecurringId AND date >= :milliseconds")
-    public void deleteFutureRecurringTransactions(String transactionRecurringId, long milliseconds);
+    // instant is stored as long in sqlite (seen in converters)
+    @Query("DELETE FROM `transaction` WHERE transactionRecurringId = :transactionRecurringId AND instant >= :epochSeconds")
+    public void deleteFutureRecurringTransactions(String transactionRecurringId, long epochSeconds);
 
     // sync DB data
     @RawQuery(observedEntities = Transaction.class)

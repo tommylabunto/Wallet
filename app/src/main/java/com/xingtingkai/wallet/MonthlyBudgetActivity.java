@@ -19,7 +19,7 @@ import com.xingtingkai.wallet.adapter.MonthlyBudgetAdapter;
 import com.xingtingkai.wallet.db.entity.MonthlyBudget;
 import com.xingtingkai.wallet.db.viewmodel.MonthlyBudgetViewModel;
 
-import java.util.Calendar;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 public class MonthlyBudgetActivity extends AppCompatActivity {
@@ -38,7 +38,7 @@ public class MonthlyBudgetActivity extends AppCompatActivity {
 
     private TextView textViewYear;
 
-    private static Calendar calendar = Calendar.getInstance();
+    private static ZonedDateTime zonedMonthDate = ZonedDateTime.now();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,21 +66,21 @@ public class MonthlyBudgetActivity extends AppCompatActivity {
         prevYear = findViewById(R.id.left_button);
         // on item click
         prevYear.setOnClickListener((View view) -> {
-            calendar.add(Calendar.YEAR, -1);
+            zonedMonthDate = zonedMonthDate.minusYears(1);
             updateMonthlyBudgetsInAYear();
         });
 
         nextYear = findViewById(R.id.right_button);
         // on item click
         nextYear.setOnClickListener((View view) -> {
-            calendar.add(Calendar.YEAR, 1);
+            zonedMonthDate = zonedMonthDate.plusYears(1);
             updateMonthlyBudgetsInAYear();
         });
     }
 
     private void updateMonthlyBudgetsInAYear() {
 
-        int yearInt = calendar.get(Calendar.YEAR);
+        int yearInt = zonedMonthDate.getYear();
 
         // on changed
         monthlyBudgetViewModel.getAllMonthlyBudgetsInAYear(yearInt).observe(this,
@@ -93,8 +93,8 @@ public class MonthlyBudgetActivity extends AppCompatActivity {
 
     private void initViewModels() {
 
-        Calendar tempCalendar = Calendar.getInstance();
-        int yearInt = tempCalendar.get(Calendar.YEAR);
+        ZonedDateTime tempZonedMonthDate = ZonedDateTime.now();
+        int yearInt = tempZonedMonthDate.getYear();
 
         String year = getString(R.string.single_string_param, yearInt + "");
         textViewYear.setText(year);

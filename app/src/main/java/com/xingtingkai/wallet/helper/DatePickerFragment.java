@@ -7,28 +7,29 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
-import java.util.Calendar;
+import java.time.ZonedDateTime;
 
 public class DatePickerFragment extends DialogFragment {
 
-    private Calendar calendar;
+    private ZonedDateTime zonedDateTime;
 
     public DatePickerFragment() {
-        Calendar calendar = Calendar.getInstance();
+        zonedDateTime = ZonedDateTime.now();
     }
 
-    public DatePickerFragment(Calendar calendar) {
+    public DatePickerFragment(ZonedDateTime zonedDateTime) {
         this();
-        this.calendar = calendar;
+        this.zonedDateTime = zonedDateTime;
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-        int year = this.calendar.get(Calendar.YEAR);
-        int month = this.calendar.get(Calendar.MONTH);
-        int day = this.calendar.get(Calendar.DAY_OF_MONTH);
+        int year = this.zonedDateTime.getYear();
+        // for compatibility with Calendar month
+        int month = this.zonedDateTime.getMonth().getValue() - 1;
+        int day = this.zonedDateTime.getDayOfMonth();
 
         return new DatePickerDialog(getActivity(), (DatePickerDialog.OnDateSetListener) getActivity(), year, month, day);
     }

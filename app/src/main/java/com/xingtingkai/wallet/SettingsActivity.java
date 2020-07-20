@@ -249,8 +249,10 @@ public class SettingsActivity extends AppCompatActivity {
 
         transactionViewModel = ViewModelProviders.of(this).get(TransactionViewModel.class);
 
+        SimpleSQLiteQuery checkPointQuery = new SimpleSQLiteQuery("pragma wal_checkpoint(full)");
+
         // sync wal files into database
-        transactionViewModel.checkpoint(new SimpleSQLiteQuery("pragma wal_checkpoint(full)"))
+        transactionViewModel.checkpoint(checkPointQuery)
                 // on changed
                 .observe(this, (Integer integer) -> {
         });

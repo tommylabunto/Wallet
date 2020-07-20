@@ -24,10 +24,10 @@ import com.google.android.material.snackbar.Snackbar;
 import com.xingtingkai.wallet.adapter.SearchTransactionAdapter;
 import com.xingtingkai.wallet.db.entity.Transaction;
 import com.xingtingkai.wallet.db.viewmodel.TransactionViewModel;
-import com.xingtingkai.wallet.helper.DateFormatter;
 import com.xingtingkai.wallet.helper.SearchSuggestionProvider;
 
-import java.util.Date;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.List;
 
 public class SearchTransactionActivity extends AppCompatActivity {
@@ -76,7 +76,8 @@ public class SearchTransactionActivity extends AppCompatActivity {
             goToAddEditTransaction.putExtra(AddEditTransactionActivity.EXTRA_ID, transaction.getTransactionId());
             goToAddEditTransaction.putExtra(AddEditTransactionActivity.EXTRA_NAME, transaction.getName());
             goToAddEditTransaction.putExtra(AddEditTransactionActivity.EXTRA_TYPENAME, transaction.getTypeName());
-            goToAddEditTransaction.putExtra(AddEditTransactionActivity.EXTRA_DATE, DateFormatter.formatDateToString(transaction.getDate()));
+            goToAddEditTransaction.putExtra(AddEditTransactionActivity.EXTRA_INSTANT, transaction.getInstant().getEpochSecond());
+            goToAddEditTransaction.putExtra(AddEditTransactionActivity.EXTRA_ZONE_ID, transaction.getZoneId().getId());
             goToAddEditTransaction.putExtra(AddEditTransactionActivity.EXTRA_VALUE, transaction.getValue());
             goToAddEditTransaction.putExtra(AddEditTransactionActivity.EXTRA_IS_EXPENSE_TYPE, transaction.isExpenseTransaction());
             startActivityForResult(goToAddEditTransaction, EDIT_TRANSACTION_ACTIVITY_REQUEST_CODE);
@@ -90,8 +91,10 @@ public class SearchTransactionActivity extends AppCompatActivity {
         searchNameSb.append(query);
         searchNameSb.append("%");
 
+        String searchName = searchNameSb.toString();
+
         // on changed
-        transactionViewModel.searchAllTransactions(searchNameSb.toString()).observe(this,
+        transactionViewModel.searchAllTransactions(searchName).observe(this,
                 (@Nullable final List<Transaction> transactions) -> {
             // Update the cached copy of the words in the transactionAdapter.
             searchTransactionAdapter.submitList(transactions);
@@ -199,8 +202,11 @@ public class SearchTransactionActivity extends AppCompatActivity {
         String typeName = data.getStringExtra(AddEditTransactionActivity.EXTRA_TYPENAME);
         double value = data.getDoubleExtra(AddEditTransactionActivity.EXTRA_VALUE, 1);
 
-        String dateString = data.getStringExtra(AddEditTransactionActivity.EXTRA_DATE);
-        Date date = DateFormatter.formatStringToDate(dateString);
+        String zoneIdString = data.getStringExtra(AddEditRepeatTransactionActivity.EXTRA_ZONE_ID);
+        ZoneId zoneId = ZoneId.of(zoneIdString);
+
+        long instantLong = data.getLongExtra(AddEditTransactionActivity.EXTRA_INSTANT, 0L);
+        Instant instant = Instant.ofEpochSecond(instantLong);
 
         boolean isExpenseType = data.getBooleanExtra(AddEditTransactionActivity.EXTRA_IS_EXPENSE_TYPE, true);
 
@@ -209,7 +215,7 @@ public class SearchTransactionActivity extends AppCompatActivity {
 //        if (id != 0) {
 //            transaction.setTransactionId(id);
 //        }
-        return Transaction.createNonRecurringTransaction(id, date, value, name, typeName, isExpenseType);
+        return Transaction.createNonRecurringTransaction(id, instant, zoneId, value, name, typeName, isExpenseType);
     }
 
     @Override

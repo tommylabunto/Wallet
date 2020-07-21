@@ -8,7 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,6 +26,8 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class RepeatTransactionActivity extends AppCompatActivity {
 
@@ -33,7 +35,6 @@ public class RepeatTransactionActivity extends AppCompatActivity {
     protected static final int EDIT_TRANSACTION_ACTIVITY_REQUEST_CODE = 2;
 
     private TransactionViewModel transactionViewModel;
-    private TypeViewModel typeViewModel;
 
     private RepeatTransactionAdapter repeatExpenseTransactionAdapter;
     private RepeatTransactionAdapter repeatIncomeTransactionAdapter;
@@ -79,7 +80,8 @@ public class RepeatTransactionActivity extends AppCompatActivity {
 
     private void initViewModels() {
 
-        transactionViewModel = ViewModelProviders.of(this).get(TransactionViewModel.class);
+        transactionViewModel = new ViewModelProvider(this).get(TransactionViewModel.class);
+//        transactionViewModel = ViewModelProviders.of(this).get(TransactionViewModel.class);
 
         long todayEpochSeconds = ZonedDateTime.now().toEpochSecond();
 
@@ -160,23 +162,41 @@ public class RepeatTransactionActivity extends AppCompatActivity {
             startActivityForResult(goToAddEditRepeatTransaction, EDIT_TRANSACTION_ACTIVITY_REQUEST_CODE);
         });
 
-        typeViewModel = ViewModelProviders.of(this).get(TypeViewModel.class);
+        TypeViewModel typeViewModel = new ViewModelProvider(this).get(TypeViewModel.class);
+
+//        TypeViewModel typeViewModel = ViewModelProviders.of(this).get(TypeViewModel.class);
 
         // on changed
-        typeViewModel.getAllTypesString().observe(this, (@Nullable final List<String> types) -> {
+//        typeViewModel.getAllTypesString().observe(this, (@Nullable final List<String> types) -> {
+//            if (types != null && types.size() == 0) {
+//                WalletDatabase.addTypes();
+//            }
+//        });
+
+        Future<List<String>> typesFuture =typeViewModel.getAllTypesStringTemp();
+
+        try {
+            List<String> types = typesFuture.get();
+
             if (types != null && types.size() == 0) {
                 WalletDatabase.addTypes();
             }
-        });
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 
-    private ImmutableList<Transaction> deepCopyDistinctTransaction(List<Transaction> transactions) {
+    private ImmutableList<Transaction> deepCopyDistinctTransaction(@Nullable List<Transaction> transactions) {
 
         ImmutableList.Builder<Transaction> tempDistinctTransactions = new ImmutableList.Builder<>();
 
         String recurringId = "";
 
-        int arraySize = transactions.size();
+        int arraySize = 0;
+
+        if (transactions != null) {
+            arraySize = transactions.size();
+        }
 
         for (int i = 0; i < arraySize; i++) {
 
@@ -205,9 +225,10 @@ public class RepeatTransactionActivity extends AppCompatActivity {
 
             if (requestCode == ADD_TRANSACTION_ACTIVITY_REQUEST_CODE) {
 
-                // create transaction
-                if (data.getStringExtra(AddEditRepeatTransactionActivity.EXTRA_OPERATION).equals("save")) {
+                String operation = data.getStringExtra(AddEditRepeatTransactionActivity.EXTRA_OPERATION);
 
+                // create transaction
+                if (operation != null && operation.equals("save")) {
                     Transaction transaction = extractDataToTransaction(data, 0L);
                     addRecurringTransactions(transaction);
                 }
@@ -220,14 +241,14 @@ public class RepeatTransactionActivity extends AppCompatActivity {
 
                 Transaction transaction = extractDataToTransaction(data, id);
 
-                // update transaction
-                if (data.getStringExtra(AddEditRepeatTransactionActivity.EXTRA_OPERATION).equals("save")) {
-                    updateRecurringTransactions(transaction);
+                String operation = data.getStringExtra(AddEditRepeatTransactionActivity.EXTRA_OPERATION);
 
-                    // delete transaction
-                    // cannot recover deleted recurring transactions
-                } else {
-                    deleteRecurringTransactions(transaction);
+                if (operation != null) {
+                    if (operation.equals("save")) {
+                        updateRecurringTransactions(transaction);
+                    } else {
+                        deleteRecurringTransactions(transaction);
+                    }
                 }
             }
         }
@@ -237,6 +258,24 @@ public class RepeatTransactionActivity extends AppCompatActivity {
 
         Snackbar snackbar = Snackbar.make(coordinatorLayout, message, Snackbar.LENGTH_LONG);
         snackbar.show();
+    }
+
+    // doesn't update the list of recurring transactions, but delete and create a new list
+    private void updateRecurringTransactions(Transaction transaction) {
+
+        deleteRecurringTransactions(transaction);
+
+        addRecurringTransactions(transaction);
+    }
+
+    private void deleteRecurringTransactions(Transaction transaction) {
+
+        long transactionEpochSecond = transaction.getInstant().getEpochSecond();
+
+        transactionViewModel.deleteFutureRecurringTransactions(
+                transaction.getTransactionRecurringId(), transactionEpochSecond);
+
+        transactionViewModel.deleteTransaction(transaction);
     }
 
     private void addRecurringTransactions(Transaction transaction) {
@@ -293,24 +332,6 @@ public class RepeatTransactionActivity extends AppCompatActivity {
         }
     }
 
-    // doesn't update the list of recurring transactions, but delete and create a new list
-    private void updateRecurringTransactions(Transaction transaction) {
-
-        deleteRecurringTransactions(transaction);
-
-        addRecurringTransactions(transaction);
-    }
-
-    private void deleteRecurringTransactions(Transaction transaction) {
-
-        long transactionEpochSecond = transaction.getInstant().getEpochSecond();
-
-        transactionViewModel.deleteFutureRecurringTransactions(
-                transaction.getTransactionRecurringId(), transactionEpochSecond);
-
-        transactionViewModel.deleteTransaction(transaction);
-    }
-
     private int countRemainingRepeat(int count, int repeat, int frequency) {
 
         // minus 1 year
@@ -324,14 +345,21 @@ public class RepeatTransactionActivity extends AppCompatActivity {
     private Transaction extractDataToTransaction(Intent data, long id) {
 
         String name = data.getStringExtra(AddEditRepeatTransactionActivity.EXTRA_NAME);
+
+        if (name == null) {
+            name = "";
+        }
+
         String typeName = data.getStringExtra(AddEditRepeatTransactionActivity.EXTRA_TYPENAME);
+
+        if (typeName == null) {
+            typeName = "";
+        }
+
         double value = data.getDoubleExtra(AddEditRepeatTransactionActivity.EXTRA_VALUE, 1);
 
         String zoneIdString = data.getStringExtra(AddEditRepeatTransactionActivity.EXTRA_ZONE_ID);
         ZoneId zoneId = ZoneId.of(zoneIdString);
-
-//        String dateString = data.getStringExtra(AddEditRepeatTransactionActivity.EXTRA_INSTANT);
-//        Instant instant = DateFormatter.formatStringToInstant(dateString, zoneId);
 
         long instantLong = data.getLongExtra(AddEditRepeatTransactionActivity.EXTRA_INSTANT, 0L);
         Instant instant = Instant.ofEpochSecond(instantLong);
@@ -340,6 +368,10 @@ public class RepeatTransactionActivity extends AppCompatActivity {
         int numOfRepeat = data.getIntExtra(AddEditRepeatTransactionActivity.EXTRA_REPEAT, 1);
 
         String recurringId = data.getStringExtra(AddEditRepeatTransactionActivity.EXTRA_RECURRING_ID);
+
+        if (recurringId == null) {
+            recurringId = "";
+        }
 
         boolean isExpenseType = data.getBooleanExtra(AddEditTransactionActivity.EXTRA_IS_EXPENSE_TYPE, true);
 

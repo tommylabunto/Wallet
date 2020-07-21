@@ -9,6 +9,7 @@ import com.xingtingkai.wallet.db.entity.MonthlyBudget;
 import com.xingtingkai.wallet.db.repository.MonthlyBudgetRepository;
 
 import java.util.List;
+import java.util.concurrent.Future;
 
 public class MonthlyBudgetViewModel extends AndroidViewModel {
 
@@ -55,5 +56,9 @@ public class MonthlyBudgetViewModel extends AndroidViewModel {
 
     public void updateAllFutureMonthlyBudgets(long monthlyBudgetId, double budget) {
         monthlyBudgetRepository.updateAllFutureMonthlyBudgets(monthlyBudgetId, budget);
+    }
+
+    public Future<MonthlyBudget> getMonthlyBudgetTemp(int year, int month) {
+        return monthlyBudgetRepository.getMonthlyBudgetTemp(year, month);
     }
 }

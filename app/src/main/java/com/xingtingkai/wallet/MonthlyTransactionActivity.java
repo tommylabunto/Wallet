@@ -20,7 +20,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -36,6 +36,8 @@ import java.math.RoundingMode;
 import java.time.Month;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class MonthlyTransactionActivity extends AppCompatActivity {
 
@@ -134,7 +136,6 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
                 .withDayOfMonth(startMonthDate.getMonth().maxLength());
 
         int yearInt = startMonthDate.getYear();
-        // month uses 1 (jan) to 12 (dec)
         Month month = startMonthDate.getMonth();
         // originally is all caps
         String monthString = month.name().substring(0,1) + month.name().substring(1,3).toLowerCase();
@@ -148,12 +149,10 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
 
         initStartEndCal();
 
-        transactionViewModel = ViewModelProviders.of(this).get(TransactionViewModel.class);
-
+        transactionViewModel = new ViewModelProvider(this).get(TransactionViewModel.class);
         updateTransactionsInAMonth();
 
-        monthlyBudgetViewModel = ViewModelProviders.of(this).get(MonthlyBudgetViewModel.class);
-
+        monthlyBudgetViewModel = new ViewModelProvider(this).get(MonthlyBudgetViewModel.class);
         updateMonthlyBudget();
     }
 
@@ -164,6 +163,16 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
 
         // on changed
         monthlyBudgetViewModel.getMonthlyBudget(year, month).observe(this, this::updateTextViewBudget);
+
+        Future<MonthlyBudget> monthlyBudgetFuture = monthlyBudgetViewModel.getMonthlyBudgetTemp(year, month);
+
+        try {
+            MonthlyBudget monthlyBudget = monthlyBudgetFuture.get();
+
+            updateTextViewBudget(monthlyBudget);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 
     private void updateTextViewBudget(MonthlyBudget tempMonthlyBudget) {
@@ -228,11 +237,21 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
                 .observe(this, (@Nullable final List<Transaction> transactions) -> {
             // Update the cached copy of the words in the transactionAdapter.
             monthlyTransactionAdapter.submitList(transactions);
-            analyzeTransactions(transactions);
+            // analyzeTransactions(transactions);
         });
 
+        Future<Double> totalExpensesFuture = transactionViewModel.calculateExpensesInAMonth(startMonthDateEpoch, endMonthDateEpoch);
+
+        try {
+            double totalExpenses = totalExpensesFuture.get();
+
+            updateTextViewTotalExpenses(totalExpenses);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+
+
         int yearInt = startMonthDate.getYear();
-        // month uses 1 (jan) to 12 (dec)
         Month month = startMonthDate.getMonth();
         // originally is all caps
         String monthString = month.name().substring(0,1) + month.name().substring(1,3).toLowerCase();
@@ -242,20 +261,23 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
         textViewMonth.setText(monthString);
     }
 
-    private void analyzeTransactions(List<Transaction> transactions) {
+    private void updateTextViewTotalExpenses(double totalExpenses) {
 
-        double totalExpenses = 0;
-
-        int arraySize = transactions.size();
-
-        for (int i = 0; i < arraySize; i++) {
-
-            Transaction transaction = transactions.get(i);
-
-            if (transaction.isExpenseTransaction()) {
-                totalExpenses += transaction.getValue();
-            }
-        }
+//        double totalExpenses = 0;
+//        int arraySize = 0;
+//
+//        if (transactions != null) {
+//            arraySize = transactions.size();
+//        }
+//
+//        for (int i = 0; i < arraySize; i++) {
+//
+//            Transaction transaction = transactions.get(i);
+//
+//            if (transaction.isExpenseTransaction()) {
+//                totalExpenses += transaction.getValue();
+//            }
+//        }
 
         // round up to 2.d.p
         BigDecimal totalAmountBd = new BigDecimal(totalExpenses).setScale(2, RoundingMode.HALF_UP);

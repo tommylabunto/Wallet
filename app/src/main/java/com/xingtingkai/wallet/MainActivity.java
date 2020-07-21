@@ -15,13 +15,12 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -39,6 +38,8 @@ import java.time.Month;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
     // save or delete
     protected static final int EDIT_TRANSACTION_ACTIVITY_REQUEST_CODE = 2;
 
-    private TypeViewModel typeViewModel;
     private TransactionViewModel transactionViewModel;
 
     private TransactionAdapter transactionAdapter;
@@ -148,12 +148,9 @@ public class MainActivity extends AppCompatActivity {
                 .withDayOfMonth(startMonthDate.getMonth().maxLength());
 
         int yearInt = startMonthDate.getYear();
-        // int monthInt = startMonthDate.getMonth().getValue();
-        // month uses 1 (jan) to 12 (dec)
-        // Month month = Month.of(monthInt + 1);
         Month month = startMonthDate.getMonth();
         // originally is all caps
-        String monthString = month.name().substring(0,1) + month.name().substring(1,3).toLowerCase();
+        String monthString = month.name().substring(0, 1) + month.name().substring(1, 3).toLowerCase();
 
         String year = getString(R.string.single_string_param, yearInt + "");
         textViewYear.setText(year);
@@ -164,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
 
         initStartEndCal();
 
-        transactionViewModel = ViewModelProviders.of(this).get(TransactionViewModel.class);
+        transactionViewModel = new ViewModelProvider(this).get(TransactionViewModel.class);
 
         updateTransactionsInAMonth();
         updateTextView();
@@ -184,14 +181,26 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(goToAddEditTransaction, EDIT_TRANSACTION_ACTIVITY_REQUEST_CODE);
         });
 
-        typeViewModel = ViewModelProviders.of(this).get(TypeViewModel.class);
+        TypeViewModel typeViewModel = new ViewModelProvider(this).get(TypeViewModel.class);
 
         // on changed
-        typeViewModel.getAllTypesString().observe(this, (@Nullable final List<String> types) -> {
+//        typeViewModel.getAllTypesString().observe(this, (@Nullable final List<String> types) -> {
+//            if (types != null && types.size() == 0) {
+//                WalletDatabase.addTypes();
+//            }
+//        });
+
+        Future<List<String>> typesFuture = typeViewModel.getAllTypesStringTemp();
+
+        try {
+            List<String> types = typesFuture.get();
+
             if (types != null && types.size() == 0) {
                 WalletDatabase.addTypes();
             }
-        });
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 
     private void updateTransactionsInAMonth() {
@@ -203,21 +212,18 @@ public class MainActivity extends AppCompatActivity {
         // on changed
         transactionViewModel.getAllTransactionsInAMonth(startMonthDateEpoch, endMonthDateEpoch)
                 .observe(this, transactions -> {
-            // Update the cached copy of the words in the transactionAdapter.
-            transactionAdapter.submitList(transactions);
-            transactionAdapter.passTransactions(transactions);
-        });
+                    // Update the cached copy of the words in the transactionAdapter.
+                    transactionAdapter.submitList(transactions);
+                    transactionAdapter.passTransactions(transactions);
+                });
     }
 
     private void updateTextView() {
 
         int yearInt = startMonthDate.getYear();
-        // int monthInt = startMonthDate.getMonth().getValue();
-        // month uses 1 (jan) to 12 (dec)
-        // Month month = Month.of(monthInt + 1);
         Month month = startMonthDate.getMonth();
         // originally is all caps
-        String monthString = month.name().substring(0,1) + month.name().substring(1,3).toLowerCase();
+        String monthString = month.name().substring(0, 1) + month.name().substring(1, 3).toLowerCase();
 
         String year = getString(R.string.single_string_param, yearInt + "");
         textViewYear.setText(year);
@@ -233,8 +239,10 @@ public class MainActivity extends AppCompatActivity {
 
             if (requestCode == ADD_TRANSACTION_ACTIVITY_REQUEST_CODE) {
 
+                String operation = data.getStringExtra(AddEditTransactionActivity.EXTRA_OPERATION);
+
                 // create transaction
-                if (data.getStringExtra(AddEditTransactionActivity.EXTRA_OPERATION).equals("save")) {
+                if (operation != null && operation.equals("save")) {
                     Transaction transaction = extractDataToTransaction(data, 0L);
                     transactionViewModel.insertTransaction(transaction);
                     reload();
@@ -248,15 +256,14 @@ public class MainActivity extends AppCompatActivity {
 
                 Transaction transaction = extractDataToTransaction(data, id);
 
-                // update transaction
-                if (data.getStringExtra(AddEditTransactionActivity.EXTRA_OPERATION).equals("save")) {
+                String operation = data.getStringExtra(AddEditTransactionActivity.EXTRA_OPERATION);
 
-                    transactionViewModel.updateTransaction(transaction);
-                    reload();
-
-                    // delete transaction
-                } else {
-                    transactionViewModel.deleteTransaction(transaction);
+                if (operation != null) {
+                    if (operation.equals("save")) {
+                        transactionViewModel.updateTransaction(transaction);
+                    } else {
+                        transactionViewModel.deleteTransaction(transaction);
+                    }
                     reload();
                 }
             }
@@ -279,7 +286,17 @@ public class MainActivity extends AppCompatActivity {
     private Transaction extractDataToTransaction(Intent data, long id) {
 
         String name = data.getStringExtra(AddEditTransactionActivity.EXTRA_NAME);
+
+        if (name == null) {
+            name = "";
+        }
+
         String typeName = data.getStringExtra(AddEditTransactionActivity.EXTRA_TYPENAME);
+
+        if (typeName == null) {
+            typeName = "";
+        }
+
         double value = data.getDoubleExtra(AddEditTransactionActivity.EXTRA_VALUE, 1);
 
         String zoneIdString = data.getStringExtra(AddEditRepeatTransactionActivity.EXTRA_ZONE_ID);

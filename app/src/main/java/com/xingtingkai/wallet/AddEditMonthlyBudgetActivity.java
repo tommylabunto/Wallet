@@ -146,7 +146,12 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
         int budget = 0;
         boolean violate = false;
 
-        String budgetString = editTextBudget.getText().toString().trim();
+        Editable budgetEditable = editTextBudget.getText();
+        String budgetString = "";
+
+        if (budgetEditable != null) {
+            budgetString = budgetEditable.toString().trim();
+        }
 
         if (!budgetString.isEmpty()) {
             budget = Integer.parseInt(budgetString);
@@ -205,7 +210,12 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
         int budget = 0;
 
         String yearString = textViewYear.getText().toString().trim();
-        String budgetString = editTextBudget.getText().toString().trim();
+        Editable budgetEditable = editTextBudget.getText();
+        String budgetString = "";
+
+        if (budgetEditable != null) {
+            budgetString = budgetEditable.toString().trim();
+        }
 
         if (!yearString.isEmpty()) {
             year = Integer.parseInt(yearString);

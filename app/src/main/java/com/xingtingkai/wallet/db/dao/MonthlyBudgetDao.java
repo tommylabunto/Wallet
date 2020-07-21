@@ -26,6 +26,9 @@ public interface MonthlyBudgetDao {
     @Query("SELECT monthlyBudgetId, budget, year, month FROM monthlyBudget WHERE year = :year AND month = :month")
     public LiveData<MonthlyBudget> getMonthlyBudget(int year, int month);
 
+    @Query("SELECT monthlyBudgetId, budget, year, month FROM monthlyBudget WHERE year = :year AND month = :month")
+    public MonthlyBudget getMonthlyBudgetTemp(int year, int month);
+
     @Query("UPDATE monthlyBudget SET budget = :budget")
     public void updateAllMonthlyBudgets(double budget);
 

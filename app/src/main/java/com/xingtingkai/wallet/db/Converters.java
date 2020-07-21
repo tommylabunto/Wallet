@@ -17,7 +17,6 @@ public class Converters {
         return instant == null ? null : instant.getEpochSecond();
     }
 
-
     @TypeConverter
     public static ZoneId fromEpoch(String value) {
         return value == null ? null : ZoneId.of(value);

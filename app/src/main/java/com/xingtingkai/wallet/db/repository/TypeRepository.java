@@ -9,6 +9,7 @@ import com.xingtingkai.wallet.db.dao.TypeDao;
 import com.xingtingkai.wallet.db.entity.Type;
 
 import java.util.List;
+import java.util.concurrent.Future;
 
 public class TypeRepository {
 
@@ -29,6 +30,11 @@ public class TypeRepository {
         return allTypesString;
     }
 
+    public Future<List<String>> getAllTypesStringTemp() {
+        return WalletDatabase.databaseWriteExecutor
+                .submit(typeDao::getAllTypesStringTemp);
+    }
+
     public LiveData<List<Type>> getAllTypes() {
         return allTypes;
     }
@@ -39,6 +45,16 @@ public class TypeRepository {
 
     public LiveData<List<Type>> getAllIncomeTypes() {
         return typeDao.getAllIncomeTypes();
+    }
+
+    public Future<List<String>> getAllExpenseTypesString() {
+        return WalletDatabase.databaseWriteExecutor
+                .submit(typeDao::getAllExpenseTypesString);
+    }
+
+    public Future<List<String>> getAllIncomeTypesString() {
+        return WalletDatabase.databaseWriteExecutor
+                .submit(typeDao::getAllIncomeTypesString);
     }
 
     // You must call this on a non-UI thread or your app will throw an exception. Room ensures

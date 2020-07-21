@@ -10,6 +10,7 @@ import com.xingtingkai.wallet.db.dao.TransactionDao;
 import com.xingtingkai.wallet.db.entity.Transaction;
 
 import java.util.List;
+import java.util.concurrent.Future;
 
 public class TransactionRepository {
 
@@ -75,12 +76,7 @@ public class TransactionRepository {
     }
 
     public LiveData<Transaction> getTransaction(long transactionId) {
-
         return transactionDao.getTransaction(transactionId);
-
-//        WalletDatabase.databaseWriteExecutor.execute(() -> {
-//            transactionDao.getTransaction(transactionId);
-//        });
     }
 
     public void deleteAllRecurringTransactions(double value, String name, String typeName, int frequency) {
@@ -93,11 +89,22 @@ public class TransactionRepository {
                 transactionDao.deleteFutureRecurringTransactions(transactionRecurringId, milliseconds));
     }
 
-    public LiveData<Integer> checkpoint(SupportSQLiteQuery supportSQLiteQuery) {
-        return transactionDao.checkpoint(supportSQLiteQuery);
+    public Future<Integer> checkpoint(SupportSQLiteQuery supportSQLiteQuery) {
+        return WalletDatabase.databaseWriteExecutor
+                .submit(() -> transactionDao.checkpoint(supportSQLiteQuery));
     }
 
     public LiveData<List<String>> getAllTransactionNameString() {
         return transactionDao.getAllTransactionNameString();
+    }
+
+    public Future<List<String>> getAllTransactionNameStringTemp() {
+        return WalletDatabase.databaseWriteExecutor
+                .submit(transactionDao::getAllTransactionNameStringTemp);
+    }
+
+    public Future<Double> calculateExpensesInAMonth(long epochSecondsStart, long epochSecondsEnd){
+        return WalletDatabase.databaseWriteExecutor
+                .submit(() -> transactionDao.calculateExpensesInAMonth(epochSecondsStart, epochSecondsEnd));
     }
 }

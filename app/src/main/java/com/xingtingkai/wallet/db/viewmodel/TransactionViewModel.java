@@ -10,6 +10,7 @@ import com.xingtingkai.wallet.db.entity.Transaction;
 import com.xingtingkai.wallet.db.repository.TransactionRepository;
 
 import java.util.List;
+import java.util.concurrent.Future;
 
 public class TransactionViewModel extends AndroidViewModel {
 
@@ -84,11 +85,19 @@ public class TransactionViewModel extends AndroidViewModel {
         transactionRepository.deleteFutureRecurringTransactions(transactionRecurringId, milliseconds);
     }
 
-    public LiveData<Integer> checkpoint(SupportSQLiteQuery supportSQLiteQuery) {
+    public Future<Integer> checkpoint(SupportSQLiteQuery supportSQLiteQuery) {
         return transactionRepository.checkpoint(supportSQLiteQuery);
     }
 
     public LiveData<List<String>> getAllTransactionNameString() {
         return transactionRepository.getAllTransactionNameString();
+    }
+
+    public Future<List<String>> getAllTransactionNameStringTemp() {
+        return transactionRepository.getAllTransactionNameStringTemp();
+    }
+
+    public Future<Double> calculateExpensesInAMonth(long epochSecondsStart, long epochSecondsEnd){
+        return transactionRepository.calculateExpensesInAMonth(epochSecondsStart, epochSecondsEnd);
     }
 }

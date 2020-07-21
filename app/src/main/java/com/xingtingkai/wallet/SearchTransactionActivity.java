@@ -8,7 +8,6 @@ import android.provider.SearchRecentSuggestions;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -16,11 +15,10 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.xingtingkai.wallet.adapter.SearchTransactionAdapter;
 import com.xingtingkai.wallet.db.entity.Transaction;
 import com.xingtingkai.wallet.db.viewmodel.TransactionViewModel;
@@ -67,7 +65,8 @@ public class SearchTransactionActivity extends AppCompatActivity {
 
     private void initViewModel() {
 
-        transactionViewModel = ViewModelProviders.of(this).get(TransactionViewModel.class);
+        transactionViewModel = new ViewModelProvider(this).get(TransactionViewModel.class);
+//        transactionViewModel = ViewModelProviders.of(this).get(TransactionViewModel.class);
 
         // when click on item in recycler view -> populate data and open up to edit
         // on item click
@@ -142,17 +141,19 @@ public class SearchTransactionActivity extends AppCompatActivity {
 
                 Transaction transaction = extractDataToTransaction(data, id);
 
+                String operation = data.getStringExtra(AddEditTransactionActivity.EXTRA_OPERATION);
+
                 // update transaction
-                if (data.getStringExtra(AddEditTransactionActivity.EXTRA_OPERATION).equals("save")) {
-
-                    transactionViewModel.updateTransaction(transaction);
-                    reload();
-                    Toast.makeText(this, "Transaction updated", Toast.LENGTH_SHORT).show();
-
-                    // delete transaction
-                } else {
-                    transactionViewModel.deleteTransaction(transaction);
-                    //showSnackbar(transaction);
+                if (operation != null) {
+                    if (operation.equals("save")) {
+                        transactionViewModel.updateTransaction(transaction);
+                        reload();
+                    }
+                    else {
+                        // delete transaction
+                        transactionViewModel.deleteTransaction(transaction);
+                        //showSnackbar(transaction);
+                    }
                 }
             }
         }
@@ -165,41 +166,51 @@ public class SearchTransactionActivity extends AppCompatActivity {
         overridePendingTransition(0, 0);
     }
 
-    private void showSnackbar(Transaction transaction) {
-
-        final int isClicked = 0;
-
-        Snackbar snackbar = Snackbar.make(coordinatorLayout, "Transaction deleted", Snackbar.LENGTH_LONG)
-                // on click
-                .setAction("UNDO", (View v) -> {
-                    // insert back
-                    transactionViewModel.insertTransaction(transaction);
-                    reload();
-
-                    Snackbar snackbar1 = Snackbar.make(coordinatorLayout, "Undo successful", Snackbar.LENGTH_SHORT);
-                    snackbar1.show();
-                })
-                .addCallback(new Snackbar.Callback() {
-
-                    @Override
-                    public void onDismissed(Snackbar snackbar, int event) {
-                        //see Snackbar.Callback docs for event details
-                        showToast();
-                        reload();
-                    }
-                });
-
-        snackbar.show();
-    }
-
-    private void showToast() {
-        Toast.makeText(this, "Reloading", Toast.LENGTH_SHORT).show();
-    }
+//    private void showSnackbar(Transaction transaction) {
+//
+//        final int isClicked = 0;
+//
+//        Snackbar snackbar = Snackbar.make(coordinatorLayout, "Transaction deleted", Snackbar.LENGTH_LONG)
+//                // on click
+//                .setAction("UNDO", (View v) -> {
+//                    // insert back
+//                    transactionViewModel.insertTransaction(transaction);
+//                    reload();
+//
+//                    Snackbar snackbar1 = Snackbar.make(coordinatorLayout, "Undo successful", Snackbar.LENGTH_SHORT);
+//                    snackbar1.show();
+//                })
+//                .addCallback(new Snackbar.Callback() {
+//
+//                    @Override
+//                    public void onDismissed(Snackbar snackbar, int event) {
+//                        //see Snackbar.Callback docs for event details
+//                        showToast();
+//                        reload();
+//                    }
+//                });
+//
+//        snackbar.show();
+//    }
+//
+//    private void showToast() {
+//        Toast.makeText(this, "Reloading", Toast.LENGTH_SHORT).show();
+//    }
 
     private Transaction extractDataToTransaction(Intent data, long id) {
 
         String name = data.getStringExtra(AddEditTransactionActivity.EXTRA_NAME);
+
+        if (name == null) {
+            name = "";
+        }
+
         String typeName = data.getStringExtra(AddEditTransactionActivity.EXTRA_TYPENAME);
+
+        if (typeName == null) {
+            typeName = "";
+        }
+
         double value = data.getDoubleExtra(AddEditTransactionActivity.EXTRA_VALUE, 1);
 
         String zoneIdString = data.getStringExtra(AddEditRepeatTransactionActivity.EXTRA_ZONE_ID);
@@ -210,11 +221,6 @@ public class SearchTransactionActivity extends AppCompatActivity {
 
         boolean isExpenseType = data.getBooleanExtra(AddEditTransactionActivity.EXTRA_IS_EXPENSE_TYPE, true);
 
-//        Transaction transaction = new Transaction(date, value, name, typeName, isExpenseType);
-
-//        if (id != 0) {
-//            transaction.setTransactionId(id);
-//        }
         return Transaction.createNonRecurringTransaction(id, instant, zoneId, value, name, typeName, isExpenseType);
     }
 

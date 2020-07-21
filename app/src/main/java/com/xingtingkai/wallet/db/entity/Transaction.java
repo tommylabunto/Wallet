@@ -76,12 +76,12 @@ public abstract class Transaction {
     public abstract boolean isExpenseTransaction();
 
     @Ignore
-    public static Transaction createNonRecurringTransaction(long transactionId, Instant instant, ZoneId zoneId, double value, String name, String typeName, boolean expenseTransaction) {
+    public static Transaction createNonRecurringTransaction(long transactionId, @NonNull Instant instant, @NonNull ZoneId zoneId, double value, @NonNull String name, @NonNull String typeName, boolean expenseTransaction) {
         return createTransaction(transactionId, "", instant, zoneId, value, name, typeName, false, 1, 0, expenseTransaction);
     }
 
     @Ignore
-    public static Transaction createRecurringTransaction(long transactionId, String transactionRecurringId, Instant instant, ZoneId zoneId, double value, String name, String typeName, int frequency, int numOfRepeat, boolean expenseTransaction) {
+    public static Transaction createRecurringTransaction(long transactionId, @NonNull String transactionRecurringId, @NonNull Instant instant, @NonNull ZoneId zoneId, double value, @NonNull String name, @NonNull String typeName, int frequency, int numOfRepeat, boolean expenseTransaction) {
         return createTransaction(transactionId, transactionRecurringId, instant, zoneId, value, name, typeName, true, frequency, numOfRepeat, expenseTransaction);
     }
 

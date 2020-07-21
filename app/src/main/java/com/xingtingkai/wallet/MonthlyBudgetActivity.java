@@ -10,7 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,9 +32,6 @@ public class MonthlyBudgetActivity extends AppCompatActivity {
     private MonthlyBudgetAdapter monthlyBudgetAdapter;
 
     private CoordinatorLayout coordinatorLayout;
-
-    private ImageButton prevYear;
-    private ImageButton nextYear;
 
     private TextView textViewYear;
 
@@ -63,14 +60,14 @@ public class MonthlyBudgetActivity extends AppCompatActivity {
 
         coordinatorLayout = findViewById(R.id.monthlyBudgetActivity);
 
-        prevYear = findViewById(R.id.left_button);
+        ImageButton prevYear = findViewById(R.id.left_button);
         // on item click
         prevYear.setOnClickListener((View view) -> {
             zonedMonthDate = zonedMonthDate.minusYears(1);
             updateMonthlyBudgetsInAYear();
         });
 
-        nextYear = findViewById(R.id.right_button);
+        ImageButton nextYear = findViewById(R.id.right_button);
         // on item click
         nextYear.setOnClickListener((View view) -> {
             zonedMonthDate = zonedMonthDate.plusYears(1);
@@ -99,7 +96,8 @@ public class MonthlyBudgetActivity extends AppCompatActivity {
         String year = getString(R.string.single_string_param, yearInt + "");
         textViewYear.setText(year);
 
-        monthlyBudgetViewModel = ViewModelProviders.of(this).get(MonthlyBudgetViewModel.class);
+        monthlyBudgetViewModel = new ViewModelProvider(this).get(MonthlyBudgetViewModel.class);
+//        monthlyBudgetViewModel = ViewModelProviders.of(this).get(MonthlyBudgetViewModel.class);
 
         // on changed
         monthlyBudgetViewModel.getAllMonthlyBudgetsInAYear(yearInt).observe(this,
@@ -127,8 +125,10 @@ public class MonthlyBudgetActivity extends AppCompatActivity {
 
             if (requestCode == ADD_MONTHLY_BUDGET_ACTIVITY_REQUEST_CODE) {
 
+                String operation = data.getStringExtra(AddEditMonthlyBudgetActivity.EXTRA_OPERATION);
+
                 // create Monthly Budget
-                if (data.getStringExtra(AddEditMonthlyBudgetActivity.EXTRA_OPERATION).equals("save")) {
+                if (operation != null && operation.equals("save")) {
 
                     MonthlyBudget monthlyBudget = extractDataToMonthlyBudget(data, 0L);
                     monthlyBudgetViewModel.insertMonthlyBudget(monthlyBudget);
@@ -137,33 +137,34 @@ public class MonthlyBudgetActivity extends AppCompatActivity {
 
                 long id = data.getLongExtra(AddEditMonthlyBudgetActivity.EXTRA_ID, -1);
                 if (id == -1) {
-                    showSnackbar("budget cannot be updated");
+                    showSnackbarMessage("budget cannot be updated");
                 }
 
                 MonthlyBudget monthlyBudget = extractDataToMonthlyBudget(data, id);
 
-                // update Monthly Budget
-                if (data.getStringExtra(AddEditMonthlyBudgetActivity.EXTRA_OPERATION).equals("save")) {
-                    monthlyBudgetViewModel.updateMonthlyBudget(monthlyBudget);
+                String operation = data.getStringExtra(AddEditMonthlyBudgetActivity.EXTRA_OPERATION);
 
-                    // update all future Monthly Budget
-                }  else if (data.getStringExtra(AddEditMonthlyBudgetActivity.EXTRA_OPERATION).equals("save next")) {
-                    monthlyBudgetViewModel.updateAllFutureMonthlyBudgets(monthlyBudget.getMonthlyBudgetId(), monthlyBudget.getBudget());
-
-                    // update all
-                } else if (data.getStringExtra(AddEditMonthlyBudgetActivity.EXTRA_OPERATION).equals("save all")) {
-                    monthlyBudgetViewModel.updateAllMonthlyBudgets(monthlyBudget.getBudget());
-                }
-                // delete Monthly Budget
-                else {
-                    monthlyBudgetViewModel.deleteMonthlyBudget(monthlyBudget);
-                    //showSnackbar(monthlyBudget);
+                if (operation != null) {
+                    // update Monthly Budget
+                    switch (operation) {
+                        case "save next":
+                            monthlyBudgetViewModel.updateAllFutureMonthlyBudgets(monthlyBudget.getMonthlyBudgetId(), monthlyBudget.getBudget());
+                            break;
+                        case "save all":
+                            monthlyBudgetViewModel.updateAllMonthlyBudgets(monthlyBudget.getBudget());
+                            break;
+                        default:
+                            monthlyBudgetViewModel.updateMonthlyBudget(monthlyBudget);
+                            // monthlyBudgetViewModel.deleteMonthlyBudget(monthlyBudget);
+                            //showSnackbar(monthlyBudget);
+                            break;
+                    }
                 }
             }
         }
     }
 
-    private void showSnackbar(String message) {
+    private void showSnackbarMessage(String message) {
 
         Snackbar snackbar = Snackbar.make(coordinatorLayout, message, Snackbar.LENGTH_LONG);
 
@@ -176,24 +177,21 @@ public class MonthlyBudgetActivity extends AppCompatActivity {
         int year = data.getIntExtra(AddEditMonthlyBudgetActivity.EXTRA_YEAR, 0);
         int month = data.getIntExtra(AddEditMonthlyBudgetActivity.EXTRA_MONTH, 0);
 
- //        if (id != 0) {
-//            monthlyBudget.setMonthlyBudgetId(id);
-//        }
         return MonthlyBudget.create(id, budget, year, month);
     }
 
-    private void showSnackbar(MonthlyBudget monthlyBudget) {
-
-        Snackbar snackbar = Snackbar.make(coordinatorLayout, "Monthly Budget deleted", Snackbar.LENGTH_LONG)
-                // on click
-                .setAction("UNDO", (View v) -> {
-                    // insert back
-                    monthlyBudgetViewModel.insertMonthlyBudget(monthlyBudget);
-
-                    Snackbar snackbar1 = Snackbar.make(coordinatorLayout, "Undo successful", Snackbar.LENGTH_SHORT);
-                    snackbar1.show();
-                });
-
-        snackbar.show();
-    }
+//    private void showSnackbar(MonthlyBudget monthlyBudget) {
+//
+//        Snackbar snackbar = Snackbar.make(coordinatorLayout, "Monthly Budget deleted", Snackbar.LENGTH_LONG)
+//                // on click
+//                .setAction("UNDO", (View v) -> {
+//                    // insert back
+//                    monthlyBudgetViewModel.insertMonthlyBudget(monthlyBudget);
+//
+//                    Snackbar snackbar1 = Snackbar.make(coordinatorLayout, "Undo successful", Snackbar.LENGTH_SHORT);
+//                    snackbar1.show();
+//                });
+//
+//        snackbar.show();
+//    }
 }

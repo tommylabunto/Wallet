@@ -88,4 +88,6 @@
         <item>@string/Annually</item>
     </string-array>
 
+    <!-- app name-->
+    <string name="full_app_name">com.xingtingkai.wallet</string>
 </resources>

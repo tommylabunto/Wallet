@@ -75,7 +75,6 @@ public class MonthlyBudgetAdapter extends ListAdapter<MonthlyBudget, MonthlyBudg
         String budget = mInflater.getContext().getString(R.string.single_string_param, monthlyBudget.getBudget() + "");
         holder.textViewBudget.setText(budget);
 
-        // month uses 1 (jan) to 12 (dec)
         Month month = Month.of(monthlyBudget.getMonth());
         // originally is all caps
         String monthString = month.name().substring(0,1) + month.name().substring(1).toLowerCase();

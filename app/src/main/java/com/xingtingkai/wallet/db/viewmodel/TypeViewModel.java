@@ -9,6 +9,7 @@ import com.xingtingkai.wallet.db.entity.Type;
 import com.xingtingkai.wallet.db.repository.TypeRepository;
 
 import java.util.List;
+import java.util.concurrent.Future;
 
 public class TypeViewModel extends AndroidViewModel {
 
@@ -31,6 +32,10 @@ public class TypeViewModel extends AndroidViewModel {
         return allTypesString;
     }
 
+    public Future<List<String>> getAllTypesStringTemp() {
+        return typeRepository.getAllTypesStringTemp();
+    }
+
     public LiveData<List<Type>> getAllTypes() {
         return allTypes;
     }
@@ -41,6 +46,14 @@ public class TypeViewModel extends AndroidViewModel {
 
     public LiveData<List<Type>> getAllIncomeTypes() {
         return typeRepository.getAllIncomeTypes();
+    }
+
+    public Future<List<String>> getAllExpenseTypesString() {
+        return typeRepository.getAllExpenseTypesString();
+    }
+
+    public Future<List<String>> getAllIncomeTypesString() {
+        return typeRepository.getAllIncomeTypesString();
     }
 
     public void insertType(Type type) {

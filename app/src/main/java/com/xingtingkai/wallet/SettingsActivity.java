@@ -19,7 +19,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.sqlite.db.SimpleSQLiteQuery;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -33,6 +33,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -45,18 +48,6 @@ public class SettingsActivity extends AppCompatActivity {
     protected static final int REQUEST_SQLITE_GET = 1;
 
     private static final int STORAGE_PERMISSION_CODE = 2;
-
-    private TransactionViewModel transactionViewModel;
-
-    private CardView cardViewRepeat;
-    private CardView cardViewType;
-    private CardView cardViewMonthlyBudget;
-
-    private CardView cardViewClearSearch;
-    private CardView cardViewEraseAllData;
-
-    private CardView cardViewExport;
-    private CardView cardViewImport;
 
     private CoordinatorLayout coordinatorLayout;
 
@@ -77,28 +68,28 @@ public class SettingsActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        cardViewRepeat = findViewById(R.id.cardview_transaction);
+        CardView cardViewRepeat = findViewById(R.id.cardview_transaction);
         // on click
         cardViewRepeat.setOnClickListener((View view) -> {
             Intent goToRepeatTransaction = new Intent(SettingsActivity.this, RepeatTransactionActivity.class);
             startActivityForResult(goToRepeatTransaction, REPEAT_ACTIVITY_REQUEST_CODE);
         });
 
-        cardViewType = findViewById(R.id.cardview_type);
+        CardView cardViewType = findViewById(R.id.cardview_type);
         // on click
         cardViewType.setOnClickListener((View view) -> {
             Intent goToType = new Intent(SettingsActivity.this, TypeActivity.class);
             startActivity(goToType);
         });
 
-        cardViewMonthlyBudget = findViewById(R.id.cardview_monthly_budget);
+        CardView cardViewMonthlyBudget = findViewById(R.id.cardview_monthly_budget);
         // on click
         cardViewMonthlyBudget.setOnClickListener((View view) -> {
             Intent goToMonthlyBudget = new Intent(SettingsActivity.this, MonthlyBudgetActivity.class);
             startActivity(goToMonthlyBudget);
         });
 
-        cardViewClearSearch = findViewById(R.id.cardview_clear_search);
+        CardView cardViewClearSearch = findViewById(R.id.cardview_clear_search);
         // on click
         cardViewClearSearch.setOnClickListener((View view) -> {
             SearchRecentSuggestions suggestions = new SearchRecentSuggestions(SettingsActivity.this,
@@ -118,7 +109,7 @@ public class SettingsActivity extends AppCompatActivity {
                     .create().show();
         });
 
-        cardViewEraseAllData = findViewById(R.id.cardview_erase_all_data);
+        CardView cardViewEraseAllData = findViewById(R.id.cardview_erase_all_data);
         // on click
         cardViewEraseAllData.setOnClickListener((View view) -> new AlertDialog.Builder(SettingsActivity.this)
                 .setTitle("Erase all data")
@@ -143,7 +134,7 @@ public class SettingsActivity extends AppCompatActivity {
         File files = new File(this.getApplicationInfo().dataDir + "/files");
         directoryName = files.getAbsolutePath();
 
-        cardViewExport = findViewById(R.id.cardview_export);
+        CardView cardViewExport = findViewById(R.id.cardview_export);
         // on click
         cardViewExport.setOnClickListener((View view) -> {
             syncDB();
@@ -151,7 +142,7 @@ public class SettingsActivity extends AppCompatActivity {
             exportDB();
         });
 
-        cardViewImport = findViewById(R.id.cardview_import);
+        CardView cardViewImport = findViewById(R.id.cardview_import);
         // on click
         cardViewImport.setOnClickListener((View view) -> checkPermissionToReadExternalFiles());
 
@@ -247,15 +238,24 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void syncDB() {
 
-        transactionViewModel = ViewModelProviders.of(this).get(TransactionViewModel.class);
+//        TransactionViewModel transactionViewModel = ViewModelProviders.of(this).get(TransactionViewModel.class);
+        TransactionViewModel transactionViewModel = new ViewModelProvider(this).get(TransactionViewModel.class);
 
         SimpleSQLiteQuery checkPointQuery = new SimpleSQLiteQuery("pragma wal_checkpoint(full)");
 
         // sync wal files into database
-        transactionViewModel.checkpoint(checkPointQuery)
-                // on changed
-                .observe(this, (Integer integer) -> {
-        });
+//        transactionViewModel.checkpoint(checkPointQuery)
+//                // on changed
+//                .observe(this, (Integer integer) -> {
+//        });
+
+        Future<Integer> checkPoint = transactionViewModel.checkpoint(checkPointQuery);
+
+        try {
+            checkPoint.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 
     /*
@@ -276,7 +276,7 @@ public class SettingsActivity extends AppCompatActivity {
 
             copyFile(fis, outputFile);
         } catch (IOException e) {
-            Log.e("dbBackup:", e.getMessage());
+            Log.e("dbBackup:", Objects.requireNonNull(e.getMessage()));
         }
     }
 
@@ -298,7 +298,7 @@ public class SettingsActivity extends AppCompatActivity {
 
             return outputFile;
         } catch (IOException e) {
-            Log.e("dbBackup:", e.getMessage());
+            Log.e("dbBackup:", Objects.requireNonNull(e.getMessage()));
         }
 
         return null;
@@ -308,7 +308,8 @@ public class SettingsActivity extends AppCompatActivity {
 
         Uri path = FileProvider.getUriForFile(
                 this,
-                "com.xingtingkai.wallet.fileprovider",
+                getString(R.string.full_app_name) + "." + "fileprovider",
+                // "com.xingtingkai.wallet.fileprovider",
                 new File(directoryName + File.separator + DATABASE_NAME + "Export" + ".db"));
 
         composeEmail("Wallet Database", path);
@@ -361,9 +362,11 @@ public class SettingsActivity extends AppCompatActivity {
 
             File outputFile = new File(outFileName);
 
-            return copyFile(fis, outputFile);
+            if (fis != null) {
+                return copyFile(fis, outputFile);
+            }
         } catch (IOException e) {
-            Log.e("dbBackup:", e.getMessage());
+            Log.e("dbBackup:", Objects.requireNonNull(e.getMessage()));
         }
 
         return null;

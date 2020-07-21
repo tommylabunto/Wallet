@@ -9,6 +9,7 @@ import com.xingtingkai.wallet.db.dao.MonthlyBudgetDao;
 import com.xingtingkai.wallet.db.entity.MonthlyBudget;
 
 import java.util.List;
+import java.util.concurrent.Future;
 
 public class MonthlyBudgetRepository {
 
@@ -59,5 +60,10 @@ public class MonthlyBudgetRepository {
     public void updateAllFutureMonthlyBudgets(long monthlyBudgetId, double budget) {
         WalletDatabase.databaseWriteExecutor.execute(() ->
                 monthlyBudgetDao.updateAllFutureMonthlyBudgets(monthlyBudgetId, budget));
+    }
+
+    public Future<MonthlyBudget> getMonthlyBudgetTemp(int year, int month) {
+        return WalletDatabase.databaseWriteExecutor
+                .submit(() -> monthlyBudgetDao.getMonthlyBudgetTemp(year, month));
     }
 }

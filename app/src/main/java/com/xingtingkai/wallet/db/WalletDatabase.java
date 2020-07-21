@@ -150,9 +150,6 @@ public abstract class WalletDatabase extends RoomDatabase {
     // but room doesn't let us know when it finishes
     public static void deleteAllData() {
 
-        databaseWriteExecutor.execute(() -> {
-
-            INSTANCE.clearAllTables();
-        });
+        databaseWriteExecutor.execute(() -> INSTANCE.clearAllTables());
     }
 }

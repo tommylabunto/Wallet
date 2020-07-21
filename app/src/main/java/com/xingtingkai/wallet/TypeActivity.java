@@ -8,7 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -75,7 +75,8 @@ public class TypeActivity extends AppCompatActivity {
 
     private void initViewModels() {
 
-        typeViewModel = ViewModelProviders.of(this).get(TypeViewModel.class);
+        typeViewModel = new ViewModelProvider(this).get(TypeViewModel.class);
+        // typeViewModel = ViewModelProviders.of(this).get(TypeViewModel.class);
 
         // on changed
         typeViewModel.getAllExpenseTypes().observe(this,
@@ -111,16 +112,24 @@ public class TypeActivity extends AppCompatActivity {
         });
     }
 
-    private void updateExpenseTypeCount(List<Type> expenseTypes) {
+    private void updateExpenseTypeCount(@Nullable List<Type> expenseTypes) {
 
-        // refresh values because onchanged will keep adding it
-        numOfExpenseTypes = expenseTypes.size();
+        numOfExpenseTypes = 0;
+
+        if (expenseTypes != null) {
+            // refresh values because onchanged will keep adding it
+            numOfExpenseTypes = expenseTypes.size();
+        }
     }
 
-    private void updateIncomeTypeCount(List<Type> incomeTypes) {
+    private void updateIncomeTypeCount(@Nullable List<Type> incomeTypes) {
 
-        // refresh values because onchanged will keep adding it
-        numOfIncomeTypes = incomeTypes.size();
+        numOfIncomeTypes = 0;
+
+        if (incomeTypes != null) {
+            // refresh values because onchanged will keep adding it
+            numOfIncomeTypes = incomeTypes.size();
+        }
     }
 
     @Override
@@ -132,8 +141,10 @@ public class TypeActivity extends AppCompatActivity {
 
             if (requestCode == ADD_TYPE_ACTIVITY_REQUEST_CODE) {
 
+                String operation = data.getStringExtra(AddEditTypeActivity.EXTRA_OPERATION);
+
                 // create type
-                if (data.getStringExtra(AddEditTypeActivity.EXTRA_OPERATION).equals("save")) {
+                if (operation != null && operation.equals("save")) {
 
                     Type type = extractDataToType(data, 0L);
                     typeViewModel.insertType(type);
@@ -147,46 +158,48 @@ public class TypeActivity extends AppCompatActivity {
 
                 Type type = extractDataToType(data, id);
 
-                // update type
-                // must have at least one of each type
-                if (data.getStringExtra(AddEditTypeActivity.EXTRA_OPERATION).equals("save")) {
+                String operation = data.getStringExtra(AddEditTypeActivity.EXTRA_OPERATION);
 
-                    boolean originalIsExpenseType = data.getBooleanExtra(AddEditTypeActivity.EXTRA_ORIGINAL_IS_EXPENSE_TYPE, true);
+                if (operation != null) {
+                    // update type
+                    if (operation.equals("save")) {
 
-                    // must have at least one type to create a transaction
-                    // switch types (is the problem)
-                    if (originalIsExpenseType != type.isExpenseType()) {
-                        if (originalIsExpenseType) {
+                        boolean originalIsExpenseType = data.getBooleanExtra(AddEditTypeActivity.EXTRA_ORIGINAL_IS_EXPENSE_TYPE, true);
+                        // must have at least one type to create a transaction
+                        // switch types (is the problem)
+                        if (originalIsExpenseType != type.isExpenseType()) {
+                            if (originalIsExpenseType) {
+                                if (numOfExpenseTypes > 1) {
+                                    typeViewModel.updateType(type);
+                                } else {
+                                    showSnackbar("at least 1 expense category is required");
+                                }
+                            } else {
+                                if (numOfIncomeTypes > 1) {
+                                    typeViewModel.updateType(type);
+                                } else {
+                                    showSnackbar("at least 1 income category is required");
+                                }
+                            }
+                            // stay on same type (not a problem)
+                        } else {
+                            typeViewModel.updateType(type);
+                        }
+
+                        // delete type
+                    } else {
+                        if (type.isExpenseType()) {
                             if (numOfExpenseTypes > 1) {
-                                typeViewModel.updateType(type);
+                                typeViewModel.deleteType(type);
                             } else {
                                 showSnackbar("at least 1 expense category is required");
                             }
                         } else {
                             if (numOfIncomeTypes > 1) {
-                                typeViewModel.updateType(type);
+                                typeViewModel.deleteType(type);
                             } else {
                                 showSnackbar("at least 1 income category is required");
                             }
-                        }
-                        // stay on same type (not a problem)
-                    } else {
-                        typeViewModel.updateType(type);
-                    }
-
-                    // delete type
-                } else {
-                    if (type.isExpenseType()) {
-                        if (numOfExpenseTypes > 1) {
-                            typeViewModel.deleteType(type);
-                        } else {
-                            showSnackbar("at least 1 expense category is required");
-                        }
-                    } else {
-                        if (numOfIncomeTypes > 1) {
-                            typeViewModel.deleteType(type);
-                        } else {
-                            showSnackbar("at least 1 income category is required");
                         }
                     }
                 }
@@ -197,7 +210,6 @@ public class TypeActivity extends AppCompatActivity {
     private void showSnackbar(String message) {
 
         Snackbar snackbar = Snackbar.make(coordinatorLayout, message, Snackbar.LENGTH_LONG);
-
         snackbar.show();
     }
 
@@ -205,10 +217,6 @@ public class TypeActivity extends AppCompatActivity {
 
         String name = data.getStringExtra(AddEditTypeActivity.EXTRA_NAME);
         boolean isExpenseType = data.getBooleanExtra(AddEditTypeActivity.EXTRA_IS_EXPENSE_TYPE, true);
-
-//        if (id != 0) {
-//            type.setTypeId(id);
-//        }
 
         // if type is new -> id is 0, but sqlite auto generates an id at insertion
         return Type.create(id, name, isExpenseType);

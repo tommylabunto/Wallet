@@ -3,6 +3,7 @@ package com.xingtingkai.wallet;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,13 +22,12 @@ import android.widget.TextView;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
-import com.xingtingkai.wallet.db.entity.Type;
 import com.xingtingkai.wallet.db.viewmodel.TransactionViewModel;
 import com.xingtingkai.wallet.db.viewmodel.TypeViewModel;
 import com.xingtingkai.wallet.helper.DateFormatter;
@@ -39,6 +39,8 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class AddEditRepeatTransactionActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
 
@@ -80,9 +82,6 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
     private ArrayAdapter<CharSequence> adapterFrequency;
 
     private Spinner spinnerType;
-
-    private TypeViewModel typeViewModel;
-    private TransactionViewModel transactionViewModel;
 
     private RadioButton radioButtonExpense;
     private RadioButton radioButtonIncome;
@@ -180,15 +179,34 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
 
     private void initViewModel() {
 
-        transactionViewModel = ViewModelProviders.of(this).get(TransactionViewModel.class);
+//        TransactionViewModel transactionViewModel = ViewModelProviders.of(this).get(TransactionViewModel.class);
+        TransactionViewModel transactionViewModel = new ViewModelProvider(this).get(TransactionViewModel.class);
 
         // on changed
-        transactionViewModel.getAllTransactionNameString().observe(this, this::deepCopySuggestions);
+        // transactionViewModel.getAllTransactionNameString().observe(this, this::deepCopySuggestions);
 
-        typeViewModel = ViewModelProviders.of(this).get(TypeViewModel.class);
+//        TypeViewModel typeViewModel = ViewModelProviders.of(this).get(TypeViewModel.class);
+        TypeViewModel typeViewModel = new ViewModelProvider(this).get(TypeViewModel.class);
 
         // on changed
-        typeViewModel.getAllTypes().observe(this, this::deepCopyList);
+//        typeViewModel.getAllTypes().observe(this, this::deepCopyList);
+
+        Future<List<String>> suggestionsFutureList = transactionViewModel.getAllTransactionNameStringTemp();
+        Future<List<String>> futureIncomeList = typeViewModel.getAllIncomeTypesString();
+        Future<List<String>> futureExpenseList = typeViewModel.getAllExpenseTypesString();
+
+        try {
+            // get income first, since there is probably less income types
+            List<String> tempIncomeTypes = futureIncomeList.get();
+            List<String> tempExpenseTypes = futureExpenseList.get();
+            List<String> suggestionsList = suggestionsFutureList.get();
+
+            deepCopySuggestions(suggestionsList);
+
+            deepCopyList(tempExpenseTypes, tempIncomeTypes);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 
     private void deepCopySuggestions(List<String> tempNameSuggestions) {
@@ -200,25 +218,28 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
         editTextName.setAdapter(nameSuggestionsAdapter);
     }
 
-    private void deepCopyList(List<Type> types) {
+    private void deepCopyList(List<String> tempExpenseTypes, List<String> tempIncomeTypes) {
 
-        expenseTypeList = new ImmutableList.Builder<String>().build();
-        incomeTypeList = new ImmutableList.Builder<String>().build();
+//        expenseTypeList = new ImmutableList.Builder<String>().build();
+//        incomeTypeList = new ImmutableList.Builder<String>().build();
+//
+//        ImmutableList.Builder<String> expenseTypeBuilder = new ImmutableList.Builder<>();
+//        ImmutableList.Builder<String> incomeTypeBuilder = new ImmutableList.Builder<>();
+//
+//        for (Type type : types) {
+//
+//            if (type.isExpenseType()) {
+//                expenseTypeBuilder.add(type.getName());
+//            } else {
+//                incomeTypeBuilder.add(type.getName());
+//            }
+//        }
+//
+//        expenseTypeList = expenseTypeBuilder.build();
+//        incomeTypeList = incomeTypeBuilder.build();
 
-        ImmutableList.Builder<String> expenseTypeBuilder = new ImmutableList.Builder<>();
-        ImmutableList.Builder<String> incomeTypeBuilder = new ImmutableList.Builder<>();
-
-        for (Type type : types) {
-
-            if (type.isExpenseType()) {
-                expenseTypeBuilder.add(type.getName());
-            } else {
-                incomeTypeBuilder.add(type.getName());
-            }
-        }
-
-        expenseTypeList = expenseTypeBuilder.build();
-        incomeTypeList = incomeTypeBuilder.build();
+        expenseTypeList = ImmutableList.copyOf(tempExpenseTypes);
+        incomeTypeList = ImmutableList.copyOf(tempIncomeTypes);
 
         boolean isExpenseType = updateRadioButton();
         ArrayAdapter<String> adapterType = showSpinnerType(isExpenseType);
@@ -335,10 +356,22 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
     private boolean violateInputValidation() {
 
         String name = editTextName.getText().toString().trim();
-        String valueString = editTextValue.getText().toString().trim();
+
+        Editable valueEditable = editTextValue.getText();
+        String valueString = "";
+
+        if (valueEditable != null) {
+            valueString = valueEditable.toString().trim();
+        }
         double value = 0;
 
-        String repeatString = editTextRepeat.getText().toString();
+        Editable repeatEditable = editTextRepeat.getText();
+        String repeatString = "";
+
+        if (repeatEditable != null) {
+            repeatString = repeatEditable.toString().trim();
+        }
+
         int repeat = -1;
 
         boolean violate = false;
@@ -381,10 +414,21 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
     private Intent extractInputToIntent(String operation) {
 
         String name = editTextName.getText().toString().trim();
-        String valueString = editTextValue.getText().toString().trim();
+
+        Editable valueEditable = editTextValue.getText();
+        String valueString = "";
+
+        if (valueEditable != null) {
+            valueString = valueEditable.toString().trim();
+        }
         double value = 0;
 
-        String repeatString = editTextRepeat.getText().toString();
+        Editable repeatEditable = editTextRepeat.getText();
+        String repeatString = "";
+
+        if (repeatEditable != null) {
+            repeatString = repeatEditable.toString().trim();
+        }
         int repeat = -1;
 
         if (!valueString.isEmpty()) {

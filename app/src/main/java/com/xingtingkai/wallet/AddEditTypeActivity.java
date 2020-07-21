@@ -2,6 +2,7 @@ package com.xingtingkai.wallet;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -129,8 +130,13 @@ public class AddEditTypeActivity extends AppCompatActivity {
 
     private Intent extractInputToIntent(String operation) {
 
-        String name = editTextType.getText().toString().trim();
+        Editable typeEditable = editTextType.getText();
+        String name = "";
 
+        if (typeEditable != null) {
+            name = typeEditable.toString().trim();
+        }
+        
         /*
         bypass check for delete
         if delete a type that a transaction uses, it won't crash.

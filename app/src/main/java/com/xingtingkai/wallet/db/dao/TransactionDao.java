@@ -34,6 +34,9 @@ public interface TransactionDao {
     @Query("SELECT transactionId, transactionRecurringId, instant, zoneId, sum(value) value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE instant >= :epochSecondsStart AND instant <= :epochSecondsEnd GROUP BY typeName ORDER BY instant ASC")
     public LiveData<List<Transaction>> getAllTransactionsInAMonthView(long epochSecondsStart, long epochSecondsEnd);
 
+    @Query("SELECT sum(value) value FROM `transaction` WHERE expenseTransaction = 1 AND instant >= :epochSecondsStart AND instant <= :epochSecondsEnd")
+    public double calculateExpensesInAMonth(long epochSecondsStart, long epochSecondsEnd);
+
     /*
     cannot use distinct (all are distinct), group by (don't know which row sqlite selects)
     so list is sorted by recurring id when RepeatTransactionActivity receives it
@@ -68,8 +71,11 @@ public interface TransactionDao {
 
     // sync DB data
     @RawQuery(observedEntities = Transaction.class)
-    public LiveData<Integer> checkpoint(SupportSQLiteQuery supportSQLiteQuery);
+    public Integer checkpoint(SupportSQLiteQuery supportSQLiteQuery);
 
     @Query("SELECT DISTINCT name FROM `transaction` ORDER BY name ASC")
     public LiveData<List<String>> getAllTransactionNameString();
+
+    @Query("SELECT DISTINCT name FROM `transaction` ORDER BY name ASC")
+    public List<String> getAllTransactionNameStringTemp();
 }

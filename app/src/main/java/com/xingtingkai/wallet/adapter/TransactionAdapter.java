@@ -156,7 +156,7 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
 
         this.isFirst = false;
 
-        if (transactions != null || !transactions.isEmpty()) {
+        if (transactions != null && !transactions.isEmpty()) {
 
             String totalAmount = calculateTotalAmountInADay(transaction);
 

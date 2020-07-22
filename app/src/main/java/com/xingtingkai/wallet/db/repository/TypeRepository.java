@@ -14,37 +14,32 @@ import java.util.concurrent.Future;
 public class TypeRepository {
 
     private TypeDao typeDao;
-    private LiveData<List<String>> allTypesString;
-    private LiveData<List<Type>> allTypes;
+    private LiveData<List<Type>> allExpenseTypes;
+    private LiveData<List<Type>> allIncomeTypes;
 
     public TypeRepository(Application application) {
         WalletDatabase db = WalletDatabase.getDatabase(application);
         typeDao = db.getTypeDao();
-        allTypesString = typeDao.getAllTypesString();
-        allTypes = typeDao.getAllTypes();
+        allExpenseTypes = typeDao.getAllExpenseTypes();
+        allIncomeTypes = typeDao.getAllIncomeTypes();
     }
 
-    // Room executes all queries on a separate thread.
-    // Observed LiveData will notify the observer when the data has changed.
-    public LiveData<List<String>> getAllTypesString() {
-        return allTypesString;
-    }
+    /*
+    Room executes all queries on a separate thread.
+    Observed LiveData will notify the observer when the data has changed.
+     */
 
-    public Future<List<String>> getAllTypesStringTemp() {
+    public Future<List<String>> getAllTypesStringFuture() {
         return WalletDatabase.databaseWriteExecutor
-                .submit(typeDao::getAllTypesStringTemp);
-    }
-
-    public LiveData<List<Type>> getAllTypes() {
-        return allTypes;
+                .submit(typeDao::getAllTypesString);
     }
 
     public LiveData<List<Type>> getAllExpenseTypes() {
-        return typeDao.getAllExpenseTypes();
+        return allExpenseTypes;
     }
 
     public LiveData<List<Type>> getAllIncomeTypes() {
-        return typeDao.getAllIncomeTypes();
+        return allIncomeTypes;
     }
 
     public Future<List<String>> getAllExpenseTypesString() {
@@ -57,8 +52,10 @@ public class TypeRepository {
                 .submit(typeDao::getAllIncomeTypesString);
     }
 
-    // You must call this on a non-UI thread or your app will throw an exception. Room ensures
-    // that you're not doing any long running operations on the main thread, blocking the UI.
+    /*
+     You must call this on a non-UI thread or your app will throw an exception. Room ensures
+     that you're not doing any long running operations on the main thread, blocking the UI.
+    */
     public void insertType(Type type) {
         WalletDatabase.databaseWriteExecutor.execute(() ->
                 typeDao.insertType(type));

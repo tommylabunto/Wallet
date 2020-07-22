@@ -190,7 +190,6 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
 
             zonedDateTime = ZonedDateTime.ofInstant(tempTransaction.getInstant(), tempTransaction.getZoneId());
 
-//                if (formatter.format(transactions.get(i).getDate()).equals(formattedDate)) {
             if (formatter.format(zonedDateTime).equals(formattedDate)) {
 
                 // only count expenses, don't minus income from expenses

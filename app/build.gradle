@@ -8,8 +8,8 @@ android {
         applicationId "com.xingtingkai.wallet"
         minSdkVersion 26
         targetSdkVersion 29
-        versionCode 3
-        versionName "3.0"
+        versionCode 4
+        versionName "4.0"
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -25,9 +25,6 @@ android {
 
     buildTypes {
         release {
-
-//            minifyEnabled false
-
             // Enables code shrinking, obfuscation, and optimization for only
             // your project's release build type.
             minifyEnabled true

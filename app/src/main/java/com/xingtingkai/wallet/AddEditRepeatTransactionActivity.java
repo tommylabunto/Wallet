@@ -158,8 +158,10 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         }
 
-        // submit form when clicked 'enter' on soft keyboard
-        // on editor action
+        /*
+         submit form when clicked 'enter' on soft keyboard
+         on editor action
+        */
         editTextRepeat.setOnEditorActionListener((TextView v, int actionId, KeyEvent event) -> {
             boolean handled = false;
             if (actionId == EditorInfo.IME_ACTION_SEND) {
@@ -179,19 +181,10 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
 
     private void initViewModel() {
 
-//        TransactionViewModel transactionViewModel = ViewModelProviders.of(this).get(TransactionViewModel.class);
         TransactionViewModel transactionViewModel = new ViewModelProvider(this).get(TransactionViewModel.class);
-
-        // on changed
-        // transactionViewModel.getAllTransactionNameString().observe(this, this::deepCopySuggestions);
-
-//        TypeViewModel typeViewModel = ViewModelProviders.of(this).get(TypeViewModel.class);
         TypeViewModel typeViewModel = new ViewModelProvider(this).get(TypeViewModel.class);
 
-        // on changed
-//        typeViewModel.getAllTypes().observe(this, this::deepCopyList);
-
-        Future<List<String>> suggestionsFutureList = transactionViewModel.getAllTransactionNameStringTemp();
+        Future<List<String>> suggestionsFutureList = transactionViewModel.getAllTransactionNameString();
         Future<List<String>> futureIncomeList = typeViewModel.getAllIncomeTypesString();
         Future<List<String>> futureExpenseList = typeViewModel.getAllExpenseTypesString();
 
@@ -220,31 +213,12 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
 
     private void deepCopyList(List<String> tempExpenseTypes, List<String> tempIncomeTypes) {
 
-//        expenseTypeList = new ImmutableList.Builder<String>().build();
-//        incomeTypeList = new ImmutableList.Builder<String>().build();
-//
-//        ImmutableList.Builder<String> expenseTypeBuilder = new ImmutableList.Builder<>();
-//        ImmutableList.Builder<String> incomeTypeBuilder = new ImmutableList.Builder<>();
-//
-//        for (Type type : types) {
-//
-//            if (type.isExpenseType()) {
-//                expenseTypeBuilder.add(type.getName());
-//            } else {
-//                incomeTypeBuilder.add(type.getName());
-//            }
-//        }
-//
-//        expenseTypeList = expenseTypeBuilder.build();
-//        incomeTypeList = incomeTypeBuilder.build();
-
         expenseTypeList = ImmutableList.copyOf(tempExpenseTypes);
         incomeTypeList = ImmutableList.copyOf(tempIncomeTypes);
 
         boolean isExpenseType = updateRadioButton();
         ArrayAdapter<String> adapterType = showSpinnerType(isExpenseType);
         extractIntentToSpinner(adapterType);
-        //extractIntent();
     }
 
     private boolean updateRadioButton() {
@@ -311,8 +285,10 @@ public class AddEditRepeatTransactionActivity extends AppCompatActivity implemen
             String value = getString(R.string.single_string_param, intent.getDoubleExtra(EXTRA_VALUE, 1) + "");
             editTextValue.setText(value);
 
-            // place cursor on the right side
-            // only for the first edit text
+            /*
+             place cursor on the right side
+              only for the first edit text
+            */
             if (editTextValue.getText() != null && editTextValue.getText().length() > 0 ) {
                 editTextValue.setSelection(editTextValue.getText().length());
             }

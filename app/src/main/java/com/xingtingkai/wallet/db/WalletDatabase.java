@@ -76,13 +76,14 @@ public abstract class WalletDatabase extends RoomDatabase {
             databaseWriteExecutor.execute(() -> {
                 // one db should only have one instance of a carry over
 //                CarryOverDao carryOverDao = INSTANCE.getCarryOverDao();
-//
 //                if (carryOverDao.getAllCarryOverList().size() == 0) {
 //                    carryOverDao.insertCarryOver(CarryOver.create(1L, false));
 //                }
 
-                // db creates 10 years worth of monthly budgets if there are no more upcoming budgets
-                // takes at least 2 minutes to populate whole list
+                /*
+                 db creates 10 years worth of monthly budgets if there are no more upcoming budgets
+                 takes at least 2 minutes to populate whole list
+                 */
 
                 ZonedDateTime zonedDateTime = ZonedDateTime.now();
 
@@ -115,8 +116,6 @@ public abstract class WalletDatabase extends RoomDatabase {
     public static void addTypes() {
 
         databaseWriteExecutor.execute(() -> {
-            // Populate the database in the background.
-            // If you want to start with more words, just add them.
             TypeDao typeDao = INSTANCE.getTypeDao();
 
             // id is 0, but sqlite auto generates an id at insertion
@@ -146,10 +145,11 @@ public abstract class WalletDatabase extends RoomDatabase {
         return INSTANCE;
     }
 
-    // run using another thread so main thread wont lock up
-    // but room doesn't let us know when it finishes
+    /*
+     run using another thread so main thread wont lock up
+     but room doesn't let us know when it finishes
+     */
     public static void deleteAllData() {
-
         databaseWriteExecutor.execute(() -> INSTANCE.clearAllTables());
     }
 }

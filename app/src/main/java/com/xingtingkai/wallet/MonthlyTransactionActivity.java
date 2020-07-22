@@ -161,10 +161,7 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
         int year = startMonthDate.getYear();
         int month = startMonthDate.getMonth().getValue();
 
-        // on changed
-        monthlyBudgetViewModel.getMonthlyBudget(year, month).observe(this, this::updateTextViewBudget);
-
-        Future<MonthlyBudget> monthlyBudgetFuture = monthlyBudgetViewModel.getMonthlyBudgetTemp(year, month);
+        Future<MonthlyBudget> monthlyBudgetFuture = monthlyBudgetViewModel.getMonthlyBudget(year, month);
 
         try {
             MonthlyBudget monthlyBudget = monthlyBudgetFuture.get();
@@ -237,7 +234,6 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
                 .observe(this, (@Nullable final List<Transaction> transactions) -> {
             // Update the cached copy of the words in the transactionAdapter.
             monthlyTransactionAdapter.submitList(transactions);
-            // analyzeTransactions(transactions);
         });
 
         Future<Double> totalExpensesFuture = transactionViewModel.calculateExpensesInAMonth(startMonthDateEpoch, endMonthDateEpoch);
@@ -262,22 +258,6 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
     }
 
     private void updateTextViewTotalExpenses(double totalExpenses) {
-
-//        double totalExpenses = 0;
-//        int arraySize = 0;
-//
-//        if (transactions != null) {
-//            arraySize = transactions.size();
-//        }
-//
-//        for (int i = 0; i < arraySize; i++) {
-//
-//            Transaction transaction = transactions.get(i);
-//
-//            if (transaction.isExpenseTransaction()) {
-//                totalExpenses += transaction.getValue();
-//            }
-//        }
 
         // round up to 2.d.p
         BigDecimal totalAmountBd = new BigDecimal(totalExpenses).setScale(2, RoundingMode.HALF_UP);
@@ -326,9 +306,11 @@ public class MonthlyTransactionActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        /*
+         Handle action bar item clicks here. The action bar will
+         automatically handle clicks on the Home/Up button, so long
+         as you specify a parent activity in AndroidManifest.xml.
+        */
         switch (item.getItemId()) {
             case R.id.action_settings:
                 Intent goToSettings = new Intent(MonthlyTransactionActivity.this, SettingsActivity.class);

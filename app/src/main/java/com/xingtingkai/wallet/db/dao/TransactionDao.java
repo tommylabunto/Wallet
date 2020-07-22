@@ -25,9 +25,6 @@ public interface TransactionDao {
     @Delete
     public void deleteTransaction(Transaction transaction);
 
-    @Query("SELECT transactionId, transactionRecurringId, instant, zoneId, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE transactionId = :transactionId ORDER BY instant ASC")
-    public LiveData<Transaction> getTransaction(long transactionId);
-
     @Query("SELECT transactionId, transactionRecurringId, instant, zoneId, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE instant >= :epochSecondsStart AND instant <= :epochSecondsEnd ORDER BY instant DESC")
     public LiveData<List<Transaction>> getAllTransactionsInAMonth(long epochSecondsStart, long epochSecondsEnd);
 
@@ -41,8 +38,6 @@ public interface TransactionDao {
     cannot use distinct (all are distinct), group by (don't know which row sqlite selects)
     so list is sorted by recurring id when RepeatTransactionActivity receives it
      */
-    @Query("SELECT transactionId, transactionRecurringId, instant, zoneId, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE repeat = 1 AND instant >= :epochSecondsToday ORDER BY transactionRecurringId ASC, instant ASC")
-    public LiveData<List<Transaction>> getAllRecurringTransactions(long epochSecondsToday);
 
     @Query("SELECT transactionId, transactionRecurringId, instant, zoneId, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE repeat = 1 AND instant >= :epochSecondsToday AND expenseTransaction = 1 ORDER BY transactionRecurringId ASC, instant ASC")
     public LiveData<List<Transaction>> getExpenseRecurringTransactions(long epochSecondsToday);
@@ -50,20 +45,12 @@ public interface TransactionDao {
     @Query("SELECT transactionId, transactionRecurringId, instant, zoneId, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE repeat = 1 AND instant >= :epochSecondsToday AND expenseTransaction = 0 ORDER BY transactionRecurringId ASC, instant ASC")
     public LiveData<List<Transaction>> getIncomeRecurringTransactions(long epochSecondsToday);
 
-    @Query("SELECT transactionId, transactionRecurringId, instant, zoneId, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE repeat = 0 ORDER BY instant ASC")
-    public LiveData<List<Transaction>> getAllNonRecurringTransactions();
-
-    @Query("SELECT transactionId, transactionRecurringId, instant, zoneId, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` ORDER BY instant ASC")
-    public LiveData<List<Transaction>> getAllTransactions();
 
     @Query("SELECT transactionId, transactionRecurringId, instant, zoneId, value, name, typeName, repeat, frequency, numOfRepeat, expenseTransaction FROM `transaction` WHERE name LIKE :searchName ORDER BY instant ASC")
     public LiveData<List<Transaction>> searchAllTransactions(String searchName);
 
     @Query("DELETE FROM `transaction`")
     public void deleteAllTransactions();
-
-    @Query("DELETE FROM `transaction` WHERE value = :value AND name = :name AND typeName = :typeName AND frequency = :frequency")
-    public void deleteAllRecurringTransactions(double value, String name, String typeName, int frequency);
 
     // instant is stored as long in sqlite (seen in converters)
     @Query("DELETE FROM `transaction` WHERE transactionRecurringId = :transactionRecurringId AND instant >= :epochSeconds")
@@ -74,8 +61,5 @@ public interface TransactionDao {
     public Integer checkpoint(SupportSQLiteQuery supportSQLiteQuery);
 
     @Query("SELECT DISTINCT name FROM `transaction` ORDER BY name ASC")
-    public LiveData<List<String>> getAllTransactionNameString();
-
-    @Query("SELECT DISTINCT name FROM `transaction` ORDER BY name ASC")
-    public List<String> getAllTransactionNameStringTemp();
+    public List<String> getAllTransactionNameString();
 }

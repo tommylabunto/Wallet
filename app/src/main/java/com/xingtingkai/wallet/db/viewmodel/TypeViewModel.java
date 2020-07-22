@@ -14,38 +14,26 @@ import java.util.concurrent.Future;
 public class TypeViewModel extends AndroidViewModel {
 
     private TypeRepository typeRepository;
-    // Using LiveData and caching what getAlphabetizedWords returns has several benefits:
-    // - We can put an observer on the data (instead of polling for changes) and only update the
-    //   the UI when the data actually changes.
-    // - Repository is completely separated from the UI through the ViewModel.
-    private LiveData<List<String>> allTypesString;
-    private LiveData<List<Type>> allTypes;
+    private LiveData<List<Type>> allExpenseTypes;
+    private LiveData<List<Type>> allIncomeTypes;
 
     public TypeViewModel(Application application) {
         super(application);
         typeRepository = new TypeRepository(application);
-        allTypesString = typeRepository.getAllTypesString();
-        allTypes = typeRepository.getAllTypes();
+        allExpenseTypes = typeRepository.getAllExpenseTypes();
+        allIncomeTypes = typeRepository.getAllIncomeTypes();
     }
 
-    public LiveData<List<String>> getAllTypesString() {
-        return allTypesString;
-    }
-
-    public Future<List<String>> getAllTypesStringTemp() {
-        return typeRepository.getAllTypesStringTemp();
-    }
-
-    public LiveData<List<Type>> getAllTypes() {
-        return allTypes;
+    public Future<List<String>> getAllTypesStringFuture() {
+        return typeRepository.getAllTypesStringFuture();
     }
 
     public LiveData<List<Type>> getAllExpenseTypes() {
-        return typeRepository.getAllExpenseTypes();
+        return allExpenseTypes;
     }
 
     public LiveData<List<Type>> getAllIncomeTypes() {
-        return typeRepository.getAllIncomeTypes();
+        return allIncomeTypes;
     }
 
     public Future<List<String>> getAllExpenseTypesString() {

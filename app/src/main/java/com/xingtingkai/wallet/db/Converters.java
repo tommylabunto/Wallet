@@ -18,7 +18,7 @@ public class Converters {
     }
 
     @TypeConverter
-    public static ZoneId fromEpoch(String value) {
+    public static ZoneId fromString(String value) {
         return value == null ? null : ZoneId.of(value);
     }
 

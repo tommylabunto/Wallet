@@ -97,15 +97,17 @@ public class MonthlyBudgetActivity extends AppCompatActivity {
         textViewYear.setText(year);
 
         monthlyBudgetViewModel = new ViewModelProvider(this).get(MonthlyBudgetViewModel.class);
-//        monthlyBudgetViewModel = ViewModelProviders.of(this).get(MonthlyBudgetViewModel.class);
 
         // on changed
         monthlyBudgetViewModel.getAllMonthlyBudgetsInAYear(yearInt).observe(this,
                 (@Nullable final List<MonthlyBudget> monthlyBudgets) ->
                         monthlyBudgetAdapter.submitList(monthlyBudgets));
 
-        // when click on item in recycler view -> populate data and open up to edit
-        // on item click
+        /*
+         when click on item in recycler view -> populate data and open up to edit
+         on item click
+        */
+
         monthlyBudgetAdapter.setOnItemClickListener((MonthlyBudget monthlyBudget) -> {
             Intent goToAddEditMonthlyBudget = new Intent(MonthlyBudgetActivity.this, AddEditMonthlyBudgetActivity.class);
             goToAddEditMonthlyBudget.putExtra(AddEditMonthlyBudgetActivity.EXTRA_ID, monthlyBudget.getMonthlyBudgetId());
@@ -175,7 +177,7 @@ public class MonthlyBudgetActivity extends AppCompatActivity {
 
         int budget = data.getIntExtra(AddEditMonthlyBudgetActivity.EXTRA_BUDGET, 0);
         int year = data.getIntExtra(AddEditMonthlyBudgetActivity.EXTRA_YEAR, 0);
-        int month = data.getIntExtra(AddEditMonthlyBudgetActivity.EXTRA_MONTH, 0);
+        int month = data.getIntExtra(AddEditMonthlyBudgetActivity.EXTRA_MONTH, 1);
 
         return MonthlyBudget.create(id, budget, year, month);
     }

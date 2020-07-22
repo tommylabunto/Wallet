@@ -55,8 +55,10 @@ public class AddEditTypeActivity extends AppCompatActivity {
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         }
 
-        // submit form when clicked 'enter' on soft keyboard
-        // on editor action
+        /*
+         submit form when clicked 'enter' on soft keyboard
+         on editor action
+        */
         editTextType.setOnEditorActionListener((TextView v, int actionId, KeyEvent event) -> {
             boolean handled = false;
             if (actionId == EditorInfo.IME_ACTION_SEND) {
@@ -86,8 +88,10 @@ public class AddEditTypeActivity extends AppCompatActivity {
         if (intent.hasExtra(EXTRA_ID)) {
             editTextType.setText(intent.getStringExtra(EXTRA_NAME));
 
-            // place cursor on the right side
-            // only for the first edit text
+            /*
+             place cursor on the right side
+             only for the first edit text
+            */
             if (editTextType.getText() != null && editTextType.getText().length() > 0 ) {
                 editTextType.setSelection(editTextType.getText().length());
             }

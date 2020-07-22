@@ -57,8 +57,9 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         }
 
-        // submit form when clicked 'enter' on soft keyboard
-        // on editor action
+        /*
+         submit form when clicked 'enter' on soft keyboard
+        */
         editTextBudget.setOnEditorActionListener((TextView v, int actionId, KeyEvent event) -> {
             boolean handled = false;
             if (actionId == EditorInfo.IME_ACTION_SEND) {
@@ -86,9 +87,7 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
             String year = getString(R.string.single_string_param, intent.getIntExtra(EXTRA_YEAR, 0) + "");
             textViewYear.setText(year);
 
-            month = intent.getIntExtra(EXTRA_MONTH, 0);
-
-            // month uses 1 (jan) to 12 (dec)
+            month = intent.getIntExtra(EXTRA_MONTH, 1);
             Month tempMonth = Month.of(month);
 
             // originally is all caps
@@ -100,8 +99,10 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
 
             Editable budgetEditable = editTextBudget.getText();
 
-            // place cursor on the right side
-            // only for the first edit text
+            /*
+             place cursor on the right side
+             only for the first edit text
+            */
             if (budgetEditable != null && budgetEditable.length() > 0) {
                 editTextBudget.setSelection(budgetEditable.length());
             }
@@ -175,7 +176,6 @@ public class AddEditMonthlyBudgetActivity extends AppCompatActivity {
                 "Update all months"
         };
 
-        //new MaterialAlertDialogBuilder(this)
         return new AlertDialog.Builder(this)
                 .setTitle("Update")
                 // on click

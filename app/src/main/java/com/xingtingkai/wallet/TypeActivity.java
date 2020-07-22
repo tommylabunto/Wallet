@@ -85,8 +85,10 @@ public class TypeActivity extends AppCompatActivity {
             updateExpenseTypeCount(types);
         });
 
-        // when click on item in recycler view -> populate data and open up to edit
-        // on item click
+        /*
+         when click on item in recycler view -> populate data and open up to edit
+         on item click
+        */
         typeExpenseAdapter.setOnItemClickListener((Type type) -> {
             Intent goToAddEditType = new Intent(TypeActivity.this, AddEditTypeActivity.class);
             goToAddEditType.putExtra(AddEditTypeActivity.EXTRA_ID, type.getTypeId());
@@ -101,8 +103,10 @@ public class TypeActivity extends AppCompatActivity {
             updateIncomeTypeCount(types);
         });
 
-        // when click on item in recycler view -> populate data and open up to edit
-        // on item click
+        /*
+         when click on item in recycler view -> populate data and open up to edit
+         on item click
+        */
         typeIncomeAdapter.setOnItemClickListener((Type type) -> {
             Intent goToAddEditType = new Intent(TypeActivity.this, AddEditTypeActivity.class);
             goToAddEditType.putExtra(AddEditTypeActivity.EXTRA_ID, type.getTypeId());
@@ -165,8 +169,10 @@ public class TypeActivity extends AppCompatActivity {
                     if (operation.equals("save")) {
 
                         boolean originalIsExpenseType = data.getBooleanExtra(AddEditTypeActivity.EXTRA_ORIGINAL_IS_EXPENSE_TYPE, true);
-                        // must have at least one type to create a transaction
-                        // switch types (is the problem)
+                        /*
+                         must have at least one type to create a transaction
+                         switch types (is the problem)
+                        */
                         if (originalIsExpenseType != type.isExpenseType()) {
                             if (originalIsExpenseType) {
                                 if (numOfExpenseTypes > 1) {

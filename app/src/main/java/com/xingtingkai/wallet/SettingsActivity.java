@@ -121,10 +121,6 @@ public class SettingsActivity extends AppCompatActivity {
                     SearchRecentSuggestions suggestions = new SearchRecentSuggestions(SettingsActivity.this,
                             SearchSuggestionProvider.AUTHORITY, SearchSuggestionProvider.MODE);
                     suggestions.clearHistory();
-                    // go home page
-//                  Intent goToAddMainActivity = new Intent(SettingsActivity.this, MainActivity.class);
-//                  startActivity(goToAddMainActivity);
-
                     showSnackbar("database erased");
                 })
                 // on click
@@ -244,11 +240,6 @@ public class SettingsActivity extends AppCompatActivity {
         SimpleSQLiteQuery checkPointQuery = new SimpleSQLiteQuery("pragma wal_checkpoint(full)");
 
         // sync wal files into database
-//        transactionViewModel.checkpoint(checkPointQuery)
-//                // on changed
-//                .observe(this, (Integer integer) -> {
-//        });
-
         Future<Integer> checkPoint = transactionViewModel.checkpoint(checkPointQuery);
 
         try {

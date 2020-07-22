@@ -66,10 +66,11 @@ public class SearchTransactionActivity extends AppCompatActivity {
     private void initViewModel() {
 
         transactionViewModel = new ViewModelProvider(this).get(TransactionViewModel.class);
-//        transactionViewModel = ViewModelProviders.of(this).get(TransactionViewModel.class);
 
-        // when click on item in recycler view -> populate data and open up to edit
-        // on item click
+        /*
+         when click on item in recycler view -> populate data and open up to edit
+         on item click
+        */
         searchTransactionAdapter.setOnItemClickListener((Transaction transaction) -> {
             Intent goToAddEditTransaction = new Intent(SearchTransactionActivity.this, AddEditTransactionActivity.class);
             goToAddEditTransaction.putExtra(AddEditTransactionActivity.EXTRA_ID, transaction.getTransactionId());
@@ -248,9 +249,11 @@ public class SearchTransactionActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        /*
+         Handle action bar item clicks here. The action bar will
+         automatically handle clicks on the Home/Up button, so long
+         as you specify a parent activity in AndroidManifest.xml.
+         */
         switch (item.getItemId()) {
             case R.id.action_settings:
                 Intent goToSettings = new Intent(SearchTransactionActivity.this, SettingsActivity.class);

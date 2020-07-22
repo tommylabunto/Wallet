@@ -81,21 +81,24 @@ public class RepeatTransactionActivity extends AppCompatActivity {
     private void initViewModels() {
 
         transactionViewModel = new ViewModelProvider(this).get(TransactionViewModel.class);
-//        transactionViewModel = ViewModelProviders.of(this).get(TransactionViewModel.class);
 
         long todayEpochSeconds = ZonedDateTime.now().toEpochSecond();
 
         // on changed
         transactionViewModel.getExpenseRecurringTransactions(todayEpochSeconds).observe(this,
                 (@Nullable final List<Transaction> transactions) -> {
-            // Update the cached copy of the words in the transactionAdapter.
-            // list received is not distinct by recurring id
+            /*
+             Update the cached copy of the words in the transactionAdapter.
+             list received is not distinct by recurring id
+            */
             List<Transaction> distinctTransactions = deepCopyDistinctTransaction(transactions);
             repeatExpenseTransactionAdapter.submitList(distinctTransactions);
         });
 
-        // when click on item in recycler view -> populate data and open up to edit
-        // on item click
+        /*
+         when click on item in recycler view -> populate data and open up to edit
+         on item click
+        */
         repeatExpenseTransactionAdapter.setOnItemClickListener((Transaction transaction) -> {
             Intent goToAddEditRepeatTransaction = new Intent(
                     RepeatTransactionActivity.this, AddEditRepeatTransactionActivity.class);
@@ -105,11 +108,8 @@ public class RepeatTransactionActivity extends AppCompatActivity {
                     transaction.getName());
             goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_TYPENAME,
                     transaction.getTypeName());
-//            goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_INSTANT,
-//                    DateFormatter.formatInstantToString(transaction.getInstant(), transaction.getZoneId()));
             goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_INSTANT,
                     transaction.getInstant().getEpochSecond());
-
             goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_ZONE_ID,
                     transaction.getZoneId().getId());
             goToAddEditRepeatTransaction.putExtra(AddEditRepeatTransactionActivity.EXTRA_VALUE,
@@ -128,14 +128,18 @@ public class RepeatTransactionActivity extends AppCompatActivity {
         // on changed
         transactionViewModel.getIncomeRecurringTransactions(todayEpochSeconds).observe(this,
                 (@Nullable final List<Transaction> transactions) -> {
-            // Update the cached copy of the words in the transactionAdapter.
-            // list received is not distinct by recurring id
+            /*
+             Update the cached copy of the words in the transactionAdapter.
+             list received is not distinct by recurring id
+            */
             ImmutableList<Transaction> distinctTransactions = deepCopyDistinctTransaction(transactions);
             repeatIncomeTransactionAdapter.submitList(distinctTransactions);
         });
 
-        // when click on item in recycler view -> populate data and open up to edit
-        // on item click
+        /*
+         when click on item in recycler view -> populate data and open up to edit
+         on item click
+        */
         repeatIncomeTransactionAdapter.setOnItemClickListener((Transaction transaction) -> {
             Intent goToAddEditRepeatTransaction = new Intent(
                     RepeatTransactionActivity.this, AddEditRepeatTransactionActivity.class);
@@ -164,16 +168,7 @@ public class RepeatTransactionActivity extends AppCompatActivity {
 
         TypeViewModel typeViewModel = new ViewModelProvider(this).get(TypeViewModel.class);
 
-//        TypeViewModel typeViewModel = ViewModelProviders.of(this).get(TypeViewModel.class);
-
-        // on changed
-//        typeViewModel.getAllTypesString().observe(this, (@Nullable final List<String> types) -> {
-//            if (types != null && types.size() == 0) {
-//                WalletDatabase.addTypes();
-//            }
-//        });
-
-        Future<List<String>> typesFuture =typeViewModel.getAllTypesStringTemp();
+        Future<List<String>> typesFuture =typeViewModel.getAllTypesStringFuture();
 
         try {
             List<String> types = typesFuture.get();
@@ -307,7 +302,6 @@ public class RepeatTransactionActivity extends AppCompatActivity {
         for (int i = 0; i <= numOfTransactions; i++) {
 
             // deep copy so that it wont reference the same object and change date for all transactions
-            // newTransaction = deepCopyTransaction(transaction, recurringId, calendar.getTime(), repeat);
             newTransaction = Transaction.createRecurringTransaction(
                     0L,
                     recurringId,

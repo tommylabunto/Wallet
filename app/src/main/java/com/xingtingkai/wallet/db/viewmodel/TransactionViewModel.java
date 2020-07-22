@@ -15,26 +15,10 @@ import java.util.concurrent.Future;
 public class TransactionViewModel extends AndroidViewModel {
 
     private TransactionRepository transactionRepository;
-    // Using LiveData and caching what getAlphabetizedWords returns has several benefits:
-    // - We can put an observer on the data (instead of polling for changes) and only update the
-    //   the UI when the data actually changes.
-    // - Repository is completely separated from the UI through the ViewModel.
-    private LiveData<List<Transaction>> allTransactions;
-    private LiveData<List<Transaction>> allNonRecurringTransactions;
 
     public TransactionViewModel(Application application) {
         super(application);
         transactionRepository = new TransactionRepository(application);
-        allTransactions = transactionRepository.getAllTransactions();
-        allNonRecurringTransactions = transactionRepository.getAllNonRecurringTransactions();
-    }
-
-    public LiveData<List<Transaction>> getAllTransactions() {
-        return allTransactions;
-    }
-
-    public LiveData<List<Transaction>> getAllRecurringTransactions(long millisecondsToday) {
-        return transactionRepository.getAllRecurringTransactions(millisecondsToday);
     }
 
     public LiveData<List<Transaction>> getExpenseRecurringTransactions(long millisecondsToday) {
@@ -43,10 +27,6 @@ public class TransactionViewModel extends AndroidViewModel {
 
     public LiveData<List<Transaction>> getIncomeRecurringTransactions(long millisecondsToday) {
         return transactionRepository.getIncomeRecurringTransactions(millisecondsToday);
-    }
-
-    public LiveData<List<Transaction>> getAllNonRecurringTransactions() {
-        return allNonRecurringTransactions;
     }
 
     public LiveData<List<Transaction>> getAllTransactionsInAMonth(long millisecondsStart, long millisecondsEnd) {
@@ -73,14 +53,6 @@ public class TransactionViewModel extends AndroidViewModel {
         transactionRepository.deleteTransaction(transaction);
     }
 
-    public LiveData<Transaction> getTransaction(long transactionId) {
-        return transactionRepository.getTransaction(transactionId);
-    }
-
-    public void deleteAllRecurringTransactions(double value, String name, String typeName, int frequency) {
-        transactionRepository.deleteAllRecurringTransactions(value, name, typeName, frequency);
-    }
-
     public void deleteFutureRecurringTransactions(String transactionRecurringId, long milliseconds) {
         transactionRepository.deleteFutureRecurringTransactions(transactionRecurringId, milliseconds);
     }
@@ -89,12 +61,8 @@ public class TransactionViewModel extends AndroidViewModel {
         return transactionRepository.checkpoint(supportSQLiteQuery);
     }
 
-    public LiveData<List<String>> getAllTransactionNameString() {
+    public Future<List<String>> getAllTransactionNameString() {
         return transactionRepository.getAllTransactionNameString();
-    }
-
-    public Future<List<String>> getAllTransactionNameStringTemp() {
-        return transactionRepository.getAllTransactionNameStringTemp();
     }
 
     public Future<Double> calculateExpensesInAMonth(long epochSecondsStart, long epochSecondsEnd){

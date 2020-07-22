@@ -21,8 +21,10 @@ public class CarryOverRepository {
         allCarryOver = carryOverDao.getAllCarryOver();
     }
 
-    // Room executes all queries on a separate thread.
-    // Observed LiveData will notify the observer when the data has changed.
+    /*
+     Room executes all queries on a separate thread.
+     Observed LiveData will notify the observer when the data has changed.
+     */
     public LiveData<List<CarryOver>> getAllCarryOver() {
         return allCarryOver;
     }
@@ -35,12 +37,15 @@ public class CarryOverRepository {
         return carryOverDao.getCarryOver();
     }
 
-    // You must call this on a non-UI thread or your app will throw an exception. Room ensures
-    // that you're not doing any long running operations on the main thread, blocking the UI.
+    /*
+     You must call this on a non-UI thread or your app will throw an exception. Room ensures
+     that you're not doing any long running operations on the main thread, blocking the UI.
+    */
     public void insertCarryOver(CarryOver carryOver) {
         WalletDatabase.databaseWriteExecutor.execute(() ->
                 carryOverDao.insertCarryOver(carryOver));
     }
+
     public void deleteCarryOver(CarryOver carryOver) {
         WalletDatabase.databaseWriteExecutor.execute(() ->
                 carryOverDao.deleteCarryOver(carryOver));

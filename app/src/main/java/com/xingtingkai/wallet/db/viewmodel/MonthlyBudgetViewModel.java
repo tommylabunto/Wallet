@@ -14,28 +14,14 @@ import java.util.concurrent.Future;
 public class MonthlyBudgetViewModel extends AndroidViewModel {
 
     private MonthlyBudgetRepository monthlyBudgetRepository;
-    // Using LiveData and caching what getAlphabetizedWords returns has several benefits:
-    // - We can put an observer on the data (instead of polling for changes) and only update the
-    //   the UI when the data actually changes.
-    // - Repository is completely separated from the UI through the ViewModel.
-    private LiveData<List<MonthlyBudget>> allMonthlyBudgets;
 
     public MonthlyBudgetViewModel(Application application) {
         super(application);
         monthlyBudgetRepository = new MonthlyBudgetRepository(application);
-        allMonthlyBudgets = monthlyBudgetRepository.getAllMonthlyBudgets();
-    }
-
-    public LiveData<List<MonthlyBudget>> getAllMonthlyBudgets() {
-        return allMonthlyBudgets;
     }
 
     public LiveData<List<MonthlyBudget>> getAllMonthlyBudgetsInAYear(int year) {
         return monthlyBudgetRepository.getAllMonthlyBudgetsInAYear(year);
-    }
-
-    public LiveData<MonthlyBudget> getMonthlyBudget(int year, int month) {
-        return monthlyBudgetRepository.getMonthlyBudget(year, month);
     }
 
     public void insertMonthlyBudget(MonthlyBudget monthlyBudget) {
@@ -58,7 +44,7 @@ public class MonthlyBudgetViewModel extends AndroidViewModel {
         monthlyBudgetRepository.updateAllFutureMonthlyBudgets(monthlyBudgetId, budget);
     }
 
-    public Future<MonthlyBudget> getMonthlyBudgetTemp(int year, int month) {
-        return monthlyBudgetRepository.getMonthlyBudgetTemp(year, month);
+    public Future<MonthlyBudget> getMonthlyBudget(int year, int month) {
+        return monthlyBudgetRepository.getMonthlyBudget(year, month);
     }
 }

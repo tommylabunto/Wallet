@@ -141,11 +141,13 @@ public class MainActivity extends AppCompatActivity {
                 .withHour(0)
                 .withDayOfMonth(1);
 
+        boolean isLeapYear = startMonthDate.toLocalDate().isLeapYear();
+
         endMonthDate = ZonedDateTime
                 .now()
                 .withMinute(59)
                 .withHour(23)
-                .withDayOfMonth(startMonthDate.getMonth().maxLength());
+                .withDayOfMonth(startMonthDate.getMonth().length(isLeapYear));
 
         int yearInt = startMonthDate.getYear();
         Month month = startMonthDate.getMonth();
